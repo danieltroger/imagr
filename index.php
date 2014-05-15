@@ -11,6 +11,7 @@ error_reporting(E_ALL);
 <body>
 <div id="grid">
 </div>
+<div id="bigpic" style="display:none"></div>
 <script>
 var imgs=Array(<?php
 $imgs = glob("*");
@@ -44,7 +45,7 @@ function getextension($file)
 $extension = explode(".",$file);
 return strtolower($extension[sizeof($extension)-1]);
 }
-?>),grid=document.getElementById("grid"),meta=json_decode(file_get_contents("meta.json"));
+?>),grid=document.getElementById("grid"),meta=json_decode(file_get_contents("meta.json")),container=document.getElementById("bigpic");;
 imgs.forEach(
 function (image) {
 var imgelem=document.createElement("img");
@@ -56,29 +57,65 @@ imgelem.dataset.name=meta[image].name;
 imgelem.dataset.by=meta[image].by;
 imgelem.dataset.description=meta[image].description;
 }
+imgelem.addEventListener("click",openpic);
 grid.appendChild(imgelem);
 });
+function openpic(e)
+{
+var img=document.createElement("img"),desc=document.createElement("span");
+container.style.display="";
+container.innerHTML="";
+img.src=this.src;
+img.classList.add("largepic");
+container.appendChild(img);
+if(this.dataset.description != undefined)
+{
+img.dataset.title=this.dataset.description+", by "+this.dataset.by;
+}
+}
 </script>
 <style>
 .image
 {
-width:20%;
+width:19%;
 margin:20px;
 min-width:200px;
-border:7px solid white;
-transition-duration:2s;
+box-shadow: 5px 5px 5px grey;
+border:5px solid white;
+transition-duration:0.5s;
 transition-property:all;
--webkit-transition-duration:2s;
+-webkit-transition-duration:0.5s;
 -webkit-transition-property:all;
 }
 .image:hover
 {
-width:40%;
-box-shadow: 5px 5px 5px grey;
+border: 5px solid red;
+cursor: pointer;
+border-radius:5%;
 }
 body
 {
 background:black;
+}
+#bigpic
+{
+left: 0px;
+top: 0px;
+position: fixed;
+bottom: 0px;
+right: 0px;
+z-index: 2;
+background: rgba(200, 200, 200, 0.6);
+}
+.largepic
+{
+max-width:90%;
+box-shadow: 10px 10px 20px;
+max-height: 90%;
+left: 50%;
+top: 50%;
+position: absolute;
+transform: translateY(-50%) translateX(-50%);
 }
 </style>
 </body>
