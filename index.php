@@ -74,6 +74,7 @@ transition-property:all;
 .image:hover
 {
 width:40%;
+box-shadow: 5px 5px 5px grey;
 }
 body
 {
