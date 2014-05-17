@@ -1,5 +1,71 @@
 <?php
 error_reporting(E_ALL);
+//copypasta
+function create_thumb($src,$dest,$desired_width = false, $desired_height = false)
+{
+    /*If no dimenstion for thumbnail given, return false */
+    if (!$desired_height&&!$desired_width) return false;
+    $fparts = pathinfo($src);
+    $ext = strtolower($fparts['extension']);
+    /* if its not an image return false */
+    if (!in_array($ext,array('gif','jpg','png','jpeg'))) return false;
+
+    /* read the source image */
+    if ($ext == 'gif')
+        $resource = imagecreatefromgif($src);
+    else if ($ext == 'png')
+        $resource = imagecreatefrompng($src);
+    else if ($ext == 'jpg' || $ext == 'jpeg')
+        $resource = imagecreatefromjpeg($src);
+    
+    $width  = imagesx($resource);
+    $height = imagesy($resource);
+    /* find the "desired height" or "desired width" of this thumbnail, relative to each other, if one of them is not given  */
+    if(!$desired_height) $desired_height = floor($height*($desired_width/$width));
+    if(!$desired_width)  $desired_width  = floor($width*($desired_height/$height));
+  
+    /* create a new, "virtual" image */
+    $virtual_image = imagecreatetruecolor($desired_width,$desired_height);
+  
+    /* copy source image at a resized size */
+    imagecopyresized($virtual_image,$resource,0,0,0,0,$desired_width,$desired_height,$width,$height);
+    
+    /* create the physical thumbnail image to its destination */
+    /* Use correct function based on the desired image type from $dest thumbnail source */
+    $fparts = pathinfo($dest);
+    $ext = strtolower($fparts['extension']);
+    /* if dest is not an image type, default to jpg */
+    if (!in_array($ext,array('gif','jpg','png','jpeg'))) $ext = 'jpg';
+    $dest = $fparts['dirname'].'/'.$fparts['filename'].'.'.$ext;
+    
+    if ($ext == 'gif')
+        imagegif($virtual_image,$dest);
+    else if ($ext == 'png')
+        imagepng($virtual_image,$dest,1);
+    else if ($ext == 'jpg' || $ext == 'jpeg')
+        imagejpeg($virtual_image,$dest,100);
+    
+    return array(
+        'width'     => $width,
+        'height'    => $height,
+        'new_width' => $desired_width,
+        'new_height'=> $desired_height,
+        'dest'      => $dest
+    );
+}
+function thumb($image)
+{
+if(!is_dir("thumbs.dir"))
+{
+mkdir("thumbs.dir");
+}
+$oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";
+if(!file_exists($oname))
+{
+create_thumb($image,$oname,800);
+}
+return $image;
+}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -14,120 +80,130 @@ error_reporting(E_ALL);
 </div>
 <div id="bigpic" style="cursor:pointer;display:none"></div>
 <script>
-var imgs=Array(<?php
-$imgs = glob("*");
-$imglen = sizeof($imgs)-1;
-$invalid_files_length = 0;
-$invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","svg~");
-foreach($imgs as $key => $img)
-{
-$extension = getextension($img);
-if(in_array($extension,$invalid_extensions))
-{
-$invalid_files_length++;
-}
-}
-echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
-foreach($imgs as $key => $img)
-{
-$extension = getextension($img);
-if(!in_array($extension,$invalid_extensions))
-{
-echo "\"{$img}\"";
-if($key != $imglen-$invalid_files_length)
-{
-echo ",";
-}
-}
-echo " /* file = {$img}, extension = {$extension}, key = {$key}*/\n";
-}
-function getextension($file)
-{
-$extension = explode(".",$file);
-return strtolower($extension[sizeof($extension)-1]);
-}
-?>),
-grid=document.getElementById("grid"),
-meta=json_decode(file_get_contents("meta.json")),
-container=document.getElementById("bigpic"),
-isMobile=false,
-desc=document.createElement("span"),
-prevb=document.createElement("img"),
-nextb=document.createElement("img"),
-img=document.createElement("img");
-bigpic.onclick=function (e)
-{
-if(e.target.id == this.id)
-{
-this.style.display="none";
-}
-}
-if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-{
-isMobile=true;
-} 
-prevb.src="prev.svg";
-prevb.classList.add("prev");
-prevb.classList.add("arrow");
-prevb.addEventListener("click",prev);
-container.appendChild(prevb);
-nextb.src="next.svg";
-nextb.classList.add("next");
-nextb.classList.add("arrow");
-nextb.addEventListener("click",next);
-container.appendChild(nextb);
-img.classList.add("largepic");
-container.appendChild(img);
-imgs.forEach(
-function (image) {
-var imgelem=document.createElement("img");
-imgelem.src=image;
-imgelem.classList.add("image");
-if(isMobile){imgelem.classList.add("mobile");}
-if(meta[image]!=undefined)
-{
-imgelem.dataset.name=meta[image].name;
-imgelem.dataset.by=meta[image].by;
-imgelem.dataset.description=meta[image].description;
-}
-imgelem.addEventListener("click",openpic);
-grid.appendChild(imgelem);
-});
-function openpic(e)
-{
-img.src=this.src;
-container.style.display="";
-if(this.dataset.description != undefined)
-{
-img.dataset.title=this.dataset.description+", by "+this.dataset.by;
-}
-else
-{
-img.dataset.title=undefined;
-}
-}
-function next(e)
-{
-var nextimg=imgs[findimg(basename(img.src))+1];
-img.src=nextimg;
-img.dataset.title=undefined;
-}
-function prev(e)
-{
-var previmg=imgs[findimg(basename(img.src))-1];
-img.src=previmg;
-img.dataset.title=undefined;
-}
-function findimg(imgurl)
-{
-for(i=0;i<=imgs.length;i++)
-{
-if(imgs[i] == imgurl)
-{
-return i;
-}
-}
-}
+  var imgs=Array(<?php
+    $imgs = glob("*");
+    $imglen = sizeof($imgs)-1;
+    $invalid_files_length = 0;
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir");
+    foreach($imgs as $key => $img)
+    {
+      $extension = getextension($img);
+      if(in_array($extension,$invalid_extensions))
+      {
+        $invalid_files_length++;
+      }
+    }
+    echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
+    foreach($imgs as $key => $img)
+    {
+      $extension = getextension($img);
+      if(!in_array($extension,$invalid_extensions))
+      {
+        echo "\"" . thumb($img) . "\"";
+        if($key != $imglen-$invalid_files_length)
+        {
+          echo ",";
+        }
+      }
+      echo " /* file = {$img}, extension = {$extension}, key = {$key}*/\n";
+    }
+    function getextension($file)
+    {
+      $extension = explode(".",$file);
+      return strtolower($extension[sizeof($extension)-1]);
+    }
+    ?>),
+    grid=document.getElementById("grid"),
+    meta=json_decode(file_get_contents("meta.json")),
+    container=document.getElementById("bigpic"),
+    isMobile=false,
+    desc=document.createElement("span"),
+    prevb=document.createElement("img"),
+    nextb=document.createElement("img"),
+    img=document.createElement("img");
+    bigpic.onclick=function (e)
+    {
+  if(e.target.id == this.id)
+  {
+  this.style.display="none";
+  }
+  }
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+  {
+    isMobile=true;
+  }
+  prevb.src="prev.svg";
+  prevb.classList.add("prev");
+  prevb.classList.add("arrow");
+  prevb.addEventListener("click",prev);
+  container.appendChild(prevb);
+  nextb.src="next.svg";
+  nextb.classList.add("next");
+  nextb.classList.add("arrow");
+  nextb.addEventListener("click",next);
+  container.appendChild(nextb);
+  img.classList.add("largepic");
+  container.appendChild(img);
+  imgs.forEach(
+    function (image) {
+      var imgelem=document.createElement("img");
+      imgelem.src="thumbs.dir/"+image+".jpg";
+      imgelem.dataset.original=image;
+      imgelem.classList.add("image");
+      if(isMobile){imgelem.classList.add("mobile");}
+      if(meta[image]!=undefined)
+      {
+        imgelem.dataset.name=meta[image].name;
+        imgelem.dataset.by=meta[image].by;
+        imgelem.dataset.description=meta[image].description;
+      }
+      imgelem.addEventListener("click",openpic);
+      grid.appendChild(imgelem);
+    });
+    function openpic(e)
+    {
+      img.src=this.dataset.original;
+      container.style.display="";
+      if(this.dataset.description != undefined)
+      {
+        img.dataset.title=this.dataset.description+", by "+this.dataset.by;
+      }
+      else
+      {
+  img.dataset.title=undefined;
+  }
+  }
+  function next(e)
+  {
+  var nextindex=(findimg(basename(img.src))+1);
+  if(nextindex == imgs.length)
+   {
+     nextindex = 0;
+   }
+  img.src=imgs[nextindex];
+  img.dataset.title=undefined;
+  }
+  function prev(e)
+  {
+    var previndex=findimg(basename(img.src))-1;
+    if(previndex < 0)
+     {
+       previndex=(imgs.length-1);
+     }
+    img.src=imgs[previndex];
+    img.dataset.title=undefined;
+  }
+  function findimg(imgurl)
+  {
+    for(i=0;i<=imgs.length;i++)
+  {
+  if(imgs[i] == imgurl)
+  {
+  return i;
+  }
+  }
+  }
+
 </script>
 <style>
 .image
