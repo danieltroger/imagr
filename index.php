@@ -136,16 +136,26 @@ return $image;
   prevb.classList.add("prev");
   prevb.classList.add("symbol");
   prevb.classList.add("vertcent");
+  prevb.style.width="10%";
   prevb.addEventListener("click",prev);
   container.appendChild(prevb);
   nextb.src="next.svg";
   nextb.classList.add("next");
   nextb.classList.add("symbol");
   nextb.classList.add("vertcent");
+  nextb.style.width="10%";
   nextb.addEventListener("click",next);
   container.appendChild(nextb);
   img.classList.add("largepic");
+  img.classList.add("cent");
   container.appendChild(img);
+  var infobut=document.createElement("img")
+  infobut.src="info.svg"
+  infobut.classList.add("symbol");
+  infobut.style.width="6%";
+  infobut.style.bottom="2%";
+  infobut.classList.add("horcent");
+  container.appendChild(infobut);
   imgs.forEach(
     function (image) {
       var imgelem=document.createElement("img");
@@ -254,8 +264,6 @@ top: 50%;
 z-index:3;
 cursor:default;
 position: absolute;
-transform: translateY(-50%) translateX(-50%);
--webkit-transform: translateY(-50%) translateX(-50%);
 }
 .prev
 {
@@ -263,7 +271,6 @@ left:2%;
 }
 .symbol
 {
-width: 10%;
 background: rgba(0, 0, 0, 0.5);
 border-radius: 50%;
 position: absolute;
@@ -274,6 +281,17 @@ z-index:5;
 top: 50%;
 transform: translateY(-50%);
 -wekit-transform: translateY(-50%);
+}
+.horcent
+{
+left: 50%;
+transform: translateX(-50%);
+-wekit-transform: translateX(-50%);
+}
+.cent
+{
+transform: translateX(-50%) translateY(-50%);
+-wekit-transform: translateX(-50%) translateY(-50%);
 }
 .next
 {
