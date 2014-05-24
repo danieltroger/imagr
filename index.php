@@ -62,7 +62,7 @@ mkdir("thumbs.dir");
 $oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";
 if(!file_exists($oname))
 {
-create_thumb($image,$oname,800);
+create_thumb($image,$oname,555);
 }
 return $image;
 }
@@ -134,12 +134,14 @@ return $image;
   }
   prevb.src="prev.svg";
   prevb.classList.add("prev");
-  prevb.classList.add("arrow");
+  prevb.classList.add("symbol");
+  prevb.classList.add("vertcent");
   prevb.addEventListener("click",prev);
   container.appendChild(prevb);
   nextb.src="next.svg";
   nextb.classList.add("next");
-  nextb.classList.add("arrow");
+  nextb.classList.add("symbol");
+  nextb.classList.add("vertcent");
   nextb.addEventListener("click",next);
   container.appendChild(nextb);
   img.classList.add("largepic");
@@ -259,16 +261,19 @@ transform: translateY(-50%) translateX(-50%);
 {
 left:2%;
 }
-.arrow
+.symbol
 {
 width: 10%;
 background: rgba(0, 0, 0, 0.5);
 border-radius: 50%;
-top: 50%;
 position: absolute;
+z-index:5;
+}
+.vertcent
+{
+top: 50%;
 transform: translateY(-50%);
 -wekit-transform: translateY(-50%);
-z-index:5;
 }
 .next
 {
