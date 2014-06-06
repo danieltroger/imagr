@@ -181,23 +181,41 @@ return $image;
       imgelem.addEventListener("click",openpic);
       grid.appendChild(imgelem);
     });
-    function openpic(e)
+    function openpic(srcthumb)
     {
-      img.src=this.dataset.original;
+if(this.tagName == "IMG")
+{
+srcthumb = this;
+}
+      img.src=srcthumb.dataset.original;
       container.style.display="";
-      if(this.dataset.description != undefined)
+      if(srcthumb.dataset.description != undefined)
       {
-        infolay.innerHTML=this.dataset.description+", by "+this.dataset.by;
+        infobut.style.display="";
+        infolay.innerHTML=srcthumb.dataset.description+", by "+srcthumb.dataset.by;
       }
       else
       {
-  img.dataset.title=undefined;
+infobut.style.display="none";
+infolay.classList.add("closed");
   }
   }
   function infooverlay(e)
   {
    infolay.classList.toggle("closed");
   }
+
+function findthumb(realsource)
+{
+var thumbs = document.getElementsByClassName("image");
+for(i = 0;i<thumbs.length;i++)
+{
+if(thumbs[i].dataset.original == realsource)
+{
+return thumbs[i];
+}
+}
+}
   function next(e)
   {
   var nextindex=(findimg(basename(img.src))+1);
@@ -205,8 +223,7 @@ return $image;
    {
      nextindex = 0;
    }
-  img.src=imgs[nextindex];
-  img.dataset.title=undefined;
+  openpic(findthumb(imgs[nextindex]));
   }
   function prev(e)
   {
@@ -215,8 +232,7 @@ return $image;
      {
        previndex=(imgs.length-1);
      }
-    img.src=imgs[previndex];
-    img.dataset.title=undefined;
+   openpic(findthumb(imgs[previndex]));
   }
   function findimg(imgurl)
   {
@@ -314,22 +330,26 @@ right:2%;
 {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
     color: #FFFFFF;
+    cursor: default;
     font-family: helvetica;
+    min-height: 5%;
+    overflow: auto;
     padding: 10px;
     position: fixed;
+    text-align: center;
     top: 3%;
+    transition-duration: 3s;
+    transition-property: all;
+    width: 90%;
     z-index: 5;
-    cursor: default;
-    transition-duration:3s;
-    transition-property:all;
-    -webkit-transition-duration:3s;
-    -webkit-transition-property:all;
-    overflow:auto;
 }
 .closed
 {
 opacity:0;
+width:0;
+height:0;
 }
+
 </style>
 </body>
 </html>
