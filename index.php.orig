@@ -80,12 +80,12 @@ return $image;
 </div>
 <div id="bigpic" style="cursor:pointer;display:none"></div>
 <script>
-  var m=Array(<?php
+  var imgs=Array(<?php
     $imgs = glob("*");
     $imglen = sizeof($imgs)-1;
     $invalid_files_length = 0;
     $rkey = 0;
-    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","orig");
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir");
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -94,7 +94,7 @@ return $image;
         $invalid_files_length++;
       }
     }
-   // echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
+    echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -107,16 +107,249 @@ return $image;
         }
       $rkey++;
       }
-      //echo " /* file = {$img}, extension = {$extension}, key = {$key}, rkey = {$rkey}*/\n";
+      echo " /* file = {$img}, extension = {$extension}, key = {$key}, rkey = {$rkey}*/\n";
     }
     function getextension($file)
     {
       $extension = explode(".",$file);
       return strtolower($extension[sizeof($extension)-1]);
     }
-    ?>),b=document.getElementById("grid"),s=json_decode(file_get_contents("meta.json")),c=document.getElementById("bigpic"),q=false,o=document.createElement("span"),d=document.createElement("img"),n=document.createElement("img"),k=document.createElement("img");bigpic.onclick=function(t){if(t.target.id==this.id){this.style.display="none"}};if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){q=true}d.src="prev.svg";d.classList.add("prev");d.classList.add("symbol");d.classList.add("vertcent");d.style.width="10%";d.addEventListener("click",h);c.appendChild(d);n.src="next.svg";n.classList.add("next");n.classList.add("symbol");n.classList.add("vertcent");n.style.width="10%";n.addEventListener("click",l);c.appendChild(n);k.classList.add("largepic");k.classList.add("cent");c.appendChild(k);var j=document.createElement("img");j.src="info.svg";j.classList.add("symbol");j.style.width="6%";j.style.bottom="2%";j.addEventListener("click",e);j.classList.add("horcent");c.appendChild(j);var f=document.createElement("div");f.classList.add("infolay");f.classList.add("horcent");f.classList.add("closed");c.appendChild(f);m.forEach(function(t){var u=document.createElement("img");u.src="thumbs.dir/"+t+".jpg";u.dataset.original=t;u.width=50;u.classList.add("image");if(q){u.classList.add("mobile")}if(s[t]!=undefined){u.dataset.name=s[t].name;u.dataset.by=s[t].by;u.dataset.description=s[t].description}u.addEventListener("click",p);b.appendChild(u)});function p(t){console.log(this);k.src=t.dataset.original;c.style.display="";if(t.dataset.description!=undefined){j.style.display="";f.innerHTML=t.dataset.description+", by "+t.dataset.by}else{j.style.display="none";f.classList.add("closed")}}function e(t){f.classList.toggle("closed")}function r(u){var t=document.getElementsByClassName("image");for(i=0;i<t.length;i++){if(t[i].dataset.original==u){return t[i]}}}function l(u){var t=(g(basename(k.src))+1);if(t==m.length){t=0}p(r(m[t]))}function h(t){var u=g(basename(k.src))-1;if(u<0){u=(m.length-1)}p(r(m[nextindex]))}function g(t){for(i=0;i<=m.length;i++){if(m[i]==t){return i}}}
+    ?>),
+    grid=document.getElementById("grid"),
+    meta=json_decode(file_get_contents("meta.json")),
+    container=document.getElementById("bigpic"),
+    isMobile=false,
+    desc=document.createElement("span"),
+    prevb=document.createElement("img"),
+    nextb=document.createElement("img"),
+    img=document.createElement("img");
+    bigpic.onclick=function (e)
+    {
+  if(e.target.id == this.id)
+  {
+  this.style.display="none";
+  }
+  }
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+  {
+    isMobile=true;
+  }
+  prevb.src="prev.svg";
+  prevb.classList.add("prev");
+  prevb.classList.add("symbol");
+  prevb.classList.add("vertcent");
+  prevb.style.width="10%";
+  prevb.addEventListener("click",prev);
+  container.appendChild(prevb);
+  nextb.src="next.svg";
+  nextb.classList.add("next");
+  nextb.classList.add("symbol");
+  nextb.classList.add("vertcent");
+  nextb.style.width="10%";
+  nextb.addEventListener("click",next);
+  container.appendChild(nextb);
+  img.classList.add("largepic");
+  img.classList.add("cent");
+  container.appendChild(img);
+  var infobut=document.createElement("img")
+  infobut.src="info.svg"
+  infobut.classList.add("symbol");
+  infobut.style.width="6%";
+  infobut.style.bottom="2%";
+  infobut.addEventListener("click",infooverlay);
+  infobut.classList.add("horcent");
+  container.appendChild(infobut);
+  var infolay=document.createElement("div");
+  infolay.classList.add("infolay");
+  infolay.classList.add("horcent");
+  infolay.classList.add("closed");
+  container.appendChild(infolay);
+  imgs.forEach(
+    function (image) {
+      var imgelem=document.createElement("img");
+      imgelem.src="thumbs.dir/"+image+".jpg";
+      imgelem.dataset.original=image;
+      imgelem.width=50;
+      imgelem.classList.add("image");
+      if(isMobile){imgelem.classList.add("mobile");}
+      if(meta[image]!=undefined)
+      {
+        imgelem.dataset.name=meta[image].name;
+        imgelem.dataset.by=meta[image].by;
+        imgelem.dataset.description=meta[image].description;
+      }
+      imgelem.addEventListener("click",openpic);
+      grid.appendChild(imgelem);
+    });
+    function openpic(srcthumb)
+    {
+if(this.tagName == "IMG")
+{
+srcthumb = this;
+}
+      img.src=srcthumb.dataset.original;
+      container.style.display="";
+      if(srcthumb.dataset.description != undefined)
+      {
+        infobut.style.display="";
+        infolay.innerHTML=srcthumb.dataset.description+", by "+srcthumb.dataset.by;
+      }
+      else
+      {
+infobut.style.display="none";
+infolay.classList.add("closed");
+  }
+  }
+  function infooverlay(e)
+  {
+   infolay.classList.toggle("closed");
+  }
+
+function findthumb(realsource)
+{
+var thumbs = document.getElementsByClassName("image");
+for(i = 0;i<thumbs.length;i++)
+{
+if(thumbs[i].dataset.original == realsource)
+{
+return thumbs[i];
+}
+}
+}
+  function next(e)
+  {
+  var nextindex=(findimg(basename(img.src))+1);
+  if(nextindex == imgs.length)
+   {
+     nextindex = 0;
+   }
+  openpic(findthumb(imgs[nextindex]));
+  }
+  function prev(e)
+  {
+    var previndex=findimg(basename(img.src))-1;
+    if(previndex < 0)
+     {
+       previndex=(imgs.length-1);
+     }
+   openpic(findthumb(imgs[previndex]));
+  }
+  function findimg(imgurl)
+  {
+    for(i=0;i<=imgs.length;i++)
+  {
+  if(imgs[i] == imgurl)
+  {
+  return i;
+  }
+  }
+  }
+
 </script>
 <style>
-.image{width:19%;margin:20px;min-width:200px;box-shadow:5px 5px 5px grey;border:5px solid white;transition-duration:.5s;transition-property:all;-webkit-transition-duration:.5s;-webkit-transition-property:all}.image.mobile{width:90%}.image:hover{border:5px solid red;cursor:pointer;border-radius:5%}body{background:black}#bigpic{left:0;top:0;position:fixed;bottom:0;right:0;z-index:2;background:rgba(200,200,200,0.6)}.largepic{max-width:90%;box-shadow:10px 10px 20px;max-height:90%;left:50%;top:50%;z-index:3;cursor:default;position:absolute}.prev{left:2%}.symbol{background:rgba(0,0,0,0.5);border-radius:50%;position:absolute;z-index:5}.vertcent{top:50%;transform:translateY(-50%);-wekit-transform:translateY(-50%)}.horcent{left:50%;transform:translateX(-50%);-wekit-transform:translateX(-50%)}.cent{transform:translateX(-50%) translateY(-50%);-wekit-transform:translateX(-50%) translateY(-50%)}.next{right:2%}.infolay{background:none repeat scroll 0 0 rgba(0,0,0,0.5);color:#fff;cursor:default;font-family:helvetica;min-height:5%;overflow:auto;padding:10px;position:fixed;text-align:center;top:3%;transition-duration:3s;transition-property:all;width:90%;z-index:5}.closed{opacity:0;width:0;height:0}
+.image
+{
+width:19%;
+margin:20px;
+min-width:200px;
+box-shadow: 5px 5px 5px grey;
+border:5px solid white;
+transition-duration:0.5s;
+transition-property:all;
+-webkit-transition-duration:0.5s;
+-webkit-transition-property:all;
+}
+.image.mobile
+{
+width:90%;
+}
+.image:hover
+{
+border: 5px solid red;
+cursor: pointer;
+border-radius:5%;
+}
+body
+{
+background:black;
+}
+#bigpic
+{
+left: 0px;
+top: 0px;
+position: fixed;
+bottom: 0px;
+right: 0px;
+z-index: 2;
+background: rgba(200, 200, 200, 0.6);
+}
+.largepic
+{
+max-width:90%;
+box-shadow: 10px 10px 20px;
+max-height: 90%;
+left: 50%;
+top: 50%;
+z-index:3;
+cursor:default;
+position: absolute;
+}
+.prev
+{
+left:2%;
+}
+.symbol
+{
+background: rgba(0, 0, 0, 0.5);
+border-radius: 50%;
+position: absolute;
+z-index:5;
+}
+.vertcent
+{
+top: 50%;
+transform: translateY(-50%);
+-wekit-transform: translateY(-50%);
+}
+.horcent
+{
+left: 50%;
+transform: translateX(-50%);
+-wekit-transform: translateX(-50%);
+}
+.cent
+{
+transform: translateX(-50%) translateY(-50%);
+-wekit-transform: translateX(-50%) translateY(-50%);
+}
+.next
+{
+right:2%;
+}
+.infolay
+{
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+    cursor: default;
+    font-family: helvetica;
+    min-height: 5%;
+    overflow: auto;
+    padding: 10px;
+    position: fixed;
+    text-align: center;
+    top: 3%;
+    transition-duration: 3s;
+    transition-property: all;
+    width: 90%;
+    z-index: 5;
+}
+.closed
+{
+opacity:0;
+width:0;
+height:0;
+}
+
+</style>
 </body>
 </html>
