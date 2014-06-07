@@ -20,7 +20,7 @@ require "thumbs.php"
     $imglen = sizeof($imgs)-1;
     $invalid_files_length = 0;
     $rkey = 0;
-    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip");
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta");
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -46,7 +46,7 @@ require "thumbs.php"
     }
     ?>),
     grid=document.getElementById("grid"),
-    meta=json_decode(file_get_contents("meta.json")),
+    meta=json_decode(file_get_contents("meta")),
     container=document.getElementById("bigpic"),
     isMobile=false,
     desc=document.createElement("span"),
