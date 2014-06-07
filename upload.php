@@ -142,7 +142,7 @@ elseif($descview)
 foreach($files as $key => $value)
 {
 ?><div class="uploadedfile" data-image="<?php echo $value; ?>">
-<img src="download.php/resize/300/<?php echo $value; ?>" /><textarea class="tarea" rows="3" placeholder="Bitte geben Sie eine kurze Beschreibung des Bildes ein"></textarea><button onclick="send({'rfile':'<?php echo $rfiles[$key]; ?>','meta':{'name':this.parentElement.dataset.image,'description':nl2br(this.previousElementSibling.value)}});this.disabled=true;">Submit</button>
+<img src="download.php/resize/300/<?php echo $value; ?>" /><textarea class="tarea" rows="3" placeholder="Bitte geben Sie eine kurze Beschreibung des Bildes ein"></textarea><button onclick="send({'rfile':'<?php echo $rfiles[$key]; ?>','meta':{'name':this.parentElement.dataset.image,'description':nl2br(this.previousElementSibling.value)}});this.disabled=true;this.innerHTML='Done';">Submit</button>
 </div>
 <?php
 }
@@ -151,7 +151,7 @@ else
 {
 ?>
 <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-<input type="file" id="uploader" name="files[]" multiple /><br />
+<label for="ul">Bitte wählen sie ihre foto(s) aus, mehrfachauswahl is über shift möglich</label><input type="file" id="uploader" id="ul" name="files[]" multiple /><br />
 Fotos: <div id="files"></div>
 <br />
 <input type="submit" value="Weiter" id="submit" disabled />
