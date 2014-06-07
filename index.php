@@ -84,7 +84,7 @@ require "thumbs.php"
   var infobut=document.createElement("img")
   infobut.src="info.svg"
   infobut.classList.add("symbol");
-  infobut.style.width="6%";
+  infobut.style.width="4%";
   infobut.style.bottom="2%";
   infobut.addEventListener("click",infooverlay);
   infobut.classList.add("horcent");
