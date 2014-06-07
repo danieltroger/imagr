@@ -151,7 +151,7 @@ else
 {
 ?>
 <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-<label for="ul">Bitte wählen sie ihre foto(s) aus, mehrfachauswahl is über shift möglich</label><input type="file" id="uploader" id="ul" name="files[]" multiple /><br />
+<label for="ul">Bitte w&auml;len sie ihre foto(s) aus, mehrfachauswahl is &uuml;ber shift m&ouml;glich</label><input type="file" id="uploader" id="ul" name="files[]" multiple /><br />
 Fotos: <div id="files"></div>
 <br />
 <input type="submit" value="Weiter" id="submit" disabled />
