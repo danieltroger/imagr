@@ -69,6 +69,7 @@ die(json_encode($ret));
 ?><!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width" />
 <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
 <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_encode.js"></script>
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/nl2br.js"></script>

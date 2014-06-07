@@ -4,7 +4,6 @@ require "thumbs.php"
 ?><!DOCTYPE html>
 <html>
 <head>
-<title>Fotos von der Klassenfahrt nach Granzow</title>
 <meta name="viewport" content="width=device-width" />
 <!--<script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/file_get_contents.js"></script>
@@ -61,7 +60,7 @@ require "thumbs.php"
   this.style.display="none";
   }
   }
-  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+  if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
   {
     isMobile=true;
   }
@@ -85,7 +84,7 @@ require "thumbs.php"
   var infobut=document.createElement("img")
   infobut.src="info.svg"
   infobut.classList.add("symbol");
-  infobut.style.width="4%";
+  infobut.style.width="7%";
   infobut.style.bottom="2%";
   infobut.addEventListener("click",infooverlay);
   infobut.classList.add("horcent");
@@ -105,6 +104,7 @@ require "thumbs.php"
       if(isMobile){imgelem.classList.add("mobile");}
       if(meta[image]!=undefined)
       {
+        imgelem.dataset.name=meta[image].name;
         imgelem.dataset.by=meta[image].by;
         imgelem.dataset.description=meta[image].description;
       }
@@ -119,29 +119,17 @@ srcthumb = this;
 }
       img.src=srcthumb.dataset.original;
       container.style.display="";
-      if(srcthumb.dataset.by != undefined)
+      if(srcthumb.dataset.description != undefined)
       {
         infobut.style.display="";
-var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),basic=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
-if(srcthumb.dataset.description == "undefined")
-{
-var basic="Hochgeladen von "+srcthumb.dataset.by;
-}
-console.log(basic);
+var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src)));
 if(exif != false)
 {
-if(exif['Make'] != undefined)
-{
-        infolay.innerHTML=basic+", fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
+        infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by+",<br />fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
 }
 else
 {
- infolay.innerHTML=basic+", fotografiert am "+exif['DateTime'];
-}
-}
-else
-{
- infolay.innerHTML=basic;
+ infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
 }
 infolay.innerHTML += "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
       }
