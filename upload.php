@@ -26,6 +26,9 @@ $file = "{$sss} ({$a}).{$ext[0]}";
 $a++;
 }
 move_uploaded_file($_FILES['files']['tmp_name'][$key],$file);
+$meta = o2a(json_decode(file_get_contents("meta")));
+$meta[$rfiles[$key]]['by'] = $_SESSION['name'];
+file_put_contents("meta",json_encode($meta));
 $files[] = $file;
 }
 $descview = true;

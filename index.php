@@ -104,7 +104,6 @@ require "thumbs.php"
       if(isMobile){imgelem.classList.add("mobile");}
       if(meta[image]!=undefined)
       {
-        imgelem.dataset.name=meta[image].name;
         imgelem.dataset.by=meta[image].by;
         imgelem.dataset.description=meta[image].description;
       }
@@ -119,17 +118,29 @@ srcthumb = this;
 }
       img.src=srcthumb.dataset.original;
       container.style.display="";
-      if(srcthumb.dataset.description != undefined)
+      if(srcthumb.dataset.by != undefined)
       {
         infobut.style.display="";
-var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src)));
+var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),basic=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
+if(srcthumb.dataset.description == "undefined")
+{
+var basic="Hochgeladen von "+srcthumb.dataset.by;
+}
+console.log(basic);
 if(exif != false)
 {
-        infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by+", fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
+if(exif['Make'] != undefined)
+{
+        infolay.innerHTML=basic+", fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
 }
 else
 {
- infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
+ infolay.innerHTML=basic+", fotografiert am "+exif['DateTime'];
+}
+}
+else
+{
+ infolay.innerHTML=basic;
 }
 infolay.innerHTML += "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
       }
