@@ -132,7 +132,15 @@ if(exif != false)
 {
 if(exif['Make'] != undefined)
 {
-        infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
+if(exif['Make'] == exif['Model'])
+{
+var mm = exif['Model'];
+}
+else
+{
+var mm = exif['Make'] + " "+ exif['Model'];
+}
+        infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer "+mm;
 }
 else
 {
