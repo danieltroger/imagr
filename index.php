@@ -4,6 +4,7 @@ require "thumbs.php"
 ?><!DOCTYPE html>
 <html>
 <head>
+<title>Fotos von der Klassenfahrt nach Granzow</title>
 <meta name="viewport" content="width=device-width" />
 <!--<script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/file_get_contents.js"></script>
