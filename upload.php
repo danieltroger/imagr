@@ -132,7 +132,7 @@ send({"name":name});
 if(!isset($_SESSION['name']))
 {
 ?>
-<label for="name">Ihr Name: </label><input id="name" name="name" />
+<label for="name">Nahme des Kindes: </label><input id="name" name="name" />
 <button onclick="sendname(document.getElementById('name').value);">Weiter</button>
 <?php
 }
@@ -141,7 +141,7 @@ elseif($descview)
 foreach($files as $key => $value)
 {
 ?><div class="uploadedfile" data-image="<?php echo $value; ?>">
-<img src="download.php/resize/300/<?php echo $value; ?>" /><textarea class="tarea" rows="3" placeholder="Bitte geben Sie eine kurze beschreibung des bildes ein"></textarea><button onclick="send({'rfile':'<?php echo $rfiles[$key]; ?>','meta':{'name':this.parentElement.dataset.image,'description':nl2br(this.previousElementSibling.value)}});this.disabled=true;">Submit</button>
+<img src="download.php/resize/300/<?php echo $value; ?>" /><textarea class="tarea" rows="3" placeholder="Bitte geben Sie eine kurze Beschreibung des Bildes ein"></textarea><button onclick="send({'rfile':'<?php echo $rfiles[$key]; ?>','meta':{'name':this.parentElement.dataset.image,'description':nl2br(this.previousElementSibling.value)}});this.disabled=true;">Submit</button>
 </div>
 <?php
 }
