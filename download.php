@@ -1,5 +1,15 @@
 <?php
 $paths = explode("/",substr($_SERVER["PATH_INFO"],1));
+if($paths[0] == "exif")
+{
+if(strlen($paths[1]) <1)
+{
+die(json_encode(array("error" => "please specify an filename")));
+}
+echo json_encode(exif_read_data($paths[1],"FILE"));
+}
+else
+{
 if($paths[0] == "resize")
 {
 $size = explode("x",strtolower($paths[1]));
@@ -11,7 +21,7 @@ $file = $paths[0];
 }
 if(strlen($file) < 1)
 {
-die("Please specify a file<br />Usage: {$_SERVER['PHP_SELF']}[/resize/width/[height]]/imagefilename");
+die("Please specify a file<br />Usage: {$_SERVER['PHP_SELF']}[/resize/width/[height]]/imagefilename to download an image<br />{$_SERVER['PHP_SELF']}/exif/filename returns json encoded exif data from filename");
 }
 if(!file_exists($file))
 {
@@ -39,4 +49,5 @@ $ext = getextension($file,true);
 $oname = "thumbs.dir"  . DIRECTORY_SEPARATOR . $ext[1] . "-" .  $paths[1] . "." .  $ext[0];
 thumb($file,$oname,$size[0],$size[1]);
 echo file_get_contents($oname);
+}
 }

@@ -20,7 +20,7 @@ require "thumbs.php"
     $imglen = sizeof($imgs)-1;
     $invalid_files_length = 0;
     $rkey = 0;
-    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir");
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip");
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -122,7 +122,16 @@ srcthumb = this;
       if(srcthumb.dataset.description != undefined)
       {
         infobut.style.display="";
-        infolay.innerHTML=srcthumb.dataset.description+", by "+srcthumb.dataset.by;
+var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src)));
+if(exif != false)
+{
+        infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by+", fotografiert am "+exif['DateTime']+", mit einer " +exif['Make'] + " "+ exif['Model'];
+}
+else
+{
+ infolay.innerHTML=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
+}
+infolay.innerHTML += "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
       }
       else
       {
