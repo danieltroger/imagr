@@ -11,7 +11,7 @@ $file = $paths[0];
 }
 if(strlen($file) < 1)
 {
-die("Please specify a file");
+die("Please specify a file<br />Usage: {$_SERVER['PHP_SELF']}[/resize/width/[height]]/imagefilename");
 }
 if(!file_exists($file))
 {
