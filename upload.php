@@ -1,4 +1,4 @@
-<?php require "thumbs.php"; require "log.php"; session_start(); function o2a($d) {if (is_object($d)) {$d = get_object_vars($d);}if (is_array($d)) {return array_map(__FUNCTION__, $d);}else {return $d;}}
+<?php require "thumbs.php"; /*require "log.php";*/ session_start(); function o2a($d) {if (is_object($d)) {$d = get_object_vars($d);}if (is_array($d)) {return array_map(__FUNCTION__, $d);}else {return $d;}}
 if(sizeof($_FILES) > 0)
 {
 $files = array();
