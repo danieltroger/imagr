@@ -1,4 +1,5 @@
 // Element.addEventListener
+// thx to mdn for the code
 (function() {
   if (!Event.prototype.preventDefault) {
     Event.prototype.preventDefault=function() {
@@ -247,4 +248,11 @@ if (objCtr.defineProperty) {
 }(self));
 
 }
-
+// Array.prototype.forEach, thx to http://stackoverflow.com/questions/16813469/javascript-method-foreach-not-supported-from-internet-explorer
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function(fn, scope) {
+        for(var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope, this[i], i, this);
+        }
+    }
+}
