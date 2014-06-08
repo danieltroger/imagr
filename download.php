@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-require "log.php";
+//require "log.php";
 $paths = explode("/",substr($_SERVER["PATH_INFO"],1));
 if($paths[0] == "exif")
 {
