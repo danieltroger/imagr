@@ -22,7 +22,7 @@ require "thumbs.php"
     $imglen = sizeof($imgs)-1;
     $invalid_files_length = 0;
     $rkey = 0;
-    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta");
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js");
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -100,14 +100,14 @@ require "thumbs.php"
     function (image) {
       var imgelem=document.createElement("img");
       imgelem.src="thumbs.dir/"+image+".jpg";
-      imgelem.dataset.original=image;
+      imgelem.setDataAttribute("original",image);
       imgelem.width=50;
       imgelem.classList.add("image");
       if(isMobile){imgelem.classList.add("mobile");}
       if(meta[image]!=undefined)
       {
-        imgelem.dataset.by=meta[image].by;
-        imgelem.dataset.description=meta[image].description;
+        imgelem.setDataAttribute("by",meta[image].by);
+        imgelem.setDataAttribute("description",meta[image].description);
       }
       imgelem.addEventListener("click",openpic);
       grid.appendChild(imgelem);
