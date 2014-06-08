@@ -73,7 +73,7 @@ die(json_encode($ret));
 <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
 <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_encode.js"></script>
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/nl2br.js"></script>
-<script src="https://raw.githubusercontent.com/eligrey/classList.js/master/classList.min.js"></script>
+<script src="ie.js"></script>
 </head>
 <body style="font-family:helvetica;">
 <style>
