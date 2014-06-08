@@ -134,7 +134,7 @@ send({"name":name});
 if(!isset($_SESSION['name']))
 {
 ?>
-<label for="name">Nahme des Kindes: </label><input id="name" name="name" />
+<label for="name">Name des Kindes: </label><input id="name" name="name" />
 <button onclick="sendname(document.getElementById('name').value);">Weiter</button>
 <?php
 }
