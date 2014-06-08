@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
-require "thumbs.php"
+require "thumbs.php";
+require "log.php";
 ?><!DOCTYPE html>
 <html>
 <head>
