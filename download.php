@@ -1,6 +1,5 @@
 <?php
 error_reporting(E_ALL);
-//require "log.php";
 $paths = explode("/",substr($_SERVER["PATH_INFO"],1));
 if($paths[0] == "exif")
 {
@@ -10,7 +9,9 @@ die(json_encode(array("error" => "please specify an filename")));
 }
 $we = exif_read_data($paths[1],"FILE");
 unset($we['MakerNote']);
-echo json_encode($we);
+//print_r($we);
+echo json_encode(array('DateTime' => $we['DateTime'],'Make' => $we['Make'],'Model' => $we['Model'],'ExifImageWidth' => $we['ExifImageWidth'],'ExifImageLength' => $we['ExifImageLength']));
+//echo json_last_error_msg();
 }
 else
 {
