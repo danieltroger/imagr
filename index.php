@@ -1,7 +1,11 @@
 <?php
 error_reporting(E_ALL);
+header("Expires: on, 01 Jan 1970 00:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 require "thumbs.php";
-//require "log.php";
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +16,7 @@ require "thumbs.php";
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/array/in_array.js"></script>
 <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/var/isset.js"></script>-->
 <script src="ie.js"></script>
+<script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/math/rand.js"></script>
 <script>function json_decode(str_json){var json=this.window.JSON;if(typeof json==="object"&&typeof json.parse==="function"){try{return json.parse(str_json)}catch(err){if(!(err instanceof SyntaxError)){throw new Error("Unexpected error type in json_decode()")}this.php_js=this.php_js||{};this.php_js.last_error_json=4;return null}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;var j;var text=str_json;cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})}if((/^[\],:{}\s]*$/).test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""))){j=eval("("+text+")");return j}this.php_js=this.php_js||{};this.php_js.last_error_json=4;return null};function file_get_contents(l,s,f,p,j){var J,c=[],z=[],A=0,B=0,C="",q=-1,d=0,y=null,F=false;var o=function(e){return e.substring(1)!==""};this.php_js=this.php_js||{};this.php_js.ini=this.php_js.ini||{};var r=this.php_js.ini;f=f||this.php_js.default_streams_context||null;if(!s){s=0}var I={FILE_USE_INCLUDE_PATH:1,FILE_TEXT:32,FILE_BINARY:64};if(typeof s==="number"){d=s}else{s=[].concat(s);for(B=0;B<s.length;B++){if(I[s[B]]){d=d|I[s[B]]}}}if(d&I.FILE_BINARY&&(d&I.FILE_TEXT)){throw"You cannot pass both FILE_BINARY and FILE_TEXT to file_get_contents()"}if((d&I.FILE_USE_INCLUDE_PATH)&&r.include_path&&r.include_path.local_value){var x=r.include_path.local_value.indexOf("/")!==-1?"/":"\\";l=r.include_path.local_value+x+l}else{if(!/^(https?|file):/.test(l)){C=this.window.location.href;q=l.indexOf("/")===0?C.indexOf("/",8)-1:C.lastIndexOf("/");l=C.slice(0,q+1)+l}}var w;if(f){w=f.stream_options&&f.stream_options.http;F=!!w}if(!f||!f.stream_options||F){var b=this.window.ActiveXObject?new ActiveXObject("Microsoft.XMLHTTP"):new XMLHttpRequest();if(!b){throw new Error("XMLHttpRequest not supported")}var g=F?w.method:"GET";var n=!!(f&&f.stream_params&&f.stream_params["phpjs.async"]);if(r["phpjs.ajaxBypassCache"]&&r["phpjs.ajaxBypassCache"].local_value){l+=(l.match(/\?/)==null?"?":"&")+(new Date()).getTime()}b.open(g,l,n);if(n){var a=f.stream_params.notification;if(typeof a==="function"){if(0&&b.addEventListener){}else{b.onreadystatechange=function(e){var i={responseText:b.responseText,responseXML:b.responseXML,status:b.status,statusText:b.statusText,readyState:b.readyState,evt:e};var k;switch(b.readyState){case 0:a.call(i,0,0,"",0,0,0);break;case 1:a.call(i,0,0,"",0,0,0);break;case 2:a.call(i,0,0,"",0,0,0);break;case 3:k=b.responseText.length*2;a.call(i,7,0,"",0,k,0);break;case 4:if(b.status>=200&&b.status<400){k=b.responseText.length*2;a.call(i,8,0,"",b.status,k,0)}else{if(b.status===403){a.call(i,10,2,"",b.status,0,0)}else{a.call(i,9,2,"",b.status,0,0)}}break;default:throw"Unrecognized ready state for file_get_contents()"}}}}}if(F){var H=(w.header&&w.header.split(/\r?\n/))||[];var v=false;for(B=0;B<H.length;B++){var E=H[B];var D=E.search(/:\s*/);var m=E.substring(0,D);b.setRequestHeader(m,E.substring(D+1));if(m==="User-Agent"){v=true}}if(!v){var t=w.user_agent||(r.user_agent&&r.user_agent.local_value);if(t){b.setRequestHeader("User-Agent",t)}}y=w.content||null}if(d&I.FILE_TEXT){var u="text/html";if(w&&w["phpjs.override"]){u=w["phpjs.override"]}else{var h=(r["unicode.stream_encoding"]&&r["unicode.stream_encoding"].local_value)||"UTF-8";if(w&&w.header&&(/^content-type:/im).test(w.header)){u=w.header.match(/^content-type:\s*(.*)$/im)[1]}if(!(/;\s*charset=/).test(u)){u+="; charset="+h}}b.overrideMimeType(u)}else{if(d&I.FILE_BINARY){b.overrideMimeType("text/plain; charset=x-user-defined")}}try{if(w&&w["phpjs.sendAsBinary"]){b.sendAsBinary(y)}else{b.send(y)}}catch(G){return false}J=b.getAllResponseHeaders();if(J){J=J.split("\n");for(A=0;A<J.length;A++){if(o(J[A])){z.push(J[A])}}J=z;for(B=0;B<J.length;B++){c[B]=J[B]}this.$http_response_header=c}if(p||j){if(j){return b.responseText.substr(p||0,j)}return b.responseText.substr(p)}return b.responseText}return false};function basename(e,d){var a=e;var c=a.charAt(a.length-1);if(c==="/"||c==="\\"){a=a.slice(0,-1)}a=a.replace(/^.*[\/\\]/g,"");if(typeof d==="string"&&a.substr(a.length-d.length)==d){a=a.substr(0,a.length-d.length)}return a};/*copypasta*/</script>
 <body>
 <div id="grid">
@@ -49,7 +54,7 @@ require "thumbs.php";
     }
     ?>),
     grid=document.getElementById("grid"),
-    meta=json_decode(file_get_contents("meta")),
+    meta=json_decode(file_get_contents("meta?"+rand(1,200))),
     container=document.getElementById("bigpic"),
     isMobile=false,
     desc=document.createElement("span"),
