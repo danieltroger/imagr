@@ -1,8 +1,10 @@
-<IfModule mod_rewrite.c>
+<IfModule mod_rewrite.c> # /whatever/download.php/tobeforwarded like is being forwarded to download.php instead of not found
 RewriteEngine On
-RewriteBase /80erfest
+RewriteBase /imagr # base direcorty where this is, relative form your document root
 RewriteRule ^download\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /80erfest/download.php [L]
+RewriteRule . /imagr/download.php [L] # same here + /download.php
 </IfModule>
+# if not module
+# go and cry (lol)
