@@ -115,11 +115,10 @@ if(response.operation == "setname")
 {
 location.reload();
 }
-if(response.operation == "uprepare")
+/*if(response.operation == "uprepare")
 {
-var sbut=document.getElementById("submit");
-sbut.disabled=false;
-}
+
+}*/
 }
     }
   }
@@ -152,7 +151,8 @@ else
 {
 ?>
 <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-<label for="ul">Bitte w&auml;hlen sie ihre Foto(s) aus, Mehrfachauswahl ist &uuml;ber shift m&ouml;glich </label><input type="file" id="uploader" id="ul" name="files[]" multiple /><br />
+Bitte w&auml;hlen sie ihre Foto(s) aus, Mehrfachauswahl ist &uuml;ber shift m&ouml;glich. <span style="color:red;">ACHTUNG:</span> Bei langsammen Internet, maximal c.a drei Fotos auf einmal hochladen, da es sonst ein "Request timout" geben könnte.
+<br /><input type="file" id="uploader" name="files[]" multiple /><br />
 Fotos: <div id="files"></div>
 <br />
 <input type="submit" value="Weiter" id="submit" disabled />
@@ -174,6 +174,7 @@ files.innerHTML+="<br /> "+fname;
 send({"file":fname,"moddate":moddate});
 }
 this.style.display="none";
+document.getElementById("submit").disabled=false;
 }
 </script>
 <?php
