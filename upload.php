@@ -151,7 +151,7 @@ else
 {
 ?>
 <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-Bitte w&auml;hlen sie ihre Foto(s) aus, Mehrfachauswahl ist &uuml;ber shift m&ouml;glich. <span style="color:red;">ACHTUNG:</span> Bei langsammen Internet, maximal c.a drei Fotos auf einmal hochladen, da es sonst ein "Request timout" geben könnte.
+Bitte w&auml;hlen sie ihre Foto(s) aus, Mehrfachauswahl ist &uuml;ber shift m&ouml;glich.<br /><span style="color:red;">ACHTUNG:</span> Bei langsammen Internet, maximal c.a drei Fotos auf einmal hochladen, da es sonst ein "Request timout" geben k&ouml;nnte.
 <br /><input type="file" id="uploader" name="files[]" multiple /><br />
 Fotos: <div id="files"></div>
 <br />
