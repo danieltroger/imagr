@@ -28,7 +28,7 @@ require "thumbs.php";
     $imglen = sizeof($imgs)-1;
     $invalid_files_length = 0;
     $rkey = 0;
-    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js");
+    $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
     foreach($imgs as $key => $img)
     {
       $extension = getextension($img);
@@ -147,7 +147,7 @@ else
 {
 var mm = exif['Make'] + " "+ exif['Model'];
 }
-        infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer "+mm;
+        infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer "+mm+", Aufl&ouml;sung: "+exif['ExifImageWidth']+"x"+exif['ExifImageLength'];
 }
 else
 {
