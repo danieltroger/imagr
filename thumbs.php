@@ -2,21 +2,23 @@
 error_reporting(0);
 function create_thumb($src,$dest,$desired_width = false, $desired_height = false)
 {
+    echo "/* create_humb() called file: " . __FILE__ . " line: " . __LINE__ .  " */ \n";
     /*If no dimenstion for thumbnail given, return false */
     if (!$desired_height&&!$desired_width) return false;
     $fparts = pathinfo($src);
     $ext = strtolower($fparts['extension']);
     /* if its not an image return false */
     if (!in_array($ext,array('gif','jpg','png','jpeg'))) return false;
+   echo "/*going to read the image file: " . __FILE__ . " line: " . __LINE__ .  " */ \n";
 
     /* read the source image */
     if ($ext == 'gif')
-        $resource = imagecreatefromgif($src);
-    else if ($ext == 'png')
-        $resource = imagecreatefrompng($src);
-    else if ($ext == 'jpg' || $ext == 'jpeg')
-        $resource = imagecreatefromjpeg($src);
-
+        {$resource = imagecreatefromgif($src);}
+    elseif ($ext == 'png')
+        {$resource = imagecreatefrompng($src);}
+    elseif ($ext == 'jpg' || $ext == 'jpeg')
+       {$resource = imagecreatefromjpeg($src);}
+    echo "/* read the image file: " . __FILE__ . " line: " . __LINE__ .  " */ \n";
     $width  = imagesx($resource);
     $height = imagesy($resource);
     /* find the "desired height" or "desired width" of this thumbnail, relative to each other, if one of them is not given  */
@@ -54,6 +56,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   }
   function thumb($image,$oname, $width, $height)
   {
+  echo "/* going to thumb {$image}...*/\n";
   if(!isset($width) && !isset($height)){$width = 380;}
   if(!isset($oname)){$oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";}
   if(!is_dir("thumbs.dir"))
@@ -71,6 +74,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   create_thumb($image,$oname,$width,$height);
   }
   }
+  echo "/* thumbed {$image}*/\n";
   return $image;
   }
   function getextension($file,$split = false)
