@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 function create_thumb($src,$dest,$desired_width = false, $desired_height = false)
 {
     /*If no dimenstion for thumbnail given, return false */
@@ -51,7 +52,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
         'dest'      => $dest
     );
   }
-  function thumb($image,$oname = undefined,$width = undefined,$height = undefined)
+  function thumb($image,$oname, $width, $height)
   {
   if(!isset($width) && !isset($height)){$width = 380;}
   if(!isset($oname)){$oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";}
