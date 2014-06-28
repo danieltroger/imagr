@@ -58,10 +58,6 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   if(!isset($oname)){$oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";}
   if(!is_dir("thumbs.dir"))
   {
-      if(!is_writable ("./"))
-      {
-         die("</script>please allow your webserver write access to the directory which contains this script, or manually create a directory called thumbs.dir where I have write access.");
-      }
     mkdir("thumbs.dir");
   }
   if(!file_exists($oname))
