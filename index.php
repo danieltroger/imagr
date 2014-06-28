@@ -1,4 +1,4 @@
-  <?php
+<?php
     error_reporting(E_ALL);
     header("Expires: on, 01 Jan 1970 00:00:00 GMT");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
