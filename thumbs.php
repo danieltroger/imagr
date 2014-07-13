@@ -56,7 +56,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   }
   function thumb($image,$oname, $width, $height)
   {
-  echo "/* going to thumb {$image}...*/\n";
+  //echo "/* going to thumb {$image}...*/\n";
   if(!isset($width) && !isset($height)){$width = 380;}
   if(!isset($oname)){$oname = "thumbs.dir" . DIRECTORY_SEPARATOR . "{$image}.jpg";}
   if(!is_dir("thumbs.dir"))
