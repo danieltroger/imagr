@@ -1,4 +1,4 @@
-  <?php
+<?php
     error_reporting(E_ALL);
     $paths = explode("/",substr($_SERVER["PATH_INFO"],1));
     if($paths[0] == "exif")
