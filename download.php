@@ -9,7 +9,13 @@
         }
         $we = exif_read_data($paths[1],"FILE");
         unset($we['MakerNote']);
-        echo json_encode(array('DateTime' => $we['DateTime'],'Make' => $we['Make'],'Model' => $we['Model'],'ExifImageWidth' => $we['ExifImageWidth'],'ExifImageLength' => $we['ExifImageLength']));
+		$gmaps = false;
+		if(strpos($we['SectionsFound'],"GPS") !== false)
+		{
+		$gmaps = 'https://www.google.com/maps/place/' . calc($we['GPSLatitude'][0]) . '°' . calc($we['GPSLatitude'][1]) . "'" . calc($we['GPSLatitude'][2]) . '"N';
+		$gmaps .= " " . calc($we['GPSLongitude'][0]) . "°" . calc($we['GPSLongitude'][1]) . "'" . calc($we['GPSLongitude'][2]) . '"E';
+		}
+        echo json_encode(array('dump'=>print_r($we,1),'gmaps' => $gmaps,'DateTime' => $we['DateTime'],'Make' => $we['Make'],'Model' => $we['Model'],'ExifImageWidth' => $we['ExifImageWidth'],'ExifImageLength' => $we['ExifImageLength']));
         //echo json_last_error_msg();
       }
       else
@@ -55,4 +61,35 @@
           echo file_get_contents($oname);
         }
       }
+	  function calc($equation)
+{
+    // Remove whitespaces
+    $equation = preg_replace('/\s+/', '', $equation);
+   
+
+    $number = '((?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?|pi|π)'; // What is a number
+
+    $functions = '(?:sinh?|cosh?|tanh?|acosh?|asinh?|atanh?|exp|log(10)?|deg2rad|rad2deg
+|sqrt|pow|abs|intval|ceil|floor|round|(mt_)?rand|gmp_fact)'; // Allowed PHP functions
+    $operators = '[\/*\^\+-,]'; // Allowed math operators
+    $regexp = '/^([+-]?('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?1))?)+$/'; // Final regexp, heavily using recursive patterns
+
+    if (preg_match($regexp, $equation))
+    {
+        $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
+        eval('$result = '.$equation.';');
+		if(strpos($result,".") !== false)
+		{
+		return explode(".",$result)[0];
+		}
+		else
+		{
+		return $result;
+		}
+    }
+    else
+    {
+        return false;
+    }
+}
   ?>
