@@ -42,6 +42,14 @@
       for(var i = 0;i<args.length;i++)
       {
       var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+      if(value == undefined)
+      {
+        console.warn("No value given");
+      }
+      if(arg.length > 2)
+      {
+          console.warn("Multiple values specified, using first one");
+      }
       console.log("Key: "+key+" value: "+value);
       if(key == "ts")
       {
