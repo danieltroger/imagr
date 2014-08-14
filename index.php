@@ -18,12 +18,25 @@
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/math/rand.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/basename.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/substr.js"></script>
+      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/explode.js"></script>
       <script src="ie.js"></script>
     <body>
     <div id="grid">
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
+      /*
+      var hash=location.hash,argr,args;
+      if(hash[1] == "!")
+      {
+      argr=substr(hash,2);
+      args=explode("|",argr);
+      for(var i = 0;i<args.length;i+=2)
+      {
+      alert("Key: "+args[i]+" value: "+args[i+1]);
+      }
+      }
+      */
       var imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
