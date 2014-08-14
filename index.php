@@ -32,6 +32,12 @@
       {
       console.info("Parsing URL paramenters...");
       argr=substr(hash,2);
+      if(strlen(argr) == 0)
+      {
+          console.warn("No arguments provided but #!. Stopping.");
+      }
+      else
+      {
       args=explode("|",argr);
       for(var i = 0;i<args.length;i++)
       {
@@ -40,6 +46,7 @@
       if(key == "ts")
       {
           thumbsize=value;
+      }
       }
       }
       }
