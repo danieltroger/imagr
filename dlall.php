@@ -1,21 +1,27 @@
 <?php
 $zip = new ZipArchive;
 $zipname = "images.zip";
-if ($zip->open($zipname, ZIPARCHIVE::CREATE) !== TRUE) {
-die("An error occured while opening the zipfile");
+$meta = o2a(json_decode(file_get_contents("meta")));
+$zs = $zip->open($zipname, ZIPARCHIVE::CREATE);
+if ($zs !== TRUE) {
+die("An error occured while opening the zipfile.<br />\n{$zs}");
 }
 	foreach(glob("*.JPG") as $image)
 	{
 		$img = pathoffile($_SERVER["SCRIPT_FILENAME"])  . DIRECTORY_SEPARATOR . $image;
+		$desc = $meta[$image]['description'];
 		if($zip->locateName($image) !== false)
 		{
-
+			echo "Keeping {$image}<br />\n";
 	  }
 		else
 		{
 			echo "Zipping {$image}...<br />\n";
-			flush();
 			$zip->addFile($img, $image);
+			if($desc != false && $desc != "false")
+			{
+				$zip->setCommentName($image,$desc);
+			}
 		}
 	}
     $zip->close();
@@ -35,4 +41,5 @@ echo "<script>location='images.zip';</script>";
       unset($a[$b-1]);
       return implode("/",$a);
       }
+			function o2a($d) {if (is_object($d)) {$d = get_object_vars($d);}if (is_array($d)) {return array_map(__FUNCTION__, $d);}else {return $d;}}
 ?>
