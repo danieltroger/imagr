@@ -29,35 +29,38 @@
       var thumbsize = 0;
       var hash=location.hash,argr,args;
       if(hash[1] == "!")
-      {
-      console.info("Parsing URL paramenters...");
-      if(hash.length <= 2)
-      {
-          console.warn("No arguments provided but #!. Stopping.");
-      }
-      else
-      {
-      argr=substr(hash,2);
-      args=explode("|",argr);
-      for(var i = 0;i<args.length;i++)
-      {
-      var arg=explode("=",args[i]),key=arg[0],value=arg[1];
-      if(value == undefined)
-      {
-        console.warn("No value given");
-      }
-      if(arg.length > 2)
-      {
-          console.warn("Multiple values specified, using first one");
-      }
-      console.log("Key: "+key+" value: "+value);
-      if(key == "ts")
-      {
-          thumbsize=value;
-      }
-      }
-      }
-      }
+        {
+          console.info("Parsing URL paramenters...");
+          if(hash.length <= 2)
+          {
+            console.warn("No arguments provided but #!. Stopping.");
+          }
+          else
+            {
+              argr=substr(hash,2);
+              args=explode("|",argr);
+              for(var i = 0;i<args.length;i++)
+              {
+                var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+                if(value == undefined)
+                {
+                  console.warn("No value given");
+                }
+                if(arg.length > 2)
+                {
+                  console.warn("Multiple values specified, using first one");
+                }
+                console.log("Key: "+key+" value: "+value);
+                if(key == "ts")
+                {
+                  if(value != "")
+                  {
+                    thumbsize=value;
+                  }
+                }
+              }
+            }
+        }
       var imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
@@ -356,4 +359,3 @@
   </style>
   </body>
   </html>
-    
