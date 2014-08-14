@@ -9,7 +9,7 @@
     ?><!DOCTYPE html>
     <html>
     <head>
-      <title>The best pictures from our trip to Sweden</title>
+      <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/file_get_contents.js"></script>
@@ -26,7 +26,16 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0,realsize=screen.width+(screen.width/10),hash=location.hash,argr,args;
+      var thumbsize = 0,realsize,hash=location.hash,argr,args,mobile=false;
+      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
+      if(mobile)
+      {
+        realsize=screen.width*2; // in case of retina & co
+      }
+      else
+      {
+        realsize=screen.width+(screen.width/10);
+      }
       if(hash[1] == "!")
         {
           console.info("Parsing URL paramenters...");
@@ -145,7 +154,6 @@
       imgs.forEach(
         function (image) {
           var imgelem=document.createElement("img");
-          if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){imgelem.style.width="90%"}
           if(thumbsize != 0)
           {
               imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
@@ -155,6 +163,7 @@
           {
             imgelem.src="thumbs.dir/"+image+".jpg";
             imgelem.style.width="19%";
+            if(mobile){imgelem.style.width="92%";}
             imgelem.style.minWidth="200px";
           }
           imgelem.setDataAttribute("original",image);
