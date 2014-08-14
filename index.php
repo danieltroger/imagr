@@ -145,13 +145,17 @@
       imgs.forEach(
         function (image) {
           var imgelem=document.createElement("img");
-          imgelem.src="thumbs.dir/"+image+".jpg";
-          imgelem.style.width="19%";
           if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){imgelem.style.width="90%"}
           if(thumbsize != 0)
           {
-              imgelem.src="download.php/resize/"+thumbsize+"/"+image;
+              imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
               imgelem.style.width=thumbsize+"px";
+          }
+          else
+          {
+            imgelem.src="thumbs.dir/"+image+".jpg";
+            imgelem.style.width="19%";
+            imgelem.style.minWidth="200px";
           }
           imgelem.setDataAttribute("original",image);
           imgelem.classList.add("image");
@@ -266,7 +270,6 @@
     .image
     {
       margin:20px;
-      min-width:200px;
       box-shadow: 5px 5px 5px grey;
       border:5px solid white;
       transition-duration:0.5s;
