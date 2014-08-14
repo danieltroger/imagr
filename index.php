@@ -32,7 +32,7 @@
       {
       console.info("Parsing URL paramenters...");
       argr=substr(hash,2);
-      if(strlen(argr) == 0)
+      if(argr.length == 0)
       {
           console.warn("No arguments provided but #!. Stopping.");
       }
