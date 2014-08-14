@@ -30,11 +30,17 @@
       var hash=location.hash,argr,args;
       if(hash[1] == "!")
       {
+      console.info("Parsing URL paramenters...");
       argr=substr(hash,2);
       args=explode("|",argr);
-      for(var i = 0;i<args.length;i+=2)
+      for(var i = 0;i<args.length;i++)
       {
-      alert("Key: "+args[i]+" value: "+args[i+1]);
+      var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+      console.log("Key: "+key+" value: "+value);
+      if(key == "ts")
+      {
+          thumbsize=value;
+      }
       }
       }
       */
