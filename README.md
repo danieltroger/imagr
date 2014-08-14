@@ -7,4 +7,6 @@ how to use: upload your images with the upload script  (the scripts must have wr
 ----------
 Important new feature: the images are now being resized to the user's screen size before being sent which makes a much more floating user experience and uses much less bandwith (and more CPU server side....)
 
+----------
+
 TODO: video support
