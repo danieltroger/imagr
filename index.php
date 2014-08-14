@@ -31,11 +31,11 @@
       if(hash[1] == "!")
       {
       console.info("Parsing URL paramenters...");
-      argr=substr(hash,2);
-      if(argr.length == 0)
+      if(hash.length <= 2)
       {
           console.warn("No arguments provided but #!. Stopping.");
       }
+      argr=substr(hash,2);
       else
       {
       args=explode("|",argr);
