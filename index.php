@@ -19,6 +19,7 @@
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/basename.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/substr.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/explode.js"></script>
+      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/url/urldecode.js"></script>
       <script src="ie.js"></script>
     <body>
     <div id="grid">
@@ -216,7 +217,7 @@
                     {
                       for(i=0;i<=imgs.length;i++)
                       {
-                        if(imgs[i] == imgurl)
+                        if(imgs[i] == urldecode(imgurl))
                         {
                           return i;
                         }
@@ -331,3 +332,4 @@
   </style>
   </body>
   </html>
+    
