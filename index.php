@@ -35,9 +35,9 @@
       {
           console.warn("No arguments provided but #!. Stopping.");
       }
-      argr=substr(hash,2);
       else
       {
+      argr=substr(hash,2);
       args=explode("|",argr);
       for(var i = 0;i<args.length;i++)
       {
