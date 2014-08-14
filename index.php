@@ -26,7 +26,7 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0,realsize=0,hash=location.hash,argr,args;
+      var thumbsize = 0,realsize=screen.width+(screen.width/10),hash=location.hash,argr,args;
       if(hash[1] == "!")
         {
           console.info("Parsing URL paramenters...");
