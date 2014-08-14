@@ -260,7 +260,7 @@
                         }
                       }
                     }
-
+                    document.onkeyup=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
     </script>
     <style>
     .image
