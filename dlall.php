@@ -1,25 +1,33 @@
 <?php
-header("Content-type: application/zip");
-header('Content-Disposition: attachment; filename="images.zip"');
 $zip = new ZipArchive;
-$zipname = rand(1,200);
+$zipname = "images.zip";
 if ($zip->open($zipname, ZIPARCHIVE::CREATE) !== TRUE) {
 die("An error occured while opening the zipfile");
 }
 	foreach(glob("*.JPG") as $image)
 	{
-	//echo "Zipping {$image}...<br />";
-    $zip->addFile(pathoffile($_SERVER["SCRIPT_FILENAME"])  . DIRECTORY_SEPARATOR . $image, $image);
+		$img = pathoffile($_SERVER["SCRIPT_FILENAME"])  . DIRECTORY_SEPARATOR . $image;
+		if($zip->locateName($image) !== false)
+		{
+
+	  }
+		else
+		{
+			echo "Zipping {$image}...<br />\n";
+			flush();
+			$zip->addFile($img, $image);
+		}
 	}
     $zip->close();
-$handle = fopen($zipname, "r") or die("Couldn't get handle");
+/*$handle = fopen($zipname, "r") or die("Couldn't get handle");
 if ($handle) {
     while (!feof($handle)) {
         echo fgets($handle, 4096);
     }
     fclose($handle);
 }
-unlink($zipname);
+unlink($zipname);*/
+echo "<script>location='images.zip';</script>";
  function pathoffile($file)
     {
       $a = explode("/",$file);
