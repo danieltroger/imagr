@@ -26,8 +26,7 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0;
-      var hash=location.hash,argr,args;
+      var thumbsize = 0,realsize=0,hash=location.hash,argr,args;
       if(hash[1] == "!")
         {
           console.info("Parsing URL paramenters...");
@@ -56,6 +55,13 @@
                   if(value != "")
                   {
                     thumbsize=value;
+                  }
+                }
+                if(key == "rs")
+                {
+                  if(value != "")
+                  {
+                    realsize=value;
                   }
                 }
               }
@@ -106,10 +112,6 @@
           this.style.display="none";
         }
       }
-      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-      {
-        isMobile=true;
-      }
       prevb.src="prev.svg";
       prevb.classList.add("prev");
       prevb.classList.add("symbol");
@@ -144,14 +146,15 @@
         function (image) {
           var imgelem=document.createElement("img");
           imgelem.src="thumbs.dir/"+image+".jpg";
+          imgelem.style.width="19%";
+          if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){imgelem.style.width="90%"}
           if(thumbsize != 0)
           {
               imgelem.src="download.php/resize/"+thumbsize+"/"+image;
+              imgelem.style.width=thumbsize+"px";
           }
           imgelem.setDataAttribute("original",image);
-          imgelem.width=50;
           imgelem.classList.add("image");
-          if(isMobile){imgelem.classList.add("mobile");}
           if(meta[image]!=undefined)
           {
             imgelem.setDataAttribute("by",meta[image].by);
@@ -166,7 +169,14 @@
             {
               srcthumb = this;
             }
+            if(realsize == 0)
+            {
             img.src=srcthumb.dataset.original;
+            }
+            else
+            {
+              img.src="download.php/resize/"+realsize+"/"+srcthumb.dataset.original;
+            }
             container.style.display="";
             if(srcthumb.dataset.by != undefined)
             {
@@ -255,7 +265,6 @@
     <style>
     .image
     {
-      width:19%;
       margin:20px;
       min-width:200px;
       box-shadow: 5px 5px 5px grey;
@@ -264,10 +273,6 @@
       transition-property:all;
       -webkit-transition-duration:0.5s;
       -webkit-transition-property:all;
-      }
-      .image.mobile
-      {
-        width:90%;
       }
       .image:hover
       {
@@ -290,71 +295,71 @@
           background: rgba(200, 200, 200, 0.6);
         }
         .largepic
-  {
-    max-width:90%;
-    box-shadow: 10px 10px 20px;
-    max-height: 90%;
-    left: 50%;
-  top: 50%;
-  z-index:3;
-  cursor:default;
-  position: absolute;
-  }
-  .prev
-  {
-    left:2%;
-  }
-  .symbol
-  {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    position: absolute;
-    z-index:5;
-  }
-  .vertcent
-  {
-    top: 50%;
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-  }
-    .horcent
-  {
-    left: 50%;
-    transform: translateX(-50%);
-    -webkit-transform: translateX(-50%);
-  }
-    .cent
-  {
-    transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translateX(-50%) translateY(-50%);
-  }
-    .next
-  {
-    right:2%;
-  }
-    .infolay
-  {
-      background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
-      color: #FFFFFF;
-      cursor: default;
-      font-family: helvetica;
-      min-height: 5%;
-      overflow: auto;
-      padding: 10px;
-      position: fixed;
-      text-align: center;
-      top: 3%;
-      transition-duration: 3s;
-      transition-property: all;
-      width: 90%;
-      z-index: 5;
-    }
-    .closed
-    {
-      opacity:0;
-      width:0;
-      height:0;
-    }
+        {
+          max-width:90%;
+          box-shadow: 10px 10px 20px;
+          max-height: 90%;
+          left: 50%;
+          top: 50%;
+          z-index:3;
+          cursor:default;
+          position: absolute;
+        }
+        .prev
+        {
+          left:2%;
+        }
+        .symbol
+        {
+          background: rgba(0, 0, 0, 0.5);
+          border-radius: 50%;
+          position: absolute;
+          z-index:5;
+        }
+        .vertcent
+        {
+          top: 50%;
+          transform: translateY(-50%);
+          -webkit-transform: translateY(-50%);
+        }
+        .horcent
+        {
+          left: 50%;
+          transform: translateX(-50%);
+          -webkit-transform: translateX(-50%);
+        }
+        .cent
+        {
+          transform: translateX(-50%) translateY(-50%);
+          -webkit-transform: translateX(-50%) translateY(-50%);
+        }
+        .next
+        {
+          right:2%;
+        }
+        .infolay
+        {
+          background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
+          color: #FFFFFF;
+          cursor: default;
+          font-family: helvetica;
+          min-height: 5%;
+          overflow: auto;
+          padding: 10px;
+          position: fixed;
+          text-align: center;
+          top: 3%;
+          transition-duration: 3s;
+          transition-property: all;
+          width: 90%;
+          z-index: 5;
+        }
+        .closed
+        {
+          opacity:0;
+          width:0;
+          height:0;
+        }
 
   </style>
   </body>
