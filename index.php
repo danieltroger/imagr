@@ -26,7 +26,7 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      /*
+      var thumbsize = 0;
       var hash=location.hash,argr,args;
       if(hash[1] == "!")
       {
@@ -58,7 +58,6 @@
       }
       }
       }
-      */
       var imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
@@ -142,6 +141,10 @@
         function (image) {
           var imgelem=document.createElement("img");
           imgelem.src="thumbs.dir/"+image+".jpg";
+          if(thumbsize != 0)
+          {
+              imgelem.src="download.php/resize/"+thumbsize+"/"+image;
+          }
           imgelem.setDataAttribute("original",image);
           imgelem.width=50;
           imgelem.classList.add("image");
