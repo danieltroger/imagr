@@ -13,6 +13,7 @@ die("An error occured while opening the zipfile.<br />\n{$zs}");
 		if($zip->locateName($image) !== false)
 		{
 			echo "Keeping {$image}<br />\n";
+			echo "Comment: " . $zip->getCommentName($image).  "<br />\n";
 	  }
 		else
 		{
