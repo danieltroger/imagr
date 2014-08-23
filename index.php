@@ -26,7 +26,7 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0,realsize,hash=location.hash,argr,args,mobile=false;
+      var thumbsize = 0,realsize,hash=location.hash,argr,args,mobile=false,spic=undefined,info=false;
       if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
       if(mobile)
       {
@@ -73,6 +73,20 @@
                     realsize=value;
                   }
                 }
+                if(key == "image")
+                {
+                  if(value != "")
+                  {
+                    spic = value;
+                  }
+                }
+                if(key == "info")
+                {
+                  if(value == "true")
+                  {
+                    info = true;
+                  }
+                }
               }
             }
         }
@@ -81,7 +95,7 @@
         $imglen = sizeof($imgs)-1;
         $invalid_files_length = 0;
         $rkey = 0;
-        $invalid_extensions=Array("php","zip","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
+        $invalid_extensions=Array("php","zip","ign","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
         foreach($imgs as $key => $img)
         {
           $extension = getextension($img);
@@ -274,6 +288,18 @@
                       }
                     }
                     document.onkeyup=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
+    window.onload=function ()
+    {
+    if(spic != undefined)
+    {
+       var ps=findthumb(spic);
+       if(ps != undefined)
+       {
+        openpic(ps);
+       }
+       if(info){infolay.classList.remove("closed")}
+     }
+     }
     </script>
     <style>
     .image
