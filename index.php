@@ -240,25 +240,25 @@
                  	aperture = exif['aperture'],
                  	exposure = exif['exposure'],
                  	filesize = exif['filesize'];
-                 	if(date != false && date != null) inf += ", fotografiert am "+date;
-                 	if(date != false && date != null && make != false && make != null && model != false && model != null)
+                 	if(date != false) inf += ", fotografiert am "+date;
+                 	if(date != false && make != false && model != false)
                  	{
                  	    var mm = make+ " " + model;
                  	    if(make == model) mm = model;
                  	    inf += ", mit einer "+mm;
                  	}
-                 	else if(make != false && make != null && model != false && model != null)
+                 	else if(make != false && model != false)
                  	{
                  	    var mm = make+ " " + model;
                  	    if(make == model) mm = model;
                  	    inf += ", fotografiert mit einer "+mm;
                  	}
-                 	if(iso != false && iso != null) inf += ", ISO: "+iso;
-                 	if(aperture != false && aperture != null) inf += ", Blende: "+aperture;
-                 	if(exposure != false && exposure != null) inf += ", Belichtungszeit: "+exposure;
-                 	if(filesize != false && filesize != null) inf += ", Dateigr&ouml;sse: "+filesize;
+                 	if(iso != false) inf += ", ISO: "+iso;
+                 	if(aperture != false) inf += ", Blende: "+aperture;
+                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
+                 	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
                  	inf += dlstr;
-                 	if(gps != false && gps != null) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
+                 	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
                     infolay.innerHTML = inf;    
                 }
                 else
