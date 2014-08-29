@@ -240,7 +240,6 @@
                  	aperture = exif['aperture'],
                  	exposure = exif['exposure'],
                  	filesize = exif['filesize'];
-                 	inf += "<br />";
                  	if(date != false) inf += ", fotografiert am "+date;
                  	if(date != false && make != false && model != false)
                  	{
@@ -256,7 +255,7 @@
                  	}
                  	if(iso != false) inf += ", ISO: "+iso;
                  	if(aperture != false) inf += ", Blende: "+aperture;
-                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure+" sekunde(n)";
+                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
                  	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
                  	inf += dlstr;
                  	if(gps != false) inf += "<a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
