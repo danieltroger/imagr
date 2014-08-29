@@ -169,6 +169,7 @@ function formatsize($size)
   }
   function flasht($fl)
   {
+    echo "flasht() called\n";
     if(($fl & 1) != 0) return true;
     return false;
   }
