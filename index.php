@@ -218,18 +218,6 @@
               }
                 if(exif != false)
                 {
-                    /*
-                    width  2774
-                    height 1943
-                    make "SONY"
-                    model "DSC-W120"
-                    GPS false
-                    date "2014:06:04 08:26:28"
-                    ISO 125
-                    aperture "7"
-                    exposure "1/200"
-                    filesize "2.08 MiB"
-                 	*/
                  	var width = exif['width'],
                  	height = exif['height'],
                  	make = exif['make'],
@@ -261,12 +249,13 @@
                  	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
                     infolay.innerHTML = inf;    
                 }
+                infolay.innerHTML = inf; 
+            }
                 else
                 {
                   infobut.style.display="none";
                   infolay.classList.add("closed");
                 }
-              }
           }
                 function infooverlay(e)
                 {
