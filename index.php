@@ -260,6 +260,7 @@
                  	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
                  	inf += dlstr;
                  	if(gps != false) inf += "<a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
+                    infolay.innerHTML = inf;    
                 }
                 else
                 {
