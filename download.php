@@ -74,7 +74,7 @@ else
     echo file_get_contents($oname);
   }
 }
-function calc($equation)
+function calc($equation,$nocomma = true)
 {
   // Remove whitespaces
   $equation = preg_replace('/\s+/', '', $equation);
@@ -91,9 +91,16 @@ function calc($equation)
   {
     $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
     eval('$result = '.$equation.';');
-    if(strpos($result,".") !== false)
+    if($nocomma)
     {
-      return explode(".",$result)[0];
+     if(strpos($result,".") !== false)
+     {
+       return explode(".",$result)[0];
+     }
+     else
+     {
+      return $result;
+     }
     }
     else
     {
@@ -137,7 +144,7 @@ function formatsize($size)
   function aperture($ap)
   {
     if(strlen($ap) < 1) return false;
-    return calc($ap);
+    return calc($ap,false);
   }
   function ISO($iso)
   {
