@@ -139,7 +139,7 @@ function formatsize($size)
     $split = explode("/",$exp);
     if($split[0] == "1") return $exp;
     if($split[1] == "1") return $exp;
-    return "1/" . $split[1] / $split[0];
+    return "1/" .round($split[1] / $split[0]);
   }
   function aperture($ap)
   {
