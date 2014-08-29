@@ -20,7 +20,7 @@ if($paths[0] == "exif")
   'dump' => print_r($we,1),
   'width' => $we['ExifImageWidth'],
   'height' => $we['ExifImageLength'],
-  'flash' => flash($we['Flash']);
+  'flash' => flash($we['Flash']),
   'make' => maker($we['Make']),
   'model' => model($we['Model']),
   'GPS' => $gmaps,
