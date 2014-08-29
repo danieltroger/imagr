@@ -27,7 +27,7 @@ if($paths[0] == "exif")
   'ISO' => ISO($we['ISOSpeedRatings']),
   'aperture' => aperture($we['FNumber']),
   'exposure' => exposure($we['ExposureTime']),
-  'filesize' => formatsize($we['FileSize')]
+  'filesize' => formatsize($we['FileSize'])
   ));
   //echo json_last_error_msg();
 }
