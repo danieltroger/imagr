@@ -131,6 +131,7 @@ function formatsize($size)
     if(strlen($exp) < 1) return false;
     $split = explode("/",$exp);
     if($split[0] == "1") return $exp;
+    if($split[1] == "1") return $exp;
     return "1/" . $split[1] / $split[0];
   }
   function aperture($ap)
