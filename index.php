@@ -247,6 +247,7 @@
                  	if(aperture != false) inf += ", Blende: "+aperture;
                  	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
                  	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+                 	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
                  	inf += dlstr;
                  	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
                     infolay.innerHTML = inf;    
