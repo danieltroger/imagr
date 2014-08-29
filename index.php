@@ -20,6 +20,7 @@
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/substr.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/explode.js"></script>
       <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/url/urldecode.js"></script>
+      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/url/urlencode.js"></script>
       <script src="ie.js"></script>
     <body>
     <div id="grid">
@@ -208,42 +209,64 @@
             if(srcthumb.dataset.by != undefined)
             {
               infobut.style.display="";
-              var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),basic=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
+              var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),
+              inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
+              dlstr = "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
               if(srcthumb.dataset.description == "undefined")
               {
-                var basic="Hochgeladen von "+srcthumb.dataset.by;
+               inf="Hochgeladen von "+srcthumb.dataset.by;
               }
-              if(exif != false)
-              {
-                  if(exif['Make'] != undefined)
-                  {
-                    if(exif['Make'] == exif['Model'])
-                    {
-                      var mm = exif['Model'];
-                    }
-                    else
-                    {
-                      var mm = exif['Make'] + " "+ exif['Model'];
-                    }
-                    infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer "+mm+", Aufl&ouml;sung: "+exif['ExifImageWidth']+"x"+exif['ExifImageLength'];
-                  }
-                  else
-                  {
-                    infolay.innerHTML=basic+", fotografiert am "+exif['DateTime'];
-                  }
+                if(exif != false)
+                {
+                    /*
+                    width  2774
+                    height 1943
+                    make "SONY"
+                    model "DSC-W120"
+                    GPS false
+                    date "2014:06:04 08:26:28"
+                    ISO 125
+                    aperture "7"
+                    exposure "1/200"
+                    filesize "2.08 MiB"
+                 	*/
+                 	var width = exif['width'],
+                 	height = exif['height'],
+                 	make = exif['make'],
+                 	model = exif['model'],
+                 	gps = exif['GPS'],
+                 	date = exif['date'],
+                 	iso = exif['ISO'],
+                 	aperture = exif['aperture'],
+                 	exposure = exif['exposure'],
+                 	filesize = exif['filesize'];
+                 	inf += "<br />";
+                 	if(date != false) inf += ", fotografiert am "+date;
+                 	if(date != false && make != false && model != false)
+                 	{
+                 	    var mm = make+ " " + model;
+                 	    if(make == model) mm = model;
+                 	    inf += ", mit einer "+mm;
+                 	}
+                 	if(make != false && model != false)
+                 	{
+                 	    var mm = make+ " " + model;
+                 	    if(make == model) mm = model;
+                 	    inf += ", fotografiert mit einer "+mm;
+                 	}
+                 	if(iso != false) inf += ", ISO: "+iso;
+                 	if(aperture != false) inf += ", Blende: "+aperture;
+                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure+" sekunde(n)";
+                 	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+                 	inf += dlstr;
+                 	if(gps != false) inf += "<a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
                 }
                 else
                 {
-                  infolay.innerHTML=basic;
+                  infobut.style.display="none";
+                  infolay.classList.add("closed");
                 }
-                infolay.innerHTML += "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
-                }
-                else
-                  {
-                    infobut.style.display="none";
-                    infolay.classList.add("closed");
-                  }
-                }
+              }
                 function infooverlay(e)
                 {
                     infolay.classList.toggle("closed");
