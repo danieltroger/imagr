@@ -20,7 +20,7 @@ if($paths[0] == "exif")
   'dump' => print_r($we,1),
   'width' => $we['ExifImageWidth'],
   'height' => $we['ExifImageLength'],
-  'flash' => flasth($we['Flash']),
+  'flash' => flash($we['Flash']),
   'make' => maker($we['Make']),
   'model' => model($we['Model']),
   'GPS' => $gmaps,
@@ -167,9 +167,8 @@ function formatsize($size)
     if(strlen($make) > 1) return $make;
     return false;
   }
-  function flasht($fl)
+  function flash($fl)
   {
-    echo "flasht() called\n";
     if($fl & 1 != 0) return true;
     return false;
   }
