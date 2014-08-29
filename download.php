@@ -18,10 +18,10 @@ if($paths[0] == "exif")
   echo json_encode(
   array(
   'dump' => print_r($we,1),
-  'width' => $width,
-  'height' => $height,
-  'maker' => $maker,
-  'model' => $model,
+  'width' => $we['ExifImageWidth'],
+  'height' => $we['ExifImageLength'],
+  'make' => maker($we['Make']),
+  'model' => model($we['Model']),
   'GPS' => $gmaps,
   'date' => edate($we['DateTime'],$we['FileDateTime']),
   'ISO' => ISO($we['ISOSpeedRatings']),
@@ -124,4 +124,37 @@ function formatsize($size)
     return "{$size} Bytes";
   }
 }
+
+  function exposure($exp)
+  {
+    if($exp == undefined) return false;
+    $split = explode("/",$exp);
+    if($split[0] == "1") return $exp;
+    return "1/" . $split[1] / $split[0];
+  }
+  function aperture($ap)
+  {
+    if($ap == undefined) return false;
+    return calc($ap);
+  }
+  function ISO($iso)
+  {
+    if($iso == undefined) return false;
+    return $iso;
+  }
+  function edate($a,$b)
+  {
+    if(strlen($a) > 2) return $a;
+    return date("Y:m:d h:i:s",$b);
+  }
+  function model($model)
+  {
+    if($model != undefined) return $model;
+    return false;
+  }
+  function maker($make)
+  {
+    if($make != undefined) return $make;
+    return false;
+  }
 ?>
