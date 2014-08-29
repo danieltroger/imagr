@@ -20,6 +20,7 @@ if($paths[0] == "exif")
   'dump' => print_r($we,1),
   'width' => $we['ExifImageWidth'],
   'height' => $we['ExifImageLength'],
+  'flash' => flash($we['Flash']);
   'make' => maker($we['Make']),
   'model' => model($we['Model']),
   'GPS' => $gmaps,
@@ -164,6 +165,11 @@ function formatsize($size)
   function maker($make)
   {
     if(strlen($make) > 1) return $make;
+    return false;
+  }
+  function flash($fl)
+  {
+    if(($fl & 1) != 0) return true;
     return false;
   }
 ?>
