@@ -107,6 +107,7 @@ function calc($equation)
 }
 function formatsize($size)
 {
+  if($size < 1) return false;
   if($size > 1024 * 1024 * 1024)
   {
     return round($size / 1024 / 1024 / 1024,2) . " GiB";
