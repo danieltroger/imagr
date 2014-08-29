@@ -12,7 +12,7 @@ if($paths[0] == "exif")
   $gmaps = false;
   if(strpos($we['SectionsFound'],"GPS") !== false)
   {
-    $gmaps = 'https://www.google.com/maps/place/' . calc($we['GPSLatitude'][0]) . '°' . calc($we['GPSLatitude'][1]) . "'" . calc($we['GPSLatitude'][2]) . '"N';
+    $gmaps = calc($we['GPSLatitude'][0]) . '°' . calc($we['GPSLatitude'][1]) . "'" . calc($we['GPSLatitude'][2]) . '"N';
     $gmaps .= " " . calc($we['GPSLongitude'][0]) . "°" . calc($we['GPSLongitude'][1]) . "'" . calc($we['GPSLongitude'][2]) . '"E';
   }
   echo json_encode(
