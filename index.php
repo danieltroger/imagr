@@ -227,7 +227,8 @@
                  	iso = exif['ISO'],
                  	aperture = exif['aperture'],
                  	exposure = exif['exposure'],
-                 	filesize = exif['filesize'];
+                 	filesize = exif['filesize'],
+                 	flash = exif['flash'];
                  	if(date != false) inf += ", fotografiert am "+date;
                  	if(date != false && make != false && model != false)
                  	{
@@ -246,6 +247,7 @@
                  	if(iso != false) inf += ", ISO: "+iso;
                  	if(aperture != false) inf += ", Blende: "+aperture;
                  	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
+                 	if(flash != false) inf += ", Blitz aktiviert";
                  	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
                  	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
                  	inf += dlstr;
