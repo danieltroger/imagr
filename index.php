@@ -233,12 +233,14 @@
                  	{
                  	    var mm = make+ " " + model;
                  	    if(make == model) mm = model;
+                 	    if(model.indexOf(make) != -1) mm = model;
                  	    inf += ", mit einer "+mm;
                  	}
                  	else if(make != false && model != false)
                  	{
                  	    var mm = make+ " " + model;
                  	    if(make == model) mm = model;
+                 	    if(model.indexOf(make) != -1) mm = model;
                  	    inf += ", fotografiert mit einer "+mm;
                  	}
                  	if(iso != false) inf += ", ISO: "+iso;
