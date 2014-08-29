@@ -127,19 +127,19 @@ function formatsize($size)
 
   function exposure($exp)
   {
-    if($exp == undefined) return false;
+    if(strlen($exp) < 1) return false;
     $split = explode("/",$exp);
     if($split[0] == "1") return $exp;
     return "1/" . $split[1] / $split[0];
   }
   function aperture($ap)
   {
-    if($ap == undefined) return false;
+    if(strlen($ap) < 1) return false;
     return calc($ap);
   }
   function ISO($iso)
   {
-    if($iso == undefined) return false;
+    if(strlen($iso) < 1) return false;
     return $iso;
   }
   function edate($a,$b)
@@ -149,12 +149,12 @@ function formatsize($size)
   }
   function model($model)
   {
-    if($model != undefined) return $model;
+    if(strlen($model) > 1 ) return $model;
     return false;
   }
   function maker($make)
   {
-    if($make != undefined) return $make;
+    if(strlen($make) > 1) return $make;
     return false;
   }
 ?>
