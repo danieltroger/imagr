@@ -267,6 +267,7 @@
                   infolay.classList.add("closed");
                 }
               }
+          }
                 function infooverlay(e)
                 {
                     infolay.classList.toggle("closed");
