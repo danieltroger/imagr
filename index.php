@@ -6,7 +6,16 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     require "thumbs.php";
-    ?><!DOCTYPE html>
+    
+    // init a .htaccess if there's no one
+    if(!file_exists(".htaccess"))
+    {
+        $dir = explode("/",$_SERVER["PHP_SELF"]);
+        unset($dir[sizeof($dir)-1]);
+        $dir = implode("/",$dir);
+        file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
+    }
+    ?><!DOCTYPE htm>
     <html>
     <head>
       <title>Imagr</title>
@@ -420,3 +429,4 @@
   </style>
   </body>
   </html>
+
