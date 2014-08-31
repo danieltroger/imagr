@@ -15,7 +15,7 @@
         $dir = implode("/",$dir);
         file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
     }
-    ?><!DOCTYPE htm>
+    ?><!DOCTYPE html>
     <html>
     <head>
       <title>Imagr</title>
