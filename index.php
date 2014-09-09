@@ -225,7 +225,7 @@
               {
                inf="Hochgeladen von "+srcthumb.dataset.by;
               }
-                if(exif != false)
+                if(exif != false && exif != null)
                 {
                  	var width = exif['width'],
                  	height = exif['height'],
