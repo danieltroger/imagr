@@ -17,7 +17,7 @@ if($paths[0] == "exif")
   }
   echo json_encode(
   array(
-  'dump' => print_r($we,1),
+  'dump' => utf8_encode(print_r($we,1)),
   'width' => $we['ExifImageWidth'],
   'height' => $we['ExifImageLength'],
   'flash' => flash($we['Flash']),
