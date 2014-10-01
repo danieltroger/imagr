@@ -59,7 +59,7 @@ else
   }
   else
   {
-    echo "Not an image (mime-type: {$cont} file: {$file})";
+    die("Not an image (mime-type: {$cont} file: {$file})");
   }
   finfo_close($finfo);
   if(!isset($size))
