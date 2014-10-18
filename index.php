@@ -213,12 +213,12 @@
               img.src="download.php/resize/"+realsize+"/"+srcthumb.dataset.original;
             }
             container.style.display="";
-            if(srcthumb.dataset.by != undefined)
-            {
-              infobut.style.display="";
+            srcthumb.dataset.by == undefined ? srcthumb.dataset.by = "Unknown" : null;
+            srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
+            infobut.style.display="";
               var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),
               inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-              dlstr = "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
+              dlstr = "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download fullsize</a>";
               if(srcthumb.dataset.description == "undefined")
               {
                inf="Hochgeladen von "+srcthumb.dataset.by;
@@ -262,12 +262,12 @@
                     infolay.innerHTML = inf;
                 }
                 infolay.innerHTML = inf;
-            }
-                else
-                {
-                  infobut.style.display="none";
-                  infolay.classList.add("closed");
-                }
+
+              //  else
+              //  {
+                //  infobut.style.display="none";
+                //  infolay.classList.add("closed");
+              //  }
           }
                 function infooverlay(e)
                 {
