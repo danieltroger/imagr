@@ -36,16 +36,8 @@
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0,realsize,hash=location.hash,argr,args,mobile=false,spic=undefined,info=false;
+      var thumbsize = 0,realsize="dyn",hash=location.hash,argr,args,mobile=false,spic=undefined,info=false;
       if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
-      if(mobile)
-      {
-        realsize=screen.width*2; // in case of retina & co
-      }
-      else
-      {
-        realsize=screen.width+(screen.width/10);
-      }
       if(hash[1] == "!")
         {
           console.info("Parsing URL paramenters...");
@@ -209,6 +201,10 @@
             if(realsize == 0)
             {
             img.src=srcthumb.dataset.original;
+            }
+            else if(relsize == "dyn")
+            {
+                img.src="download.php/resize/"+img.clientHeight+(img.clientHeight/10)+"/"+srcthumb.dataset.original;
             }
             else
             {
