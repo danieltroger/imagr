@@ -6,7 +6,7 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     require "thumbs.php";
-    
+
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
     {
@@ -204,7 +204,9 @@
             }
             else if(realsize == "dyn")
             {
-                img.src="download.php/resize/"+img.clientHeight+(img.clientHeight/10)+"/"+srcthumb.dataset.original;
+                var cw = img.clientWidth,
+                dynsize = cw > 2 ? cw : screen.width;
+                img.src="download.php/resize/"+dynsize+"/"+srcthumb.dataset.original;
             }
             else
             {
@@ -257,9 +259,9 @@
                  	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
                  	inf += dlstr;
                  	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
-                    infolay.innerHTML = inf;    
+                    infolay.innerHTML = inf;
                 }
-                infolay.innerHTML = inf; 
+                infolay.innerHTML = inf;
             }
                 else
                 {
@@ -425,4 +427,3 @@
   </style>
   </body>
   </html>
-
