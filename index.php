@@ -213,7 +213,7 @@
               img.src="download.php/resize/"+realsize+"/"+srcthumb.dataset.original;
             }
             container.style.display="";
-            srcthumb.dataset.by == undefined ? srcthumb.dataset.by = "Unknown" : null;
+            srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
             srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
             infobut.style.display="";
               var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),
