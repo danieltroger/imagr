@@ -202,7 +202,7 @@
             {
             img.src=srcthumb.dataset.original;
             }
-            else if(relsize == "dyn")
+            else if(realsize == "dyn")
             {
                 img.src="download.php/resize/"+img.clientHeight+(img.clientHeight/10)+"/"+srcthumb.dataset.original;
             }
