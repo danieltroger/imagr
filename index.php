@@ -20,16 +20,7 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/file_get_contents.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/array/in_array.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/var/isset.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/math/rand.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/basename.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/substr.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/explode.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/url/urldecode.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/url/urlencode.js"></script>
+      <script src="http://s.natur-kultur.eu/phpjs?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
       <script src="ie.js"></script>
     <body>
     <div id="grid">
