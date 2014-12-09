@@ -263,7 +263,7 @@
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
        {
-         w = new Worker("http://s.natur-kultur.eu/phpjs?f=imagr_preload");
+         w = new Worker("preload.js");
          w.onmessage = function(e)
          {
            var fname = basename(e.data[1]),
