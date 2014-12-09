@@ -30,89 +30,12 @@
       realsize="dyn",
       argr,args,
       mobile=false,
-      spic=undefined,
       info=false,
       preload = true,
-      loaded = false;
-      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true;preload=false}
-      function lhash()
-      {
-        var hash = location.hash;
-        if(hash[1] == "!")
-        {
-          //console.info("Parsing URL paramenters...");
-          if(hash.length <= 2)
-          {
-            console.warn("No arguments provided but #!. Stopping.");
-          }
-          else
-            {
-              argr=substr(hash,2);
-              args=explode(",",argr);
-              for(var i = 0;i<args.length;i++)
-              {
-                var arg=explode("=",args[i]),key=arg[0],value=arg[1];
-                if(value == undefined)
-                {
-                  console.warn("No value given");
-                }
-                if(arg.length > 2)
-                {
-                  console.warn("Multiple values specified, using first one");
-                }
-                //console.log("Key: "+key+" value: "+value);
-                if(key == "ts")
-                {
-                  if(value != "")
-                  {
-                    thumbsize=value;
-                  }
-                }
-                if(key == "rs")
-                {
-                  if(value != "")
-                  {
-                    realsize=value;
-                  }
-                }
-                if(key == "image")
-                {
-                  if(value != "")
-                  {
-                    spic = value;
-                  }
-                }
-                if(key == "info")
-                {
-                  if(value == "true")
-                  {
-                    info = true;
-                  }
-                }
-                if(key == "preload")
-                {
-                  if(value == "false") preload = false;
-                  if(value == "true") prelaod = true;
-                }
-              }
-            }
-        }
-        if(loaded)
-        {
-          if(spic != undefined)
-          {
-            var ps=findthumb(spic);
-            if(ps != undefined && img.dataset.original != ps.dataset.original)
-            {
-              openpic(ps);
-            }
-            if(info){infolay.classList.remove("closed")}
-          }
-        }
-        setTimeout("lhash();",1000);
-      }
-      lhash();
-      var imgs=Array(<?php
+      loaded = false,
+      mobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+      preload = mobile ? false : true,
+      imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
         $invalid_files_length = 0;
@@ -150,13 +73,13 @@
       prevb=document.createElement("img"),
       nextb=document.createElement("img"),
       img=document.createElement("img");
-      bigpic.onclick=function (e)
+      bigpic.addEventListener("click",function (e)
       {
         if(e.target.id == this.id)
         {
           this.style.display="none";
         }
-      }
+      });
       prevb.src="prev.svg";
       prevb.classList.add("prev","symbol","vertcent");
       prevb.style.width="10%";
@@ -206,146 +129,138 @@
           grid.appendChild(imgelem);
         });
         function openpic(srcthumb)
+        {
+          if(this.tagName == "IMG")
           {
-            if(this.tagName == "IMG")
+            srcthumb = this;
+          }
+          var url = srcthumb.dataset.original, blob = false, burl = imgs[url];
+          if(substr(burl,0,4) == "blob")
+          {
+            console.info("Reading image "+url+" from "+burl);
+            img.src=burl;
+            blob = true;
+          }
+          else
+          {
+            if(realsize == 0)
             {
-              srcthumb = this;
+            img.src=url;
             }
-            var url = srcthumb.dataset.original, blob = false, burl = imgs[url];
-            if(substr(burl,0,4) == "blob")
+            else if(realsize == "dyn")
             {
-              console.info("Reading image "+url+" from "+burl);
-              img.src=burl;
-              blob = true;
+              var cw = img.clientWidth,
+              dynsize = cw > 2 ? cw : screen.width;
+              img.src="download.php/resize/"+dynsize+"/"+url;
             }
             else
             {
-              if(realsize == 0)
+              img.src="download.php/resize/"+realsize+"/"+url;
+            }
+          }
+          img.dataset.original = url;
+          location.hash = "#!image="+basename(url);
+          container.style.display="";
+          srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
+          srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
+          infobut.style.display="";
+            var exif = json_decode(file_get_contents("download.php/exif/"+url)),
+            inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
+            lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
+            //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
+            if(srcthumb.dataset.description == "undefined")
+            {
+             inf="Hochgeladen von "+srcthumb.dataset.by;
+            }
+            if(exif != false && exif != null)
+            {
+             	var width = exif['width'],
+             	height = exif['height'],
+             	make = exif['make'],
+             	model = exif['model'],
+             	gps = exif['GPS'],
+             	date = exif['date'],
+             	iso = exif['ISO'],
+             	aperture = exif['aperture'],
+             	exposure = exif['exposure'],
+             	filesize = exif['filesize'],
+             	flash = exif['flash'];
+             	if(date != false) inf += ", fotografiert am "+date;
+             	if(date != false && make != false && model != false)
+             	{
+           	    var mm = make+ " " + model;
+           	    if(make == model) mm = model;
+           	    if(model.indexOf(make) != -1) mm = model;
+           	    inf += ", mit einer "+mm;
+             	}
+             	else if(make != false && model != false)
+             	{
+           	    var mm = make+ " " + model;
+           	    if(make == model) mm = model;
+           	    if(model.indexOf(make) != -1) mm = model;
+           	    inf += ", fotografiert mit einer "+mm;
+             	}
+             	if(iso != false) inf += ", ISO: "+iso;
+             	if(aperture != false) inf += ", Blende: "+aperture;
+             	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
+             	if(flash != false) inf += ", Blitz aktiviert";
+             	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+             	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
+             	inf += lstr;
+             	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
+                infolay.innerHTML = inf;
+            }
+            infolay.innerHTML = inf;
+          }
+          function infooverlay()
+          {
+              infolay.classList.toggle("closed");
+          }
+          function findthumb(realsource)
+          {
+            var thumbs = document.getElementsByClassName("image");
+            for(i = 0;i<thumbs.length;i++)
+            {
+              if(thumbs[i].dataset.original == realsource)
               {
-              img.src=url;
-              }
-              else if(realsize == "dyn")
-              {
-                var cw = img.clientWidth,
-                dynsize = cw > 2 ? cw : screen.width;
-                img.src="download.php/resize/"+dynsize+"/"+url;
-              }
-              else
-              {
-                img.src="download.php/resize/"+realsize+"/"+url;
+                return thumbs[i];
               }
             }
-            img.dataset.original = url;
-            location.hash = "#!image="+basename(url);
-            container.style.display="";
-            srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
-            srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
-            infobut.style.display="";
-              var exif = json_decode(file_get_contents("download.php/exif/"+url)),
-              inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-              lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
-              //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
-              if(srcthumb.dataset.description == "undefined")
-              {
-               inf="Hochgeladen von "+srcthumb.dataset.by;
-              }
-                if(exif != false && exif != null)
-                {
-                 	var width = exif['width'],
-                 	height = exif['height'],
-                 	make = exif['make'],
-                 	model = exif['model'],
-                 	gps = exif['GPS'],
-                 	date = exif['date'],
-                 	iso = exif['ISO'],
-                 	aperture = exif['aperture'],
-                 	exposure = exif['exposure'],
-                 	filesize = exif['filesize'],
-                 	flash = exif['flash'];
-                 	if(date != false) inf += ", fotografiert am "+date;
-                 	if(date != false && make != false && model != false)
-                 	{
-                 	    var mm = make+ " " + model;
-                 	    if(make == model) mm = model;
-                 	    if(model.indexOf(make) != -1) mm = model;
-                 	    inf += ", mit einer "+mm;
-                 	}
-                 	else if(make != false && model != false)
-                 	{
-                 	    var mm = make+ " " + model;
-                 	    if(make == model) mm = model;
-                 	    if(model.indexOf(make) != -1) mm = model;
-                 	    inf += ", fotografiert mit einer "+mm;
-                 	}
-                 	if(iso != false) inf += ", ISO: "+iso;
-                 	if(aperture != false) inf += ", Blende: "+aperture;
-                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
-                 	if(flash != false) inf += ", Blitz aktiviert";
-                 	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
-                 	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
-                 	inf += lstr;
-                 	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
-                    infolay.innerHTML = inf;
-                }
-                infolay.innerHTML = inf;
-
-              //  else
-              //  {
-                //  infobut.style.display="none";
-                //  infolay.classList.add("closed");
-              //  }
           }
-                function infooverlay(e)
+          function next(e)
+          {
+            var nextindex=(findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
+            if(nextindex == imgs.length)
+            {
+              nextindex = 0;
+            }
+            var thumb = findthumb(imgs[nextindex]);
+            openpic(thumb);
+          }
+          function prev(e)
+          {
+            var previndex=findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
+            if(previndex < 0)
+            {
+              previndex=(imgs.length-1);
+            }
+              openpic(findthumb(imgs[previndex]));
+            }
+            function findimg(imgurl)
+            {
+              for(i=0;i<=imgs.length;i++)
+              {
+                if(imgs[i] == urldecode(imgurl))
                 {
-                    infolay.classList.toggle("closed");
+                  return i;
                 }
-                function findthumb(realsource)
-                {
-                  var thumbs = document.getElementsByClassName("image");
-                  for(i = 0;i<thumbs.length;i++)
-                  {
-                    if(thumbs[i].dataset.original == realsource)
-                    {
-                        return thumbs[i];
-                    }
-                  }
-                }
-                function next(e)
-                {
-                  var nextindex=(findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
-                  if(nextindex == imgs.length)
-                  {
-                    nextindex = 0;
-                  }
-                  var thumb = findthumb(imgs[nextindex]);
-                  openpic(thumb);
-                  }
-                  function prev(e)
-                  {
-                    var previndex=findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
-                    if(previndex < 0)
-                    {
-                      previndex=(imgs.length-1);
-                      }
-                      openpic(findthumb(imgs[previndex]));
-                    }
-                    function findimg(imgurl)
-                    {
-                      for(i=0;i<=imgs.length;i++)
-                      {
-                        if(imgs[i] == urldecode(imgurl))
-                        {
-                          return i;
-                        }
-                      }
-                    }
-
-                    document.onkeypress=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
-    window.onload=startWorker;
-     var w;
+              }
+            }
+            window.addEventListener("keypress",function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}});
+            window.addEventListener("load",startWorker);
+            window.addEventListener("load",lhash);
      function startWorker()
      {
-       loaded = true;
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
        {
          w = new Worker("preload.js");
@@ -355,12 +270,84 @@
            blob = e.data[0],
            url = (window.URL || window.webkitURL).createObjectURL(blob);
            imgs[fname] = url;
-           console.info("WebWorker has successfully downloaded "+fname+" to "+url);
+           //console.info("WebWorker has successfully downloaded "+fname+" to "+url);
           };
           w.postMessage(imgs);
           console.info("Preload WebWorker started");
        }
      }
+     function lhash()
+     {
+       var hash = location.hash;
+       if(hash[1] == "!")
+        {
+          //console.info("Parsing URL paramenters...");
+          if(hash.length <= 2)
+          {
+            console.warn("No arguments provided but #!. Stopping.");
+          }
+          else
+          {
+            argr=substr(hash,2);
+            args=explode(",",argr);
+            for(var i = 0;i<args.length;i++)
+            {
+              var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+              if(value == undefined)
+              {
+                console.warn("No value given");
+              }
+              if(arg.length > 2)
+              {
+                console.warn("Multiple values specified, using first one");
+              }
+              //console.log("Key: "+key+" value: "+value);
+              if(key == "ts")
+              {
+                if(value != "")
+                {
+                  thumbsize=value;
+                }
+              }
+              if(key == "rs")
+              {
+                if(value != "")
+                {
+                  realsize=value;
+                }
+              }
+              if(key == "image")
+              {
+                if(value != "" && value != undefined)
+                {
+                  var t=findthumb(value);
+                  if(t != undefined && img.dataset.original != t.dataset.original)
+                  {
+                    openpic(t);
+                  }
+                }
+              }
+              if(key == "info")
+              {
+                if(value == "true")
+                {
+                  infolay.classList.remove("closed");
+                }
+                else if(value == "false")
+                {
+                  infolay.classList.add("closed");
+                }
+              }
+              if(key == "preload")
+              {
+                if(value == "false") preload = false;
+                if(value == "true") prelaod = true;
+              }
+            }
+          }
+        }
+    setTimeout("lhash();",1000);
+    }
     </script>
     <style>
     .image
