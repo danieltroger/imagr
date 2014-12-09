@@ -20,14 +20,20 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="http://s.natur-kultur.eu/phpjs?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
-      <script src="ie.js"></script>
+      <script src="http://s.natur-kultur.eu/phpjs?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
     <body>
     <div id="grid">
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
-      var thumbsize = 0,realsize="dyn",hash=location.hash,argr,args,mobile=false,spic=undefined,info=false;
+      var thumbsize = 0,
+      realsize="dyn",
+      hash=location.hash,
+      argr,args,
+      mobile=false,
+      spic=undefined,
+      info=false,
+      preload = true;
       if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
       if(hash[1] == "!")
         {
@@ -80,6 +86,7 @@
                     info = true;
                   }
                 }
+                (key == "preload" && value == "false") ? preload = false : null;
               }
             }
         }
@@ -129,21 +136,16 @@
         }
       }
       prevb.src="prev.svg";
-      prevb.classList.add("prev");
-      prevb.classList.add("symbol");
-      prevb.classList.add("vertcent");
+      prevb.classList.add("prev","symbol","vertcent");
       prevb.style.width="10%";
       prevb.addEventListener("click",prev);
       container.appendChild(prevb);
       nextb.src="next.svg";
-      nextb.classList.add("next");
-      nextb.classList.add("symbol");
-      nextb.classList.add("vertcent");
+      nextb.classList.add("next","symbol","vertcent");
       nextb.style.width="10%";
       nextb.addEventListener("click",next);
       container.appendChild(nextb);
-      img.classList.add("largepic");
-      img.classList.add("cent");
+      img.classList.add("largepic","cent");
       container.appendChild(img);
       var infobut=document.createElement("img")
       infobut.src="info.svg"
@@ -154,9 +156,7 @@
       infobut.classList.add("horcent");
       container.appendChild(infobut);
       var infolay=document.createElement("div");
-      infolay.classList.add("infolay");
-      infolay.classList.add("horcent");
-      infolay.classList.add("closed");
+      infolay.classList.add("infolay","horcent","closed");
       container.appendChild(infolay);
       imgs.forEach(
         function (image) {
@@ -189,27 +189,38 @@
             {
               srcthumb = this;
             }
-            if(realsize == 0)
+            var url = srcthumb.dataset.original, blob = false, burl = imgs[url];
+            if(substr(burl,0,4) == "blob")
             {
-            img.src=srcthumb.dataset.original;
-            }
-            else if(realsize == "dyn")
-            {
-                var cw = img.clientWidth,
-                dynsize = cw > 2 ? cw : screen.width;
-                img.src="download.php/resize/"+dynsize+"/"+srcthumb.dataset.original;
+              console.info("Reading image "+url+" from blob "+burl);
+              img.src=burl;
+              blob = true;
             }
             else
             {
-              img.src="download.php/resize/"+realsize+"/"+srcthumb.dataset.original;
+              if(realsize == 0)
+              {
+              img.src=url;
+              }
+              else if(realsize == "dyn")
+              {
+                var cw = img.clientWidth,
+                dynsize = cw > 2 ? cw : screen.width;
+                img.src="download.php/resize/"+dynsize+"/"+url;
+              }
+              else
+              {
+                img.src="download.php/resize/"+realsize+"/"+url;
+              }
             }
+            img.dataset.original = url;
             container.style.display="";
             srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
             srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
             infobut.style.display="";
-              var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),
+              var exif = json_decode(file_get_contents("download.php/exif/"+url)),
               inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-              dlstr = "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download fullsize</a>";
+              dlstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\"download.php/"+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
               if(srcthumb.dataset.description == "undefined")
               {
                inf="Hochgeladen von "+srcthumb.dataset.by;
@@ -273,20 +284,22 @@
                     {
                         return thumbs[i];
                     }
-                    }
                   }
-                  function next(e)
+                }
+                function next(e)
+                {
+                  var nextindex=(findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
+                  if(nextindex == imgs.length)
                   {
-                    var nextindex=(findimg(basename(img.src))+1);
-                    if(nextindex == imgs.length)
-                    {
-                      nextindex = 0;
-                    }
-                    openpic(findthumb(imgs[nextindex]));
+                    nextindex = 0;
+                  }
+                  var thumb = findthumb(imgs[nextindex]);
+                  console.log(thumb);
+                  openpic(thumb);
                   }
                   function prev(e)
                   {
-                    var previndex=findimg(basename(img.src))-1;
+                    var previndex=findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
                     if(previndex < 0)
                     {
                       previndex=(imgs.length-1);
@@ -315,6 +328,25 @@
        }
        if(info){infolay.classList.remove("closed")}
      }
+     startWorker();
+     }
+     var w;
+     function startWorker()
+     {
+       if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
+       {
+         w = new Worker("preload.js");
+         w.onmessage = function(e)
+         {
+           var fname = e.data[1],
+           blob = e.data[0],
+           url = (window.URL || window.webkitURL).createObjectURL(blob);
+           imgs[fname] = url;
+           console.info("WebWorker has successfully downloaded "+fname+" to "+url);
+          };
+          w.postMessage(imgs);
+          console.info("Preload WebWorker started");
+       }
      }
     </script>
     <style>
