@@ -270,7 +270,7 @@
            blob = e.data[0],
            url = (window.URL || window.webkitURL).createObjectURL(blob);
            imgs[fname] = url;
-           //console.info("WebWorker has successfully downloaded "+fname+" to "+url);
+           console.info("WebWorker has successfully downloaded "+fname+" to "+url);
           };
           w.postMessage(imgs);
           console.info("Preload WebWorker started");
