@@ -6,29 +6,89 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     require "thumbs.php";
+
+    // init a .htaccess if there's no one
+    if(!file_exists(".htaccess"))
+    {
+        $dir = explode("/",$_SERVER["PHP_SELF"]);
+        unset($dir[sizeof($dir)-1]);
+        $dir = implode("/",$dir);
+        file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
+    }
     ?><!DOCTYPE html>
     <html>
     <head>
-      <title>Fotos von der Klassenfahrt nach Granzow</title>
+      <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <!--<script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/filesystem/file_get_contents.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/array/in_array.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/var/isset.js"></script>-->
+      <script src="http://s.natur-kultur.eu/phpjs?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
       <script src="ie.js"></script>
-      <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/math/rand.js"></script>
-    <script>function json_decode(str_json){var json=this.window.JSON;if(typeof json==="object"&&typeof json.parse==="function"){try{return json.parse(str_json)}catch(err){if(!(err instanceof SyntaxError)){throw new Error("Unexpected error type in json_decode()")}this.php_js=this.php_js||{};this.php_js.last_error_json=4;return null}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;var j;var text=str_json;cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})}if((/^[\],:{}\s]*$/).test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""))){j=eval("("+text+")");return j}this.php_js=this.php_js||{};this.php_js.last_error_json=4;return null};function file_get_contents(l,s,f,p,j){var J,c=[],z=[],A=0,B=0,C="",q=-1,d=0,y=null,F=false;var o=function(e){return e.substring(1)!==""};this.php_js=this.php_js||{};this.php_js.ini=this.php_js.ini||{};var r=this.php_js.ini;f=f||this.php_js.default_streams_context||null;if(!s){s=0}var I={FILE_USE_INCLUDE_PATH:1,FILE_TEXT:32,FILE_BINARY:64};if(typeof s==="number"){d=s}else{s=[].concat(s);for(B=0;B<s.length;B++){if(I[s[B]]){d=d|I[s[B]]}}}if(d&I.FILE_BINARY&&(d&I.FILE_TEXT)){throw"You cannot pass both FILE_BINARY and FILE_TEXT to file_get_contents()"}if((d&I.FILE_USE_INCLUDE_PATH)&&r.include_path&&r.include_path.local_value){var x=r.include_path.local_value.indexOf("/")!==-1?"/":"\\";l=r.include_path.local_value+x+l}else{if(!/^(https?|file):/.test(l)){C=this.window.location.href;q=l.indexOf("/")===0?C.indexOf("/",8)-1:C.lastIndexOf("/");l=C.slice(0,q+1)+l}}var w;if(f){w=f.stream_options&&f.stream_options.http;F=!!w}if(!f||!f.stream_options||F){var b=this.window.ActiveXObject?new ActiveXObject("Microsoft.XMLHTTP"):new XMLHttpRequest();if(!b){throw new Error("XMLHttpRequest not supported")}var g=F?w.method:"GET";var n=!!(f&&f.stream_params&&f.stream_params["phpjs.async"]);if(r["phpjs.ajaxBypassCache"]&&r["phpjs.ajaxBypassCache"].local_value){l+=(l.match(/\?/)==null?"?":"&")+(new Date()).getTime()}b.open(g,l,n);if(n){var a=f.stream_params.notification;if(typeof a==="function"){if(0&&b.addEventListener){}else{b.onreadystatechange=function(e){var i={responseText:b.responseText,responseXML:b.responseXML,status:b.status,statusText:b.statusText,readyState:b.readyState,evt:e};var k;switch(b.readyState){case 0:a.call(i,0,0,"",0,0,0);break;case 1:a.call(i,0,0,"",0,0,0);break;case 2:a.call(i,0,0,"",0,0,0);break;case 3:k=b.responseText.length*2;a.call(i,7,0,"",0,k,0);break;case 4:if(b.status>=200&&b.status<400){k=b.responseText.length*2;a.call(i,8,0,"",b.status,k,0)}else{if(b.status===403){a.call(i,10,2,"",b.status,0,0)}else{a.call(i,9,2,"",b.status,0,0)}}break;default:throw"Unrecognized ready state for file_get_contents()"}}}}}if(F){var H=(w.header&&w.header.split(/\r?\n/))||[];var v=false;for(B=0;B<H.length;B++){var E=H[B];var D=E.search(/:\s*/);var m=E.substring(0,D);b.setRequestHeader(m,E.substring(D+1));if(m==="User-Agent"){v=true}}if(!v){var t=w.user_agent||(r.user_agent&&r.user_agent.local_value);if(t){b.setRequestHeader("User-Agent",t)}}y=w.content||null}if(d&I.FILE_TEXT){var u="text/html";if(w&&w["phpjs.override"]){u=w["phpjs.override"]}else{var h=(r["unicode.stream_encoding"]&&r["unicode.stream_encoding"].local_value)||"UTF-8";if(w&&w.header&&(/^content-type:/im).test(w.header)){u=w.header.match(/^content-type:\s*(.*)$/im)[1]}if(!(/;\s*charset=/).test(u)){u+="; charset="+h}}b.overrideMimeType(u)}else{if(d&I.FILE_BINARY){b.overrideMimeType("text/plain; charset=x-user-defined")}}try{if(w&&w["phpjs.sendAsBinary"]){b.sendAsBinary(y)}else{b.send(y)}}catch(G){return false}J=b.getAllResponseHeaders();if(J){J=J.split("\n");for(A=0;A<J.length;A++){if(o(J[A])){z.push(J[A])}}J=z;for(B=0;B<J.length;B++){c[B]=J[B]}this.$http_response_header=c}if(p||j){if(j){return b.responseText.substr(p||0,j)}return b.responseText.substr(p)}return b.responseText}return false};function basename(e,d){var a=e;var c=a.charAt(a.length-1);if(c==="/"||c==="\\"){a=a.slice(0,-1)}a=a.replace(/^.*[\/\\]/g,"");if(typeof d==="string"&&a.substr(a.length-d.length)==d){a=a.substr(0,a.length-d.length)}return a};/*copypasta*/</script>
     <body>
     <div id="grid">
     </div>
     <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
+      var thumbsize = 0,realsize="dyn",hash=location.hash,argr,args,mobile=false,spic=undefined,info=false;
+      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
+      if(hash[1] == "!")
+        {
+          console.info("Parsing URL paramenters...");
+          if(hash.length <= 2)
+          {
+            console.warn("No arguments provided but #!. Stopping.");
+          }
+          else
+            {
+              argr=substr(hash,2);
+              args=explode("|",argr);
+              for(var i = 0;i<args.length;i++)
+              {
+                var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+                if(value == undefined)
+                {
+                  console.warn("No value given");
+                }
+                if(arg.length > 2)
+                {
+                  console.warn("Multiple values specified, using first one");
+                }
+                console.log("Key: "+key+" value: "+value);
+                if(key == "ts")
+                {
+                  if(value != "")
+                  {
+                    thumbsize=value;
+                  }
+                }
+                if(key == "rs")
+                {
+                  if(value != "")
+                  {
+                    realsize=value;
+                  }
+                }
+                if(key == "image")
+                {
+                  if(value != "")
+                  {
+                    spic = value;
+                  }
+                }
+                if(key == "info")
+                {
+                  if(value == "true")
+                  {
+                    info = true;
+                  }
+                }
+              }
+            }
+        }
       var imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
         $invalid_files_length = 0;
         $rkey = 0;
-        $invalid_extensions=Array("php","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
+        $invalid_extensions=Array("php","zip","ign","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
         foreach($imgs as $key => $img)
         {
           $extension = getextension($img);
@@ -68,10 +128,6 @@
           this.style.display="none";
         }
       }
-      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-      {
-        isMobile=true;
-      }
       prevb.src="prev.svg";
       prevb.classList.add("prev");
       prevb.classList.add("symbol");
@@ -105,11 +161,20 @@
       imgs.forEach(
         function (image) {
           var imgelem=document.createElement("img");
-          imgelem.src="thumbs.dir/"+image+".jpg";
+          if(thumbsize != 0)
+          {
+              imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
+              imgelem.style.width=thumbsize+"px";
+          }
+          else
+          {
+            imgelem.src="thumbs.dir/"+image+".jpg";
+            imgelem.style.width="19%";
+            if(mobile){imgelem.style.width="92%";}
+            imgelem.style.minWidth="200px";
+          }
           imgelem.setDataAttribute("original",image);
-          imgelem.width=50;
           imgelem.classList.add("image");
-          if(isMobile){imgelem.classList.add("mobile");}
           if(meta[image]!=undefined)
           {
             imgelem.setDataAttribute("by",meta[image].by);
@@ -124,48 +189,77 @@
             {
               srcthumb = this;
             }
-            img.src=srcthumb.dataset.original;
-            container.style.display="";
-            if(srcthumb.dataset.by != undefined)
+            if(realsize == 0)
             {
-              infobut.style.display="";
-              var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),basic=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by;
+            img.src=srcthumb.dataset.original;
+            }
+            else if(realsize == "dyn")
+            {
+                var cw = img.clientWidth,
+                dynsize = cw > 2 ? cw : screen.width;
+                img.src="download.php/resize/"+dynsize+"/"+srcthumb.dataset.original;
+            }
+            else
+            {
+              img.src="download.php/resize/"+realsize+"/"+srcthumb.dataset.original;
+            }
+            container.style.display="";
+            srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
+            srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
+            infobut.style.display="";
+              var exif = json_decode(file_get_contents("download.php/exif/"+basename(img.src))),
+              inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
+              dlstr = "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download fullsize</a>";
               if(srcthumb.dataset.description == "undefined")
               {
-                var basic="Hochgeladen von "+srcthumb.dataset.by;
+               inf="Hochgeladen von "+srcthumb.dataset.by;
               }
-              console.log(basic);
-              if(exif != false)
-              {
-                  if(exif['Make'] != undefined)
-                  {
-                    if(exif['Make'] == exif['Model'])
-                    {
-                      var mm = exif['Model'];
-                    }
-                    else
-                    {
-                      var mm = exif['Make'] + " "+ exif['Model'];
-                    }
-                    infolay.innerHTML=basic+",<br />fotografiert am "+exif['DateTime']+", mit einer "+mm+", Aufl&ouml;sung: "+exif['ExifImageWidth']+"x"+exif['ExifImageLength'];
-                  }
-                  else
-                  {
-                    infolay.innerHTML=basic+", fotografiert am "+exif['DateTime'];
-                  }
-                }
-                else
+                if(exif != false && exif != null)
                 {
-                  infolay.innerHTML=basic;
+                 	var width = exif['width'],
+                 	height = exif['height'],
+                 	make = exif['make'],
+                 	model = exif['model'],
+                 	gps = exif['GPS'],
+                 	date = exif['date'],
+                 	iso = exif['ISO'],
+                 	aperture = exif['aperture'],
+                 	exposure = exif['exposure'],
+                 	filesize = exif['filesize'],
+                 	flash = exif['flash'];
+                 	if(date != false) inf += ", fotografiert am "+date;
+                 	if(date != false && make != false && model != false)
+                 	{
+                 	    var mm = make+ " " + model;
+                 	    if(make == model) mm = model;
+                 	    if(model.indexOf(make) != -1) mm = model;
+                 	    inf += ", mit einer "+mm;
+                 	}
+                 	else if(make != false && model != false)
+                 	{
+                 	    var mm = make+ " " + model;
+                 	    if(make == model) mm = model;
+                 	    if(model.indexOf(make) != -1) mm = model;
+                 	    inf += ", fotografiert mit einer "+mm;
+                 	}
+                 	if(iso != false) inf += ", ISO: "+iso;
+                 	if(aperture != false) inf += ", Blende: "+aperture;
+                 	if(exposure != false) inf += ", Belichtungszeit: "+exposure;
+                 	if(flash != false) inf += ", Blitz aktiviert";
+                 	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+                 	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
+                 	inf += dlstr;
+                 	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
+                    infolay.innerHTML = inf;
                 }
-                infolay.innerHTML += "<br /><a style=\"color:white;\" href=\"download.php/"+basename(img.src)+"\">Download</a>";
-                }
-                else
-                  {
-                    infobut.style.display="none";
-                    infolay.classList.add("closed");
-                  }
-                }
+                infolay.innerHTML = inf;
+
+              //  else
+              //  {
+                //  infobut.style.display="none";
+                //  infolay.classList.add("closed");
+              //  }
+          }
                 function infooverlay(e)
                 {
                     infolay.classList.toggle("closed");
@@ -203,30 +297,36 @@
                     {
                       for(i=0;i<=imgs.length;i++)
                       {
-                        if(imgs[i] == imgurl)
+                        if(imgs[i] == urldecode(imgurl))
                         {
                           return i;
                         }
                       }
                     }
-
+                    document.onkeyup=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
+    window.onload=function ()
+    {
+    if(spic != undefined)
+    {
+       var ps=findthumb(spic);
+       if(ps != undefined)
+       {
+        openpic(ps);
+       }
+       if(info){infolay.classList.remove("closed")}
+     }
+     }
     </script>
     <style>
     .image
     {
-      width:19%;
       margin:20px;
-      min-width:200px;
       box-shadow: 5px 5px 5px grey;
       border:5px solid white;
       transition-duration:0.5s;
       transition-property:all;
       -webkit-transition-duration:0.5s;
       -webkit-transition-property:all;
-      }
-      .image.mobile
-      {
-        width:90%;
       }
       .image:hover
       {
@@ -249,71 +349,71 @@
           background: rgba(200, 200, 200, 0.6);
         }
         .largepic
-  {
-    max-width:90%;
-    box-shadow: 10px 10px 20px;
-    max-height: 90%;
-    left: 50%;
-  top: 50%;
-  z-index:3;
-  cursor:default;
-  position: absolute;
-  }
-  .prev
-  {
-    left:2%;
-  }
-  .symbol
-  {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    position: absolute;
-    z-index:5;
-  }
-  .vertcent
-  {
-    top: 50%;
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-  }
-    .horcent
-  {
-    left: 50%;
-    transform: translateX(-50%);
-    -webkit-transform: translateX(-50%);
-  }
-    .cent
-  {
-    transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translateX(-50%) translateY(-50%);
-  }
-    .next
-  {
-    right:2%;
-  }
-    .infolay
-  {
-      background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
-      color: #FFFFFF;
-      cursor: default;
-      font-family: helvetica;
-      min-height: 5%;
-      overflow: auto;
-      padding: 10px;
-      position: fixed;
-      text-align: center;
-      top: 3%;
-      transition-duration: 3s;
-      transition-property: all;
-      width: 90%;
-      z-index: 5;
-    }
-    .closed
-    {
-      opacity:0;
-      width:0;
-      height:0;
-    }
+        {
+          max-width:90%;
+          box-shadow: 10px 10px 20px;
+          max-height: 90%;
+          left: 50%;
+          top: 50%;
+          z-index:3;
+          cursor:default;
+          position: absolute;
+        }
+        .prev
+        {
+          left:2%;
+        }
+        .symbol
+        {
+          background: rgba(0, 0, 0, 0.5);
+          border-radius: 50%;
+          position: absolute;
+          z-index:5;
+        }
+        .vertcent
+        {
+          top: 50%;
+          transform: translateY(-50%);
+          -webkit-transform: translateY(-50%);
+        }
+        .horcent
+        {
+          left: 50%;
+          transform: translateX(-50%);
+          -webkit-transform: translateX(-50%);
+        }
+        .cent
+        {
+          transform: translateX(-50%) translateY(-50%);
+          -webkit-transform: translateX(-50%) translateY(-50%);
+        }
+        .next
+        {
+          right:2%;
+        }
+        .infolay
+        {
+          background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
+          color: #FFFFFF;
+          cursor: default;
+          font-family: helvetica;
+          min-height: 5%;
+          overflow: auto;
+          padding: 10px;
+          position: fixed;
+          text-align: center;
+          top: 3%;
+          transition-duration: 3s;
+          transition-property: all;
+          width: 90%;
+          z-index: 5;
+        }
+        .closed
+        {
+          opacity:0;
+          width:0;
+          height:0;
+        }
 
   </style>
   </body>
