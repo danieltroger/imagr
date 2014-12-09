@@ -45,7 +45,7 @@
           else
             {
               argr=substr(hash,2);
-              args=explode("|",argr);
+              args=explode(",",argr);
               for(var i = 0;i<args.length;i++)
               {
                 var arg=explode("=",args[i]),key=arg[0],value=arg[1];
@@ -220,7 +220,7 @@
             infobut.style.display="";
               var exif = json_decode(file_get_contents("download.php/exif/"+url)),
               inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-              dlstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\"download.php/"+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
+              dlstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
               if(srcthumb.dataset.description == "undefined")
               {
                inf="Hochgeladen von "+srcthumb.dataset.by;
@@ -294,7 +294,6 @@
                     nextindex = 0;
                   }
                   var thumb = findthumb(imgs[nextindex]);
-                  console.log(thumb);
                   openpic(thumb);
                   }
                   function prev(e)
@@ -316,7 +315,7 @@
                         }
                       }
                     }
-                    document.onkeyup=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
+                    document.onkeypress=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
     window.onload=function ()
     {
     if(spic != undefined)
@@ -338,7 +337,7 @@
          w = new Worker("preload.js");
          w.onmessage = function(e)
          {
-           var fname = e.data[1],
+           var fname = basename(e.data[1]),
            blob = e.data[0],
            url = (window.URL || window.webkitURL).createObjectURL(blob);
            imgs[fname] = url;
