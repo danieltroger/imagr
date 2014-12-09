@@ -28,16 +28,19 @@
       <script>
       var thumbsize = 0,
       realsize="dyn",
-      hash=location.hash,
       argr,args,
       mobile=false,
       spic=undefined,
       info=false,
-      preload = true;
-      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true}
-      if(hash[1] == "!")
+      preload = true,
+      loaded = false;
+      if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){mobile=true;preload=false}
+      function lhash()
+      {
+        var hash = location.hash;
+        if(hash[1] == "!")
         {
-          console.info("Parsing URL paramenters...");
+          //console.info("Parsing URL paramenters...");
           if(hash.length <= 2)
           {
             console.warn("No arguments provided but #!. Stopping.");
@@ -57,7 +60,7 @@
                 {
                   console.warn("Multiple values specified, using first one");
                 }
-                console.log("Key: "+key+" value: "+value);
+                //console.log("Key: "+key+" value: "+value);
                 if(key == "ts")
                 {
                   if(value != "")
@@ -86,10 +89,29 @@
                     info = true;
                   }
                 }
-                (key == "preload" && value == "false") ? preload = false : null;
+                if(key == "preload")
+                {
+                  if(value == "false") preload = false;
+                  if(value == "true") prelaod = true;
+                }
               }
             }
         }
+        if(loaded)
+        {
+          if(spic != undefined)
+          {
+            var ps=findthumb(spic);
+            if(ps != undefined && img.dataset.original != ps.dataset.original)
+            {
+              openpic(ps);
+            }
+            if(info){infolay.classList.remove("closed")}
+          }
+        }
+        setTimeout("lhash();",1000);
+      }
+      lhash();
       var imgs=Array(<?php
         $imgs = glob("*");
         $imglen = sizeof($imgs)-1;
@@ -192,7 +214,7 @@
             var url = srcthumb.dataset.original, blob = false, burl = imgs[url];
             if(substr(burl,0,4) == "blob")
             {
-              console.info("Reading image "+url+" from blob "+burl);
+              console.info("Reading image "+url+" from "+burl);
               img.src=burl;
               blob = true;
             }
@@ -214,13 +236,15 @@
               }
             }
             img.dataset.original = url;
+            location.hash = "#!image="+basename(url);
             container.style.display="";
             srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
             srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
             infobut.style.display="";
               var exif = json_decode(file_get_contents("download.php/exif/"+url)),
               inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-              dlstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
+              lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
+              //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
               if(srcthumb.dataset.description == "undefined")
               {
                inf="Hochgeladen von "+srcthumb.dataset.by;
@@ -259,7 +283,7 @@
                  	if(flash != false) inf += ", Blitz aktiviert";
                  	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
                  	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
-                 	inf += dlstr;
+                 	inf += lstr;
                  	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
                     infolay.innerHTML = inf;
                 }
@@ -315,23 +339,13 @@
                         }
                       }
                     }
+
                     document.onkeypress=function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}};
-    window.onload=function ()
-    {
-    if(spic != undefined)
-    {
-       var ps=findthumb(spic);
-       if(ps != undefined)
-       {
-        openpic(ps);
-       }
-       if(info){infolay.classList.remove("closed")}
-     }
-     startWorker();
-     }
+    window.onload=startWorker;
      var w;
      function startWorker()
      {
+       loaded = true;
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
        {
          w = new Worker("preload.js");
