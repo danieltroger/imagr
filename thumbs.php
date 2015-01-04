@@ -1,5 +1,6 @@
 <?php
 error_reporting(0);
+if(!function_exists('gd_info')) die("Cannot find the GD extension. Please check that it's installed.");
 function create_thumb($src,$dest,$desired_width = false, $desired_height = false)
 {
    // echo "/* create_humb() called file: " . __FILE__ . " line: " . __LINE__ .  " */ \n";

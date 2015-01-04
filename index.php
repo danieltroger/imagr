@@ -7,21 +7,24 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     require "thumbs.php";
+    require "imgs.php";
 
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
     {
-        $dir = explode("/",$_SERVER["PHP_SELF"]);
-        unset($dir[sizeof($dir)-1]);
-        $dir = implode("/",$dir);
-        file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
+      if(!is_writable(".htaccess")) die("Cannot create .htaccess, probaly permission denied.");
+      $dir = explode("/",$_SERVER["PHP_SELF"]);
+      unset($dir[sizeof($dir)-1]);
+      $dir = implode("/",$dir);
+      file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
     }
     ?><!DOCTYPE html>
     <html>
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="http://natur-kultur.eu/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
+      <!--<script src="http://natur-kultur.eu/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>-->
+      <script src="script.js"></script>
     <body>
     <div id="grid">
     </div>
@@ -37,34 +40,7 @@
       mobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
       preload = mobile ? false : true,
       imgs=Array(<?php
-        $imgs = glob("*");
-        $imglen = sizeof($imgs)-1;
-        $invalid_files_length = 0;
-        $rkey = 0;
-        $invalid_extensions=Array("php","zip","ign","html","html~","php~","json","json~","log","svg","mov","svg~","license","dir","zip","meta","js","md");
-        foreach($imgs as $key => $img)
-        {
-          $extension = getextension($img);
-      if(in_array($extension,$invalid_extensions))
-        {
-            $invalid_files_length++;
-          }
-        }
-        echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
-        foreach($imgs as $key => $img)
-        {
-          $extension = getextension($img);
-          if(!in_array($extension,$invalid_extensions))
-          {
-            echo "\"" . thumb($img) . "\"";
-            if($rkey != $imglen-$invalid_files_length)
-            {
-              echo ",";
-            }
-            $rkey++;
-          }
-          echo " /* file = {$img}, extension = {$extension}, key = {$key}, rkey = {$rkey}*/\n";
-        }
+      imgs(1);
       ?>),
       grid=document.getElementById("grid"),
       meta=json_decode(file_get_contents("meta?"+rand(1,200))),
