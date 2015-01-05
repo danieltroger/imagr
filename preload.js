@@ -5,11 +5,12 @@ self.onmessage=function(e)
     var oReq = new XMLHttpRequest();
     oReq.open("GET", img, false);
     oReq.responseType = "blob";
-    oReq.onload = function(oEvent)
-    {
-      var blob = oReq.response;
-      postMessage([blob,oEvent.target.responseURL]);
-    };
     oReq.send();
+    var blob = oReq.response;
+    var m = new XMLHttpRequest();
+    m.open("GET","download.php/exif/"+img,false);
+    m.send();
+    var json = m.response;
+    postMessage([blob,oReq.responseURL,json]);
   });
 }

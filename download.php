@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 $paths = explode("/",substr($_SERVER["PATH_INFO"],1));
 if($paths[0] == "exif")
 {
+  header("Content-type: text/plain");
   if(strlen($paths[1]) <1)
   {
     die(json_encode(array("error" => "please specify an filename")));
@@ -17,9 +18,8 @@ if($paths[0] == "exif")
   }
   echo json_encode(
   array(
-  'dump' => utf8_encode(print_r($we,1)),
-  'width' => $we['ExifImageWidth'],
-  'height' => $we['ExifImageLength'],
+  'width' => w($we['ExifImageWidth']),
+  'height' => h($we['ExifImageLength']),
   'flash' => flash($we['Flash']),
   'make' => maker($we['Make']),
   'model' => model($we['Model']),
@@ -154,6 +154,7 @@ function formatsize($size)
   }
   function edate($a,$b)
   {
+    if(empty($a) && empty($b)) return false;
     if(strlen($a) > 2) return $a;
     return date("Y:m:d h:i:s",$b);
   }
@@ -171,5 +172,17 @@ function formatsize($size)
   {
     if($fl & 1 != 0) return true;
     return false;
+  }
+  function w($t)
+  {
+    $f = $GLOBALS['paths'][1];
+    if(!empty($t)) return $t;
+    return getimagesize($f)[0];
+  }
+  function h($t,$f)
+  {
+    $f = $GLOBALS['paths'][1];
+    if(!empty($t)) return $t;
+    return getimagesize($f)[1];
   }
 ?>

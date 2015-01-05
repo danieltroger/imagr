@@ -12,7 +12,7 @@
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
     {
-      if(!is_writable(".htaccess")) die("Cannot create .htaccess, probaly permission denied.");
+      if(!is_writable(".")) die("Cannot create .htaccess, probaly permission denied.");
       $dir = explode("/",$_SERVER["PHP_SELF"]);
       unset($dir[sizeof($dir)-1]);
       $dir = implode("/",$dir);
@@ -49,7 +49,8 @@
       desc=document.createElement("span"),
       prevb=document.createElement("img"),
       nextb=document.createElement("img"),
-      img=document.createElement("img");
+      img=document.createElement("img"),
+      mdata = {};
       bigpic.addEventListener("click",function (e)
       {
         if(e.target.id == this.id)
@@ -141,7 +142,7 @@
           srcthumb.dataset.by == undefined ? srcthumb.dataset.by = (meta['all'] != undefined ? meta['all'] : "Unknown") : null;
           srcthumb.dataset.description == undefined ? srcthumb.dataset.description = "Unbenannt" : null;
           infobut.style.display="";
-            var exif = json_decode(file_get_contents("download.php/exif/"+url)),
+            var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
             inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
             lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
             //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
@@ -244,9 +245,10 @@
          w.onmessage = function(e)
          {
            var fname = basename(e.data[1]),
-           blob = e.data[0],
-           url = (window.URL || window.webkitURL).createObjectURL(blob);
+           blob = e.data[0];
+           var url = (window.URL || window.webkitURL).createObjectURL(blob);
            imgs[fname] = url;
+           mdata[fname] = json_decode(e.data[2]);
            console.info("WebWorker has successfully downloaded "+fname+" to "+url);
           };
           w.postMessage(imgs);
