@@ -18,17 +18,17 @@ if($paths[0] == "exif")
   }
   echo json_encode(
   array(
-  'width' => w($we['ExifImageWidth']),
-  'height' => h($we['ExifImageLength']),
-  'flash' => flash($we['Flash']),
-  'make' => maker($we['Make']),
-  'model' => model($we['Model']),
-  'GPS' => $gmaps,
-  'date' => edate($we['DateTime'],$we['FileDateTime']),
-  'ISO' => ISO($we['ISOSpeedRatings']),
-  'aperture' => aperture($we['FNumber']),
-  'exposure' => exposure($we['ExposureTime']),
-  'filesize' => formatsize($we['FileSize'])
+    'width' => w($we['ExifImageWidth']),
+    'height' => h($we['ExifImageLength']),
+    'flash' => flash($we['Flash']),
+    'make' => maker($we['Make']),
+    'model' => model($we['Model']),
+    'GPS' => $gmaps,
+    'date' => edate($we['DateTime'],$we['FileDateTime']),
+    'ISO' => ISO($we['ISOSpeedRatings']),
+    'aperture' => aperture($we['FNumber']),
+    'exposure' => exposure($we['ExposureTime']),
+    'filesize' => formatsize($we['FileSize'])
   ));
   //echo json_last_error_msg();
 }
@@ -53,18 +53,15 @@ else
   }
   $finfo = finfo_open(FILEINFO_MIME_TYPE);
   $cont = finfo_file($finfo,$file);
-  if(strpos(strtolower($cont),"image/") !== false)
-  {
-    header("Content-type: {$cont}-download");
-  }
-  else
+  $fsize = filesize($file);
+  if(substr(strtolower($cont),0,6) != "image/")
   {
     die("Not an image (mime-type: {$cont} file: {$file})");
   }
   finfo_close($finfo);
   if(!isset($size))
   {
-    echo file_get_contents($file);
+    $dfile = $file;
   }
   else
   {
@@ -72,8 +69,52 @@ else
     $ext = getextension($file,true);
     $oname = "thumbs.dir"  . DIRECTORY_SEPARATOR . $ext[1] . "-" .  $paths[1] . "." .  $ext[0];
     thumb($file,$oname,$size[0],$size[1]);
-    echo file_get_contents($oname);
+    $dfile = $oname;
   }
+  // downloader
+  $offset = 0;
+  $range = @$_SERVER['HTTP_RANGE'];
+  $buffsize = 1048576;
+  $h = fopen($file,"r");
+  if(isset($range))
+  {
+    $a = explode("=",$range);
+    unset($a[0]);
+    $a = explode("-",implode("=",$a));
+    $offset = $a[0];
+    if(empty($a[1]))
+    {
+      $stop = $fsize;
+    }
+    else
+    {
+      $stop = explode("/",$a[1])[0]+1;
+    }
+    $length = $stop-$offset;
+    header('HTTP/1.1 206 Partial Content');
+    header('Accept-Ranges: bytes');
+    header("Content-type: {$cont}-download");
+    header("Content-Range: bytes " . $offset . "-" . ($stop-1) . "/" . $fsize);
+    header("Content-length: {$length}");
+    if($length == 0) exit;
+    fseek($h, $offset);
+    for(;$offset+$buffsize < $stop;$offset += $buffsize)
+    {
+      echo fread($h,$buffsize);
+    }
+    echo fread($h,$stop-$offset);
+  }
+  else
+  {
+    header('Accept-Ranges: bytes');
+    header("Content-type: {$cont}-download");
+    header("Content-length: {$fsize}");
+    while(!feof($h))
+    {
+      echo fread($h,$buffsize);
+    }
+  }
+  fclose($h);
 }
 function calc($equation,$nocomma = true)
 {
@@ -94,14 +135,14 @@ function calc($equation,$nocomma = true)
     eval('$result = '.$equation.';');
     if($nocomma)
     {
-     if(strpos($result,".") !== false)
-     {
-       return explode(".",$result)[0];
-     }
-     else
-     {
-      return $result;
-     }
+      if(strpos($result,".") !== false)
+      {
+        return explode(".",$result)[0];
+      }
+      else
+      {
+        return $result;
+      }
     }
     else
     {
@@ -115,74 +156,74 @@ function calc($equation,$nocomma = true)
 }
 function formatsize($size)
 {
-  if($size < 1) return false;
-  if($size > 1024 * 1024 * 1024)
+  if($size == 0) return "0 Bytes";
+  if($size == 1) return "1 Byte";
+  if($size >= 1024 * 1024 * 1024)
   {
     return round($size / 1024 / 1024 / 1024,2) . " GiB";
   }
-  elseif($size > 1024 * 1024)
+  elseif($size >= 1024 * 1024)
   {
     return round($size / 1024 / 1024,2) . " MiB";
   }
-  elseif($size > 1024)
+  elseif($size >= 1024)
   {
     return round($size / 1024,2) . " KiB";
   }
-  elseif($size < 1024)
+  elseif($size <= 1024)
   {
     return "{$size} Bytes";
   }
 }
-
-  function exposure($exp)
-  {
-    if(strlen($exp) < 1) return false;
-    $split = explode("/",$exp);
-    if($split[0] == "1") return $exp;
-    if($split[1] == "1") return $exp;
-    return "1/" .round($split[1] / $split[0]);
-  }
-  function aperture($ap)
-  {
-    if(strlen($ap) < 1) return false;
-    return calc($ap,false);
-  }
-  function ISO($iso)
-  {
-    if(strlen($iso) < 1) return false;
-    return $iso;
-  }
-  function edate($a,$b)
-  {
-    if(empty($a) && empty($b)) return false;
-    if(strlen($a) > 2) return $a;
-    return date("Y:m:d h:i:s",$b);
-  }
-  function model($model)
-  {
-    if(strlen($model) > 1 ) return $model;
-    return false;
-  }
-  function maker($make)
-  {
-    if(strlen($make) > 1) return $make;
-    return false;
-  }
-  function flash($fl)
-  {
-    if($fl & 1 != 0) return true;
-    return false;
-  }
-  function w($t)
-  {
-    $f = $GLOBALS['paths'][1];
-    if(!empty($t)) return $t;
-    return getimagesize($f)[0];
-  }
-  function h($t,$f)
-  {
-    $f = $GLOBALS['paths'][1];
-    if(!empty($t)) return $t;
-    return getimagesize($f)[1];
-  }
+function exposure($exp)
+{
+  if(strlen($exp) < 1) return false;
+  $split = explode("/",$exp);
+  if($split[0] == "1") return $exp;
+  if($split[1] == "1") return $exp;
+  return "1/" .round($split[1] / $split[0]);
+}
+function aperture($ap)
+{
+  if(strlen($ap) < 1) return false;
+  return calc($ap,false);
+}
+function ISO($iso)
+{
+  if(strlen($iso) < 1) return false;
+  return $iso;
+}
+function edate($a,$b)
+{
+  if(empty($a) && empty($b)) return false;
+  if(strlen($a) > 2) return $a;
+  return date("Y:m:d h:i:s",$b);
+}
+function model($model)
+{
+  if(strlen($model) > 1 ) return $model;
+  return false;
+}
+function maker($make)
+{
+  if(strlen($make) > 1) return $make;
+  return false;
+}
+function flash($fl)
+{
+  if($fl & 1 != 0) return true;
+  return false;
+}
+function w($t)
+{
+  $f = $GLOBALS['paths'][1];
+  if(!empty($t)) return $t;
+  return getimagesize($f)[0];
+}
+function h($t)
+{
+  $f = $GLOBALS['paths'][1];
+  if(!empty($t)) return $t;
+  return getimagesize($f)[1];
+}
 ?>
