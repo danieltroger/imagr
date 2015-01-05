@@ -5,19 +5,19 @@ Is an image and move viewer written in HTML5.
 
 ## Howto
 
-Upload your images with the upload script (the script must have write permission to write to the directory where imagr is) or place them in the "root directory" of image. Enjoy!
+Place imagr on your webserver, then upload your images with the upload script (the script must have write permission to write to the directory where imagr is) or place them in the "root directory" of image. Enjoy!
 
 ----------
 
 ### Preload
 
-The viewer now preloads all images (into the memory O.o) if the client supports WebWorkers.
+The viewer now preloads all images and it's metadata (into the memory O.o) if the client supports WebWorkers.
 
 Preloading is disabled on mobile clients. (Due to cellular data usage.)
 
 ### Linking
 
-If you open an image if you automatically get a link to it in the location bar. Anyways, here's the documentation.
+If you open an imag, you'll automatically get a link to it in the location bar. Anyways, here's the documentation.
 
 Possible options are: `/imagr/#![image=<filename.jpg>,][info=<boolean>,][preload=<boolean>,][rs=<width>[x<height>],][ts=<width>[x<height>]]`
 
