@@ -70,7 +70,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
         'dest'      => $dest
     );
   }
-  function thumb($image,$oname, $width, $height, $rot_exif)
+  function thumb($image,$oname, $width, $height)
   {
   //echo "/* going to thumb {$image}...*/\n";
   if(!isset($width) && !isset($height)){$width = 380;}
