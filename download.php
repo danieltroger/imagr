@@ -84,9 +84,17 @@ else
                 imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),-90,0),$rname);
                 break;
         }
+        $dfile = $rname;
+      }
+      else
+      {
+
       }
     }
-    $dfile = $rname;
+    else
+    {
+      $dfile = $rname;
+    }
   }
   else
   {
