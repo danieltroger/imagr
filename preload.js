@@ -3,7 +3,7 @@ self.onmessage=function(e)
   e.data.forEach(function (img)
   {
     var oReq = new XMLHttpRequest();
-    oReq.open("GET", img, false);
+    oReq.open("GET", "download.php/"+img, false);
     oReq.responseType = "blob";
     oReq.send();
     var blob = oReq.response;

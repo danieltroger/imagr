@@ -31,7 +31,22 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
 
     /* copy source image at a resized size */
     imagecopyresized($virtual_image,$resource,0,0,0,0,$desired_width,$desired_height,$width,$height);
-
+    $exif = exif_read_data($src);
+    if(!empty($exif['Orientation']))
+    {
+      switch($exif['Orientation'])
+      {
+          case 8:
+              $virtual_image = imagerotate($virtual_image,90,0);
+              break;
+          case 3:
+              $virtual_image = imagerotate($virtual_image,180,0);
+              break;
+          case 6:
+              $virtual_image = imagerotate($virtual_image,-90,0);
+              break;
+      }
+    }
     /* create the physical thumbnail image to its destination */
     /* Use correct function based on the desired image type from $dest thumbnail source */
     $fparts = pathinfo($dest);
@@ -55,7 +70,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
         'dest'      => $dest
     );
   }
-  function thumb($image,$oname, $width, $height)
+  function thumb($image,$oname, $width, $height, $rot_exif)
   {
   //echo "/* going to thumb {$image}...*/\n";
   if(!isset($width) && !isset($height)){$width = 380;}
@@ -72,7 +87,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   }
   else
   {
-  create_thumb($image,$oname,$width,$height);
+    create_thumb($image,$oname,$width,$height);
   }
   }
  // echo "/* thumbed {$image}*/\n";

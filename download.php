@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-$paths = explode("/",substr($_SERVER["PATH_INFO"],1));
+$paths = explode("/",substr("/resize/300/IMG_4953.JPG",1));
 if($paths[0] == "exif")
 {
   header("Content-type: text/plain");
@@ -61,7 +61,31 @@ else
   finfo_close($finfo);
   if(!isset($size))
   {
-    $dfile = $file;
+    $rname = "thumbs.dir/" . basename($file);
+    if(!is_dir("thumbs.dir")){mkdir("thumbs.dir");}
+    if(!file_exists($rname))
+    {
+      $e = exif_read_data($file);
+      if(!empty($e['Orientation']))
+      {
+        header("X-exif-rotation: {$e['Orientation']}");
+        header("Content-type: image/jpeg-dl");
+        switch($e['Orientation'])
+        {
+            case 8:
+                $image =  imagecreatefromstring(file_get_contents($file));
+                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),90,0),$rname);
+                break;
+            case 3:
+                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),180,0),$rname);
+                break;
+            case 6:
+                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),-90,0),$rname);
+                break;
+        }
+      }
+    }
+    $dfile = $rname;
   }
   else
   {
@@ -75,7 +99,7 @@ else
   $offset = 0;
   $range = @$_SERVER['HTTP_RANGE'];
   $buffsize = 1048576;
-  $h = fopen($file,"r");
+  $h = fopen($dfile,"r");
   if(isset($range))
   {
     $a = explode("=",$range);
