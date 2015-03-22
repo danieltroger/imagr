@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-$paths = explode("/",substr("/resize/300/IMG_4953.JPG",1));
+$paths = explode("/",substr($_SERVER['PATH_INFO'],1));
 if($paths[0] == "exif")
 {
   header("Content-type: text/plain");
