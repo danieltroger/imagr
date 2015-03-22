@@ -88,7 +88,7 @@ else
       }
       else
       {
-
+        $dfile = $file;
       }
     }
     else
