@@ -108,6 +108,7 @@ else
   $offset = 0;
   $range = @$_SERVER['HTTP_RANGE'];
   $buffsize = 1048576;
+  $fsize = filesize($dfile);
   $h = fopen($dfile,"r");
   if(!empty($range))
   {
