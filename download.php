@@ -100,7 +100,7 @@ else
   $range = @$_SERVER['HTTP_RANGE'];
   $buffsize = 1048576;
   $h = fopen($dfile,"r");
-  if(isset($range))
+  if(!empty($range))
   {
     $a = explode("=",$range);
     unset($a[0]);
