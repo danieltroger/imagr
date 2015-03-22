@@ -66,9 +66,10 @@ else
     if(!file_exists($rname))
     {
       $e = exif_read_data($file);
-      if(!empty($e['Orientation']))
+      $r = @$e['Orientation'];
+      if(!empty($r) && ($r == 8 || $r == 3 || $r == 6))
       {
-        header("X-exif-rotation: {$e['Orientation']}");
+        header("X-exif-rotation: {$r}");
         header("Content-type: image/jpeg-dl");
         switch($e['Orientation'])
         {
