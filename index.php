@@ -238,6 +238,26 @@
             window.addEventListener("keypress",function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}});
             window.addEventListener("load",lhash);
             window.addEventListener("load",startWorker);
+            img.addEventListener("dblclick",function () {
+            var element = document.documentElement;
+            if(element.requestFullscreen)
+            {
+              element.requestFullscreen();
+            }
+            else if(element.mozRequestFullScreen)
+            {
+              element.mozRequestFullScreen();
+            }
+            else if(element.webkitRequestFullscreen)
+            {
+              element.webkitRequestFullscreen();
+            }
+            else if(element.msRequestFullscreen)
+            {
+              element.msRequestFullscreen();
+            }
+          });
+
      function startWorker()
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
