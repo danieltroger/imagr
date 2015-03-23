@@ -134,7 +134,7 @@
               d = document,
               e = d.documentElement,
               g = d.getElementsByTagName('body')[0],
-              x = w.innerWidth|| e.clientWidth|| g.clientWidth,
+              x = w.innerWidth|| e.clientWidth|| g.clientWidth;
               img.src="download.php/resize/"+(x/100)*95+"/"+url;
             }
             else
