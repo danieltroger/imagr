@@ -266,8 +266,8 @@
           }
           else
           {
-            argr=substr(hash,2);
-            args=explode(",",argr);
+            argr = substr(hash,2);
+            args = explode(",",argr);
             for(var i = 0;i<args.length;i++)
             {
               var arg=explode("=",args[i]),key=arg[0],value=arg[1];
@@ -318,8 +318,8 @@
               }
               if(key == "preload")
               {
-                if(value == "false") preload = false;
-                if(value == "true") prelaod = true;
+                if(value == "false" || value == false) preload = false;
+                if(value == "true" || value == true) preload = true;
               }
             }
           }
