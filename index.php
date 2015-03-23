@@ -50,8 +50,7 @@
       prevb=document.createElement("img"),
       nextb=document.createElement("img"),
       img=document.createElement("img"),
-      mdata = {},
-      l;
+      mdata = {};
       bigpic.addEventListener("click",function (e)
       {
         if(e.target.id == this.id)
@@ -239,12 +238,9 @@
             window.addEventListener("load",startWorker);
      function startWorker()
      {
-       if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload == true)
+       if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
        {
-         console.log(preload);
          w = new Worker("preload.js");
-         l = new Worker("loc.js");
-         console.info("Location WebWorker started");
          w.onmessage = function(e)
          {
            var fname = basename(e.data[1]),
