@@ -386,17 +386,20 @@
           top: 50%;
           transform: translateY(-50%);
           -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
         }
         .horcent
         {
           left: 50%;
           transform: translateX(-50%);
           -webkit-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
         }
         .cent
         {
           transform: translateX(-50%) translateY(-50%);
           -webkit-transform: translateX(-50%) translateY(-50%);
+          -ms-transform: translateX(-50%) translateY(-50%);
         }
         .next
         {
