@@ -23,7 +23,7 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="//s.natur-kultur.eu/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
+      <script src="/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
       <!--<script src="script.js"></script>-->
     <body>
     <div id="grid">
@@ -56,6 +56,7 @@
         if(e.target.id == this.id)
         {
           this.style.display="none";
+          location.hash = "#!overview=true"
         }
       });
       prevb.src="prev.svg";
@@ -235,6 +236,7 @@
               }
             }
             window.addEventListener("keypress",function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}});
+            window.addEventListener("load",lhash);
             window.addEventListener("load",startWorker);
      function startWorker()
      {
@@ -256,6 +258,7 @@
      }
      function lhash()
      {
+       requestAnimationFrame(lhash);
        var hash = location.hash;
        if(hash[1] == "!")
         {
@@ -318,14 +321,17 @@
               }
               if(key == "preload")
               {
-                console.log(value);
+                //console.log(value);
                 if(value == "false" || value == false) preload = false;
                 if(value == "true" || value == true) preload = true;
+              }
+              if(key == "overview")
+              {
+                if(value == "true" || value == true) bigpic.click();
               }
             }
           }
         }
-    setTimeout("lhash();",1000);
     }
     </script>
     <style>
