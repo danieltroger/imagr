@@ -23,7 +23,7 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="http://natur-kultur.eu/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
+      <script src="//s.natur-kultur.eu/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
       <!--<script src="script.js"></script>-->
     <body>
     <div id="grid">
