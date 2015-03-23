@@ -318,6 +318,7 @@
               }
               if(key == "preload")
               {
+                console.log(value);
                 if(value == "false" || value == false) preload = false;
                 if(value == "true" || value == true) preload = true;
               }
