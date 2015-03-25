@@ -21,6 +21,7 @@ fclose($in);
 //$length = $h['X-length'];
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
 $fname = basename($h['X-name']);
+if(empty($fname)) exit(json_encode(Array('success' => false, 'error' => 'filename is empty')));
 $date = (int) $h['X-date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
