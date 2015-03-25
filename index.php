@@ -82,36 +82,42 @@
       var infolay=document.createElement("div");
       infolay.classList.add("infolay","horcent","closed");
       container.appendChild(infolay);
-      imgs.forEach(
-        function (image) {
-          var imgelem=document.createElement("img");
-          if(thumbsize != 0)
-          {
-              imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
-              imgelem.style.width=thumbsize+"px";
-          }
-          else
-          {
-            imgelem.src="thumbs.dir/"+image+".jpg";
-            imgelem.style.width="19%";
-            if(mobile){imgelem.style.width="92%";}
-            imgelem.style.minWidth="200px";
-          }
-          imgelem.setDataAttribute("original",image);
-          imgelem.classList.add("image");
-          if(meta[image]!=undefined)
-          {
-            imgelem.setDataAttribute("by",meta[image].by);
-            imgelem.setDataAttribute("description",meta[image].description);
-          }
-          imgelem.addEventListener("click",openpic);
-          grid.appendChild(imgelem);
-        });
+      imgs.forEach(addimg);
+      function addimg(image)
+      {
+        var imgelem=document.createElement("img");
+        if(thumbsize != 0)
+        {
+            imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
+            imgelem.style.width=thumbsize+"px";
+        }
+        else
+        {
+          imgelem.src="thumbs.dir/"+image+".jpg";
+          imgelem.style.width="19%";
+          if(mobile){imgelem.style.width="92%";}
+          imgelem.style.minWidth="200px";
+        }
+        imgelem.setDataAttribute("original",image);
+        imgelem.classList.add("image");
+        if(meta[image]!=undefined)
+        {
+          imgelem.setDataAttribute("by",meta[image].by);
+          imgelem.setDataAttribute("description",meta[image].description);
+        }
+        imgelem.addEventListener("click",openpic);
+        grid.appendChild(imgelem);
+      }
         function openpic(srcthumb)
         {
           if(this.tagName == "IMG")
           {
             srcthumb = this;
+          }
+          if(srcthumb == undefined)
+          {
+            console.warn("srcthumb is undefined");
+            return;
           }
           var url = srcthumb.dataset.original, blob = false, burl = imgs[url];
           if(substr(burl,0,4) == "blob")
@@ -243,6 +249,31 @@
             window.addEventListener("keypress",function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}});
             window.addEventListener("load",lhash);
             window.addEventListener("load",startWorker);
+            var p;
+            window.addEventListener("load",function ()
+            {
+              p = document.querySelector("#progress");
+              var elem = document.body;
+              elem.addEventListener("dragover", function(e){e.preventDefault();});
+              elem.addEventListener("drop", function(e)
+              {
+                e.preventDefault();
+                var files = e.dataTransfer.files,
+                i = 0;
+                for(; i < files.length; i++)
+                {
+                  var src = files[i];
+                  if(src.type.match(/image.*/))
+                  {
+                    read(src);
+                  }
+                  else
+                  {
+                    alert("File: "+src.name+" is not an image");
+                  }
+                }
+              });
+            });
             img.addEventListener("dblclick",function () {
             var element = document.documentElement;
             if(element.requestFullscreen)
@@ -262,7 +293,39 @@
               element.msRequestFullscreen();
             }
           });
-
+          function read(file)
+          {
+            var reader = new FileReader();
+            reader.addEventListener("load",function (e){
+              upload(e.target.result,file.name,file.lastModified);
+            });
+            reader.readAsDataURL(file);
+          }
+          function upload(binary,fname,date)
+          {
+            var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+            xmlhttp.onreadystatechange=function()
+            {
+              if (xmlhttp.readyState==4 && xmlhttp.status==200)
+              {
+                var ret = json_decode(xmlhttp.responseText);
+                if(ret.success)
+                {
+                  imgs.push(ret.file);
+                  addimg(ret.file);
+                  alert(ret.orig_file+" was successfully uploaded");
+                }
+                else
+                {
+                  alert("There was an error while uploading: "+ret.error+", file: "+ret.file);
+                }
+              }
+            }
+            xmlhttp.open("POST","upload.php",true);
+            xmlhttp.setRequestHeader("X-name",fname);
+            xmlhttp.setRequestHeader("X-date",date);
+            xmlhttp.send(binary);
+          }
      function startWorker()
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
@@ -326,10 +389,14 @@
               {
                 if(value != "" && value != undefined)
                 {
-                  var t=findthumb(value);
-                  if(t != undefined && img.dataset.original != t.dataset.original)
+                  if(img.dataset.original != value)
                   {
-                    openpic(t);
+                    var t = findthumb(value);
+                    if(t != undefined && img.dataset.original != t.dataset.original)
+                    {
+
+                      openpic(t);
+                    }
                   }
                 }
               }
@@ -352,7 +419,7 @@
               }
               if(key == "overview")
               {
-                if(value == "true" || value == true) bigpic.click();
+                if(value == "true" || value == true) if(bigpic.style.display != "none") bigpic.click();
               }
             }
           }

@@ -46,6 +46,7 @@ while(file_exists($fname))
 rename($tn,$fname);
 chmod($fname,0644);
 touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
+thumb($fname);
 if(file_exists($fname))
 {
   exit(json_encode(Array('success' => true,'date' => $date,'file' => $fname,'orig_file' => $h['X-name'])));
