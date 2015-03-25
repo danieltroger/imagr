@@ -5,7 +5,7 @@ Is an image and move viewer written in HTML5.
 
 ## Howto
 
-Place imagr on your webserver, then upload your images with the upload script (the script must have write permission to write to the directory where imagr is) or place them in the "root directory" of image. Enjoy!
+Place imagr on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
 
 ----------
 
@@ -17,11 +17,15 @@ Preloading is disabled on mobile clients. (Due to cellular data usage.)
 
 ### Linking
 
-If you open an imag, you'll automatically get a link to it in the location bar. Anyways, here's the documentation.
+If you open an imagr, you'll automatically get a link to it in the location bar. Anyways, here's the documentation.
 
 Possible options are: `/imagr/#![image=<filename.jpg>,][info=<boolean>,][preload=<boolean>,][rs=<width>[x<height>],][ts=<width>[x<height>]]`
 
 `rs` stands for real size, the size of the loaded images (the preloaded are always fullsize).
+
+If `rs` is equal to zero (`#!rs=0`) the full image will be loaded.
+
+If `rs` is equal to (`rs=dyn`) the image size will be adjusted depending on the window size. This is the default option.
 
 `ts` stands for thumbnail size.
 
