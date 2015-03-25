@@ -17,7 +17,7 @@ Preloading is disabled on mobile clients. (Due to cellular data usage.)
 
 ### Linking
 
-If you open an imag, you'll automatically get a link to it in the location bar. Anyways, here's the documentation.
+If you open an imagr, you'll automatically get a link to it in the location bar. Anyways, here's the documentation.
 
 Possible options are: `/imagr/#![image=<filename.jpg>,][info=<boolean>,][preload=<boolean>,][rs=<width>[x<height>],][ts=<width>[x<height>]]`
 
