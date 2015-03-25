@@ -60,16 +60,21 @@
         }
       });
       prevb.src="prev.svg";
-      prevb.classList.add("prev","symbol","vertcent");
+      prevb.classList.add("prev");
+      prevb.classList.add("symbol");
+      prevb.classList.add("vertcent");
       prevb.style.width="10%";
       prevb.addEventListener("click",prev);
       container.appendChild(prevb);
       nextb.src="next.svg";
-      nextb.classList.add("next","symbol","vertcent");
+      nextb.classList.add("next");
+      nextb.classList.add("symbol");
+      nextb.classList.add("vertcent");
       nextb.style.width="10%";
       nextb.addEventListener("click",next);
       container.appendChild(nextb);
-      img.classList.add("largepic","cent");
+      img.classList.add("largepic");
+      img.classList.add("cent");
       container.appendChild(img);
       var infobut=document.createElement("img")
       infobut.src="info.svg"
@@ -79,8 +84,10 @@
       infobut.addEventListener("click",infooverlay);
       infobut.classList.add("horcent");
       container.appendChild(infobut);
-      var infolay=document.createElement("div");
-      infolay.classList.add("infolay","horcent","closed");
+      var infolay = document.createElement("div");
+      infolay.classList.add("infolay");
+      infolay.classList.add("horcent");
+      infolay.classList.add("closed");
       container.appendChild(infolay);
       imgs.forEach(addimg);
       function addimg(image)
