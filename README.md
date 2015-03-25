@@ -22,7 +22,9 @@ If you open an imagr, you'll automatically get a link to it in the location bar.
 Possible options are: `/imagr/#![image=<filename.jpg>,][info=<boolean>,][preload=<boolean>,][rs=<width>[x<height>],][ts=<width>[x<height>]]`
 
 `rs` stands for real size, the size of the loaded images (the preloaded are always fullsize).
+
 If `rs` is equal to zero (`#!rs=0`) the full image will be loaded.
+
 If `rs` is equal to (`rs=dyn`) the image size will be adjusted depending on the window size. This is the default option.
 
 `ts` stands for thumbnail size.
