@@ -1,187 +1,56 @@
-  <?php
-  require "thumbs.php";
-  session_start();
-  function o2a($d) {if (is_object($d)) {$d = get_object_vars($d);}if (is_array($d)) {return array_map(__FUNCTION__, $d);}else {return $d;}}
-  if(sizeof($_FILES) > 0)
+<?php
+error_reporting(E_ALL);
+require "thumbs.php";
+header("Content-type: text/plain");
+if(!is_writable(".")) exit(json_encode(Array('success' => false, 'error' => 'Directory not writable')));
+$h = getallheaders();
+$tn = tempnam(sys_get_temp_dir(), 'upl');
+$temp = fopen($tn,"w+");
+$in = fopen("php://input","r");
+stream_filter_append($temp, 'convert.base64-decode',STREAM_FILTER_WRITE);
+$c = 1;
+while($c)
+{
+  if(fread($in,1) == ",") $c = 0;
+}
+while(!feof($in))
+{
+  fwrite($temp, fread($in,1048576));
+}
+fclose($in);
+//$length = $h['X-length'];
+//if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
+$fname = basename($h['X-name']);
+$date = (int) $h['X-date'];
+if(substr($date,-3) == 000) $date = substr($date,0,-3);
+$finfo = new finfo(FILEINFO_MIME_TYPE);
+fseek($temp,0);
+$mime = $finfo->buffer(fread($temp,1024));
+if(substr($mime,0,6) != "image/") exit(json_encode(Array('success' => false, 'error' => "Not an image (mime: " . $mime . ")",'file' => $fname)));
+finfo_close($finfo);
+fclose($temp);
+$a = 1;
+while(file_exists($fname))
+{
+  $ext = getextension($fname,true);
+  $spaces = explode(" ",$ext[1]);
+  if($a != 1)
   {
-    $files = array();
-    $rfiles = array();
-    foreach($_FILES['files']['name'] as $key => $file)
-      {
-        if($_FILES['files']['error'][$key] >0)
-        {
-          die("Something went wrong with file {$file}, please try again");
-        }
-        $rfiles[] = $file;
-        $a = 2;
-        while(file_exists($file))
-        {
-          $ext = getextension($file,true);
-          $sss = $ext[1];
-          if($a > 2)
-          {
-            $sss = explode(" ",$ext[1]);
-            $ssss = sizeof($sss);
-            unset($sss[$ssss-1]);
-            $sss = implode(" ",$sss);
-          }
-          $file = "{$sss} ({$a}).{$ext[0]}";
-          $a++;
-          }
-          move_uploaded_file($_FILES['files']['tmp_name'][$key],$file);
-          $meta = o2a(json_decode(file_get_contents("meta")));
-          $meta[$rfiles[$key]]['by'] = $_SESSION['name'];
-          file_put_contents("meta",json_encode($meta));
-          $files[] = $file;
-        }
-        $descview = true;
-      }
-      elseif(strlen($HTTP_RAW_POST_DATA) > 0)
-      {
-        $data = o2a(json_decode($HTTP_RAW_POST_DATA));
-        $ret = array();
-          if(isset($data['name']))
-          {
-            $ret['operation'] = "setname";
-            $_SESSION['name'] = $data['name'];
-            $ret["status"] ="ok";
-          }
-          elseif(isset($data['file']))
-          {
-            $ret['operation'] = "uprepare";
-            $_SESSION[$data['file']] = $data['moddate'];
-            $ret["status"] ="ok";
-          }
-          elseif(isset($data['meta']))
-          {
-            // echo'ed stuff
-            $ret['operation'] = "meta";
-            $ret['meta'] = $data['meta'];
-            $ret['meta']['moddate'] = $_SESSION[$data['rfile']];
-            $ret['meta']['by'] = $_SESSION['name'];
-            $ret["status"] ="ok";
-            // stuff for the meta file
-            $meta = o2a(json_decode(file_get_contents("meta")));
-            $meta[$data['meta']['name']] = array("description" => $data['meta']['description'],"moddate" => $_SESSION[$data['rfile']]);
-            $meta[$data['meta']['name']]['by'] = $_SESSION['name'];
-            file_put_contents("meta",json_encode($meta));
-          }
-          $ret['sessiondump'] = $_SESSION;
-          die(json_encode($ret));
-        }
-        ?><!DOCTYPE html>
-        <html>
-        <head>
-          <meta name="viewport" content="width=device-width" />
-          <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_decode.js"></script>
-          <script src="https://raw.github.com/kvz/phpjs/master/functions/json/json_encode.js"></script>
-          <script src="https://raw.githubusercontent.com/kvz/phpjs/master/functions/strings/nl2br.js"></script>
-          <script src="ie.js"></script>
-        </head>
-        <body style="font-family:helvetica;">
-        <style>
-          .uploadedfile
-          {
-            border: 2px dotted #0000FF;
-            margin: 12px;
-            padding: 7px;
-          }
-          .tarea
-          {
-            border: 1px dotted #FF0000;
-            font-family: helvetica;
-            font-size: 13pt;
-            margin: 10px;
-            width: 25%;
-          }
-          </style>
-          <script>function send(arr)
-  {
-    var xmlhttp;
-    if (window.XMLHttpRequest)
-    {// code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp=new XMLHttpRequest();
-    }
-    else
-    {// code for IE6, IE5
-      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlhttp.onreadystatechange=function()
-    {
-      if (xmlhttp.readyState==4 && xmlhttp.status==200)
-      {
-        var response=json_decode(xmlhttp.responseText);
-  console.log(response);
-     if(response.status == "ok")
-     {
-       if(response.operation == "setname")
-       {
-         location.reload();
-       }
-       /*if(response.operation == "uprepare")
-       {
-
-     }*/
-   }
-      }
-    }
-    xmlhttp.open("POST","<?php echo $_SERVRE['PHP_SELF']; ?>",false);
-    xmlhttp.send(json_encode(arr));
+    $ss = sizeof($spaces);
+    unset($spaces[$ss-1]);
   }
-  function sendname(name)
-  {
-    send({"name":name});
-  }
-  </script><?php
-    if(!isset($_SESSION['name']))
-    {
-      ?>
-  <label for="name">Name des Kindes: </label><input id="name" name="name" />
-  <button onclick="sendname(document.getElementById('name').value);">Weiter</button>
-  <?php
-  }
-    elseif($descview)
-    {
-      foreach($files as $key => $value)
-      {
-        ?><div class="uploadedfile" data-image="<?php echo $value; ?>">
-          <img src="download.php/resize/300/<?php echo $value; ?>" /><textarea class="tarea" rows="3" placeholder="Bitte geben Sie eine kurze Beschreibung des Bildes ein"></textarea><button onclick="send({'rfile':'<?php echo $rfiles[$key]; ?>','meta':{'name':this.parentElement.dataset.image,'description':nl2br(this.previousElementSibling.value)}});this.disabled=true;this.innerHTML='Done';">Submit</button>
-        </div>
-        <?php
-      }
-    }
-    else
-    {
-      ?>
-      <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-        Bitte w&auml;hlen sie ihre Foto(s) aus, Mehrfachauswahl ist &uuml;ber shift m&ouml;glich.<br /><span style="color:red;">ACHTUNG:</span> Bei langsammen Internet, maximal c.a drei Fotos auf einmal hochladen, da es sonst ein "Request timout" geben k&ouml;nnte.
-        <br /><input type="file" id="uploader" name="files[]" multiple /><br />
-        Fotos: <div id="files"></div>
-        <br />
-        <input type="submit" value="Weiter" id="submit" disabled />
-      </form>
-      <script>
-      var uploader=document.getElementById("uploader"),files=document.getElementById("files");
-      uploader.onchange=function (e)
-      {
-        for(i = 0;i<this.files.length;i++)
-        {
-          var file=this.files[i],fname=file.name,ftype=file.type,moddate=file.lastModifiedDate;
-          if(ftype.indexOf("image/") == -1)
-          {
-            alert("Datei: "+fname+" ist kein foto, bitte versuchen sie es erneut....");
-            files.innerHTML="";
-            return;
-          }
-  files.innerHTML+="<br /> "+fname;
-  send({"file":fname,"moddate":moddate});
-  }
-  this.style.display="none";
-  document.getElementById("submit").disabled=false;
-  }
-  </script>
-  <?php
-  }
-  ?>
-  </body>
-  </html>
+  $fi_new = implode(" ",$spaces);
+  $fname = "{$fi_new} ({$a}).{$ext[0]}";
+  $a++;
+}
+rename($tn,$fname);
+chmod($fname,0644);
+touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
+if(file_exists($fname))
+{
+  exit(json_encode(Array('success' => true,'date' => $date,'file' => $fname,'orig_file' => $h['X-name'])));
+}
+else
+{
+  exit(json_encode(Array('success' => false, 'error' => "Something went wrong while saving the file",'file' => $fname)));
+}

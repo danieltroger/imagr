@@ -107,5 +107,5 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
         unset($extension[$asize-1]);
         return array($ext,implode(".",$extension));
       }
-      }
+    }
   ?>
