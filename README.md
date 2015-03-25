@@ -5,7 +5,7 @@ Is an image and move viewer written in HTML5.
 
 ## Howto
 
-Place imagr on your webserver, ensure that it can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
+Place imagr on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
 
 ----------
 
