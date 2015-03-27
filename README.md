@@ -9,6 +9,14 @@ Place imagr on your webserver, ensure that we can write there, place your images
 
 ----------
 
+### The viewer GUI
+
+When the page loads, thumbnails will be loaded onto the page (if there are any images, otherwise you will be able to upload some per drag 'n drop,) then, if you click an image, a large view will be opened, which is being closed when you click in the grey area around it.
+
+If you double click on the large image, fullscreen will be toggled if you permit it. (Your browser will probaly ask, I've only tested this feature on Chromium (Google Chrome) and Firefox (Developer edition) so far.)
+
+If you hit the Info button (i) you'll get some information about the image, if made available through EXIF, and an image title and uploaded by if specified in json format in the file `meta`.
+
 ### Preload
 
 The viewer now preloads all images and it's metadata (into the memory O.o) if the client supports WebWorkers.

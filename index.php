@@ -305,7 +305,45 @@
                 }
               });
             });
-            img.addEventListener("dblclick",toggleFullScreen);
+            img.addEventListener("dblclick",function ()
+            {
+                // based on http://davidwalsh.name/fullscreen
+                if((document.fullscreenEnabled == false) || (document.mozFullScreen == false) || (document.webkitIsFullScreen == false))
+                {
+                  var e = document.documentElement;
+                  if(e.requestFullscreen)
+                  {
+                    e.requestFullscreen();
+                  }
+                  else if(e.mozRequestFullScreen)
+                  {
+                    e.mozRequestFullScreen();
+                  }
+                  else if(e.webkitRequestFullscreen)
+                  {
+                    e.webkitRequestFullscreen();
+                  }
+                  else if(e.msRequestFullscreen)
+                  {
+                    e.msRequestFullscreen();
+                  }
+                }
+                else
+                {
+                  if(document.exitFullscreen)
+                  {
+                    document.exitFullscreen();
+                  }
+                  else if(document.mozCancelFullScreen)
+                  {
+                    document.mozCancelFullScreen();
+                  }
+                  else if(document.webkitExitFullscreen)
+                  {
+                    document.webkitExitFullscreen();
+                  }
+                }
+              });
           function read(file)
           {
             var reader = new FileReader();
@@ -340,46 +378,6 @@
             xmlhttp.setRequestHeader("X-date",date);
             xmlhttp.send(binary);
           }
-    function toggleFullScreen()
-    {
-      // based on http://davidwalsh.name/fullscreen
-      var fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled;
-      if(!fullscreenEnabled)
-      {
-        var e = document.documentElement;
-        if(e.requestFullscreen)
-        {
-          e.requestFullscreen();
-        }
-        else if(e.mozRequestFullScreen)
-        {
-          e.mozRequestFullScreen();
-        }
-        else if(e.webkitRequestFullscreen)
-        {
-          e.webkitRequestFullscreen();
-        }
-        else if(e.msRequestFullscreen)
-        {
-          e.msRequestFullscreen();
-        }
-      }
-      else
-      {
-        if(document.exitFullscreen)
-        {
-          document.exitFullscreen();
-        }
-        else if(document.mozCancelFullScreen)
-        {
-          document.mozCancelFullScreen();
-        }
-        else if(document.webkitExitFullscreen)
-        {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
      function startWorker()
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
@@ -418,7 +416,8 @@
               var arg=explode("=",args[i]),key=arg[0],value=arg[1];
               if(value == undefined)
               {
-                console.warn("No value given");
+                //console.warn("No value given, assuming true");
+                value = true;
               }
               if(arg.length > 2)
               {
@@ -443,12 +442,12 @@
               {
                 if(value != "" && value != undefined)
                 {
-                  if(img.dataset.original != value)
+                  var hidden = (bigpic.style.display == "none");
+                  if(hidden || img.dataset.original != value)
                   {
                     var t = findthumb(value);
-                    if(t != undefined && img.dataset.original != t.dataset.original)
+                    if(t != undefined && (img.dataset.original != t.dataset.original || hidden))
                     {
-
                       openpic(t);
                     }
                   }
