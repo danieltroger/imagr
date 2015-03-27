@@ -218,7 +218,7 @@
              	if(flash != false) inf += ", Blitz aktiviert";
              	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
              	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
-              if(sw != false && sw != null) inf += ", editiert mit "+sw;
+              if(sw != false && sw != null) inf += ", software: "+sw;
              	inf += lstr;
              	if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
             }
