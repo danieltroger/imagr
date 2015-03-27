@@ -28,7 +28,8 @@ if($paths[0] == "exif")
     'ISO' => ISO($we['ISOSpeedRatings']),
     'aperture' => aperture($we['FNumber']),
     'exposure' => exposure($we['ExposureTime']),
-    'filesize' => formatsize($we['FileSize'])
+    'filesize' => formatsize($we['FileSize']),
+    'software' => sw($we['Software'])
   ));
   //echo json_last_error_msg();
 }
@@ -230,8 +231,8 @@ function ISO($iso)
 function edate($a,$b)
 {
   if(empty($a) && empty($b)) return false;
-  if(strlen($a) > 2) return $a;
-  return date("Y:m:d h:i:s",$b);
+  if(!empty($a)) return $a;
+  return date("Y:m:d \u\m H:i:s",$b);
 }
 function model($model)
 {
@@ -259,5 +260,9 @@ function h($t)
   $f = $GLOBALS['paths'][1];
   if(!empty($t)) return $t;
   return getimagesize($f)[1];
+}
+function sw($soft)
+{
+  return empty($soft) ? false : $soft;
 }
 ?>

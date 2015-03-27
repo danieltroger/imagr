@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 require "thumbs.php";
 header("Content-type: text/plain");
-if(!is_writable(".")) exit(json_encode(Array('success' => false, 'error' => 'Directory not writable')));
+if(!is_writable(".")) x_err('Directory not writable');
 $h = getallheaders();
 $tn = tempnam(sys_get_temp_dir(), 'upl');
 $temp = fopen($tn,"w+");
@@ -21,13 +21,13 @@ fclose($in);
 //$length = $h['X-length'];
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
 $fname = basename($h['X-name']);
-if(empty($fname)) exit(json_encode(Array('success' => false, 'error' => 'filename is empty')));
+if(empty($fname)) x_err("Filename is empty");
 $date = (int) $h['X-date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
 fseek($temp,0);
 $mime = $finfo->buffer(fread($temp,1024));
-if(substr($mime,0,6) != "image/") exit(json_encode(Array('success' => false, 'error' => "Not an image (mime: " . $mime . ")",'file' => $fname)));
+if(substr($mime,0,6) != "image/") x_err("Not an image (mime: " . $mime . ")");
 finfo_close($finfo);
 fclose($temp);
 $a = 1;
@@ -50,9 +50,15 @@ touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 thumb($fname);
 if(file_exists($fname))
 {
-  exit(json_encode(Array('success' => true,'date' => $date,'file' => $fname,'orig_file' => $h['X-name'])));
+  exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $h['X-name'])));
 }
 else
 {
-  exit(json_encode(Array('success' => false, 'error' => "Something went wrong while saving the file",'file' => $fname)));
+  x_err("Something went wrong while saving the file");
+}
+function x_err($e)
+{
+  // try to clean up if neccessary
+  @unlink($GLOBALS['tn']);
+  exit(json_encode(Array('success' => false, 'error' => $e,'file' => $GLOBALS['fname'])));
 }

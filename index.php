@@ -24,6 +24,7 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <script src="/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
+      <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com//css?family=Ubuntu+Mono%7CUbuntu%3Aregular%2Cbold&amp;subset=Latin">
       <!--<script src="script.js"></script>-->
     <body>
     <div id="grid">
@@ -90,6 +91,19 @@
       infolay.classList.add("closed");
       container.appendChild(infolay);
       imgs.forEach(addimg);
+      if(!imgs.length)
+      {
+        var empty = document.createElement("div"),
+        h1 = document.createElement("h1"),
+        h2 = document.createElement("h2");
+        h1.appendChild(document.createTextNode("Noch nichts da..."));//"Nothing here yet."));
+        h2.appendChild(document.createTextNode("Ziehe fotos auf diese Seite um sie hochzuladen"));//"Upload something by dragging images onto this page"));
+        empty.id = "empty";
+        empty.classList.add("cent");
+        empty.appendChild(h1);
+        empty.appendChild(h2);
+        document.body.appendChild(empty);
+      }
       function addimg(image)
       {
         var imgelem=document.createElement("img");
@@ -163,7 +177,7 @@
           infobut.style.display="";
             var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
             inf=srcthumb.dataset.description+", hochgeladen von "+srcthumb.dataset.by,
-            lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">Download fullsize</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">Download fullsize</a>";
+            lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
             //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
             if(srcthumb.dataset.description == "undefined")
             {
@@ -181,21 +195,22 @@
              	aperture = exif['aperture'],
              	exposure = exif['exposure'],
              	filesize = exif['filesize'],
-             	flash = exif['flash'];
+             	flash = exif['flash'],
+              sw = exif['software'];
              	if(date != false) inf += ", fotografiert am "+date;
              	if(date != false && make != false && model != false)
              	{
            	    var mm = make+ " " + model;
            	    if(make == model) mm = model;
            	    if(model.indexOf(make) != -1) mm = model;
-           	    inf += ", mit einer "+mm;
+           	    inf += ", mit einer / einem "+mm;
              	}
              	else if(make != false && model != false)
              	{
            	    var mm = make+ " " + model;
            	    if(make == model) mm = model;
            	    if(model.indexOf(make) != -1) mm = model;
-           	    inf += ", fotografiert mit einer "+mm;
+           	    inf += ", fotografiert mit einer / einem "+mm;
              	}
              	if(iso != false) inf += ", ISO: "+iso;
              	if(aperture != false) inf += ", Blende: "+aperture;
@@ -203,10 +218,18 @@
              	if(flash != false) inf += ", Blitz aktiviert";
              	if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
              	if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
+              if(sw != false && sw != null) inf += ", editiert mit "+sw;
              	inf += lstr;
-             	if(gps != false) inf += " <a style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">View on maps</a>";
-                infolay.innerHTML = inf;
+             	if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
             }
+            /*
+            TODO: fix this.
+            while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
+            {
+              infolay.removeChild(infolay.firstChild);
+            }
+            infolay.appendChild(document.createTextNode(inf));
+            */
             infolay.innerHTML = inf;
           }
           function infooverlay()
@@ -259,6 +282,7 @@
             var p;
             window.addEventListener("load",function ()
             {
+              document.body.style.background = "black";
               p = document.querySelector("#progress");
               var elem = document.body;
               elem.addEventListener("dragover", function(e){e.preventDefault();});
@@ -281,25 +305,7 @@
                 }
               });
             });
-            img.addEventListener("dblclick",function () {
-            var element = document.documentElement;
-            if(element.requestFullscreen)
-            {
-              element.requestFullscreen();
-            }
-            else if(element.mozRequestFullScreen)
-            {
-              element.mozRequestFullScreen();
-            }
-            else if(element.webkitRequestFullscreen)
-            {
-              element.webkitRequestFullscreen();
-            }
-            else if(element.msRequestFullscreen)
-            {
-              element.msRequestFullscreen();
-            }
-          });
+            img.addEventListener("dblclick",toggleFullScreen);
           function read(file)
           {
             var reader = new FileReader();
@@ -313,13 +319,14 @@
             var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
             xmlhttp.onreadystatechange=function()
             {
-              if (xmlhttp.readyState==4 && xmlhttp.status==200)
+              if (xmlhttp.readyState==4 && xmlhttp.status == 200)
               {
                 var ret = json_decode(xmlhttp.responseText);
                 if(ret.success)
                 {
                   imgs.push(ret.file);
                   addimg(ret.file);
+                  if(imgs.length != 0 && typeof empty != "undefined" && empty != undefined && empty.style.display != "none") empty.style.display = "none";
                   alert(ret.orig_file+" was successfully uploaded");
                 }
                 else
@@ -333,6 +340,46 @@
             xmlhttp.setRequestHeader("X-date",date);
             xmlhttp.send(binary);
           }
+    function toggleFullScreen()
+    {
+      // based on http://davidwalsh.name/fullscreen
+      var fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled;
+      if(!fullscreenEnabled)
+      {
+        var e = document.documentElement;
+        if(e.requestFullscreen)
+        {
+          e.requestFullscreen();
+        }
+        else if(e.mozRequestFullScreen)
+        {
+          e.mozRequestFullScreen();
+        }
+        else if(e.webkitRequestFullscreen)
+        {
+          e.webkitRequestFullscreen();
+        }
+        else if(e.msRequestFullscreen)
+        {
+          e.msRequestFullscreen();
+        }
+      }
+      else
+      {
+        if(document.exitFullscreen)
+        {
+          document.exitFullscreen();
+        }
+        else if(document.mozCancelFullScreen)
+        {
+          document.mozCancelFullScreen();
+        }
+        else if(document.webkitExitFullscreen)
+        {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
      function startWorker()
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
@@ -433,7 +480,20 @@
         }
     }
     </script>
+    <noscript>
+      Sorry, but you need javascript to get this page working.
+    </noscript>
     <style>
+    #empty
+    {
+      color: white;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      max-width: 90%;
+      max-height: 90%;
+      text-align: center;
+    }
     .image
     {
       margin:20px;
@@ -452,7 +512,15 @@
       }
       body
       {
-        background:black;
+        font-family: Ubuntu;
+        /*
+        fix drag 'n drop when no images are present
+        */
+        min-width: 97%;
+        min-height: 97%;
+        max-width: 100%;
+        max-height: 100%;
+        position: absolute;
       }
       #bigpic
         {
@@ -513,9 +581,8 @@
         .infolay
         {
           background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
-          color: #FFFFFF;
+          color: white;
           cursor: default;
-          font-family: helvetica;
           min-height: 5%;
           overflow: auto;
           padding: 10px;
