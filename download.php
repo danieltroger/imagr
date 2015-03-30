@@ -33,6 +33,27 @@ if($paths[0] == "exif")
   ));
   //echo json_last_error_msg();
 }
+elseif($paths[0] == "delete")
+{
+  @$f = basename($paths[1]);
+  if(empty($f))
+  {
+    $r = false;
+  }
+  else
+  {
+    @unlink($paths[1]);
+    if(file_exists($paths[1]))
+    {
+      $r = false;
+    }
+    else
+    {
+      $r = true;
+    }
+  }
+  exit(json_encode(Array('success' => $r)));
+}
 else
 {
   if($paths[0] == "resize")

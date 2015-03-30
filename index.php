@@ -36,10 +36,9 @@
       argr,args,
       mobile=false,
       info=false,
-      preload = true,
+      preload = false,
       loaded = false,
       mobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-      preload = mobile ? false : true,
       imgs=Array(<?php
       imgs(1);
       ?>),
@@ -51,7 +50,8 @@
       prevb=document.createElement("img"),
       nextb=document.createElement("img"),
       img=document.createElement("img"),
-      mdata = {};
+      mdata = {},
+      empty;
       bigpic.addEventListener("click",function (e)
       {
         if(e.target.id == this.id)
@@ -91,19 +91,24 @@
       infolay.classList.add("closed");
       container.appendChild(infolay);
       imgs.forEach(addimg);
-      if(!imgs.length)
+      function ety()
       {
-        var empty = document.createElement("div"),
-        h1 = document.createElement("h1"),
-        h2 = document.createElement("h2");
-        h1.appendChild(document.createTextNode("Noch nichts da..."));//"Nothing here yet."));
-        h2.appendChild(document.createTextNode("Ziehe fotos auf diese Seite um sie hochzuladen"));//"Upload something by dragging images onto this page"));
-        empty.id = "empty";
-        empty.classList.add("cent");
-        empty.appendChild(h1);
-        empty.appendChild(h2);
-        document.body.appendChild(empty);
+        if(!imgs.length)
+        {
+          empty = document.createElement("div"),
+          h1 = document.createElement("h1"),
+          h2 = document.createElement("h2");
+          h1.appendChild(document.createTextNode("Noch nichts da..."));//"Nothing here yet."));
+          h2.appendChild(document.createTextNode("Ziehe fotos auf diese Seite um sie hochzuladen"));//"Upload something by dragging images onto this page"));
+          empty.id = "empty";
+          empty.classList.add("cent");
+          empty.appendChild(h1);
+          empty.appendChild(h2);
+          document.body.appendChild(empty);
+          if(arguments[0]) bigpic.click();
+        }
       }
+      ety();
       function addimg(image)
       {
         var imgelem=document.createElement("img");
@@ -221,6 +226,7 @@
               if(sw != false && sw != null) inf += ", software: "+sw;
              	inf += lstr;
              	if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
+              inf += "<br /><button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
             }
             /*
             TODO: fix this.
@@ -247,9 +253,40 @@
               }
             }
           }
+          function del()
+          {
+            var pic = img.dataset.original,
+            r = json_decode(file_get_contents("download.php/delete/"+pic));
+            if(r.success)
+            {
+              //prev();
+              next();
+              findthumb(pic).remove();
+              imgs.splice(findimg(pic),1);
+              ety(true);
+            }
+            else
+            {
+              alert("Ein fehler ist beim löschen aufgetreten.");
+            }
+          }
+          if(typeof Element.prototype.remove != "function")
+          {
+            Element.prototype.remove = function()
+            {
+              this.parentElement.removeChild(this);
+            }
+            NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+              for(var i = 0, len = this.length; i < len; i++) {
+                if(this[i] && this[i].parentElement) {
+                  this[i].parentElement.removeChild(this[i]);
+                }
+              }
+            }
+          }
           function next(e)
           {
-            var nextindex=(findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
+            var nextindex = (findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
             if(nextindex == imgs.length)
             {
               nextindex = 0;
@@ -259,10 +296,10 @@
           }
           function prev(e)
           {
-            var previndex=findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
+            var previndex = findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
             if(previndex < 0)
             {
-              previndex=(imgs.length-1);
+              previndex = (imgs.length-1);
             }
               openpic(findthumb(imgs[previndex]));
             }
@@ -276,7 +313,14 @@
                 }
               }
             }
-            window.addEventListener("keypress",function (e){var kk = e.keyCode || e.which;if(kk==39){next();}if(kk==37){prev()}});
+            window.addEventListener("keypress",function (e)
+            {
+              var kk = e.keyCode || e.which;
+              if(kk == 27) {e.preventDefault(); bigpic.click();}
+              if(kk == 39) next();
+              if(kk == 37) prev();
+              if(kk == 8 || kk == 46){ e.preventDefault(); del();}
+            });
             window.addEventListener("load",lhash);
             window.addEventListener("load",startWorker);
             var p;
@@ -365,7 +409,7 @@
                   imgs.push(ret.file);
                   addimg(ret.file);
                   if(imgs.length != 0 && typeof empty != "undefined" && empty != undefined && empty.style.display != "none") empty.style.display = "none";
-                  alert(ret.orig_file+" was successfully uploaded");
+                  console.log(ret.orig_file+" was successfully uploaded");
                 }
                 else
                 {
@@ -483,6 +527,29 @@
       Sorry, but you need javascript to get this page working.
     </noscript>
     <style>
+    /* https://css-tricks.com/examples/WebKitScrollbars/
+    /* Let's get this party started */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        background: rgba(255,0,0,0.8);
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    }
+    ::-webkit-scrollbar-thumb:window-inactive {
+    	background: rgba(255,0,0,0.4);
+    }
     #empty
     {
       color: white;
