@@ -3,6 +3,9 @@ imagr
 
 Is an image and move viewer written in HTML5.
 
+## Important 
+### please get imagr via [this link](https://github.com/danieltroger/imagr/archive/4ffa552dc78049d773cd8489561bb7ce91d4ea7e.zip) if you are planning to use imagr in production.
+
 ## Howto
 
 Place imagr on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
