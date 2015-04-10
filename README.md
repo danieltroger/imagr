@@ -87,4 +87,14 @@ For example,
 cd /home/daniel/Pictures/shared
 wget -ci <(wget -qO - http://natur-kultur.eu/shared/wget.php)
 ```
+
+### Uploading
+
+Use drag 'n drop.
+If you really want to upload images with the command line, see that you've `php` and `curl` installed and try as follows:
+
+```
+f=myimage.jpg
+php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"));' | curl  yoursite.tld/imagr/upload.php?name=$f\&date=$(php -r 'echo filemtime("'$f'") . "000";') -d @-
+```
 ----------
