@@ -3,8 +3,6 @@ imagr
 
 Is an image and move viewer written in HTML5.
 
-## Important 
-### please get imagr via [this link](https://github.com/danieltroger/imagr/archive/4ffa552dc78049d773cd8489561bb7ce91d4ea7e.zip) if you are planning to use imagr in production.
 
 ## Howto
 
