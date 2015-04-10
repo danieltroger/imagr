@@ -337,7 +337,7 @@
                     var src = files[i];
                     if(src.type.match(/image.*/))
                     {
-                      empty.style.display = "none";
+                      if(empty != undefined) empty.style.display = "none";
                       read(src);
                     }
                     else
