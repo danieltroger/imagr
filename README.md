@@ -18,6 +18,32 @@ If you double click on the large image, fullscreen will be toggled if you permit
 
 If you hit the Info button (i) you'll get some information about the image, if made available through EXIF, and an image title and uploaded by if specified in json format in the file `meta`.
 
+When you upload images per drag 'n drop, a little orange progress bar will appear at the top of the page, displaying the total data uploaded.
+
+### Feature enabling and disabling
+
+You can enable and / or disable features in the `features` file.
+The features file is in json format and you can toggle the upload and deletion features there.
+
+**Examples**
+
+The default content of the features file is:
+```
+{
+  "uploading": true,
+  "deleting": true
+}
+```
+
+You can toggle the features by setting their value to true respective false. For example, if you would like to disable deletion and only enable uploading, the file would look like this:
+
+```
+{
+  "uploading": true,
+  "deleting": false
+}
+```
+
 ### Preload
 
 The viewer now preloads all images and it's metadata (into the memory O.o) if the client supports WebWorkers.
