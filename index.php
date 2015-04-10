@@ -26,9 +26,14 @@
       <script src="http://natur-kultur.eu/phpjs.php?f=compat,json_encode,uniqid,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
       <script src="StackBlur.js"></script>
       <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com//css?family=Ubuntu+Mono%7CUbuntu%3Aregular%2Cbold&amp;subset=Latin">
+      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
       <!--<script src="script.js"></script>-->
     <body>
       <span id="progress"></span>
+      <div class="fileUpload btn btn-primary">
+        <span>Upload image</span>
+        <input type="file" multiple class="upload" />
+      </div>
       <div id="grid">
       </div>
       <div id="bigpic" style="cursor:pointer;display:none"></div>
@@ -312,6 +317,8 @@
             window.addEventListener("keypress",function (e)
             {
               var kk = e.keyCode || e.which;
+              if(kk == 105) infooverlay();
+              if(kk == 102) fs();
               if(kk == 27) {e.preventDefault(); bigpic.click();}
               if(kk == 39) next();
               if(kk == 37) prev();
@@ -326,67 +333,71 @@
               var elem = document.body;
               if(features.uploading)
               {
+                var upbut = document.querySelector("input");
+                upbut.addEventListener("change",fqueue);
                 elem.addEventListener("dragover", function(e){e.preventDefault();});
-                elem.addEventListener("drop", function(e)
-                {
-                  e.preventDefault();
-                  var files = e.dataTransfer.files,
-                  i = 0;
-                  for(; i < files.length; i++)
-                  {
-                    var src = files[i];
-                    if(src.type.match(/image.*/))
-                    {
-                      if(empty != undefined) empty.style.display = "none";
-                      read(src);
-                    }
-                    else
-                    {
-                      alert("File: "+src.name+" is not an image");
-                    }
-                  }
-                });
+                elem.addEventListener("drop",fqueue);
               }
             });
-            img.addEventListener("dblclick",function ()
-            {
-                // based on http://davidwalsh.name/fullscreen
-                if((document.fullscreenEnabled == false) || (document.mozFullScreen == false) || (document.webkitIsFullScreen == false))
+            img.addEventListener("dblclick",fs);
+          function fqueue(e)
+          {
+              e.preventDefault();
+              var files = e.target.files != undefined ? e.target.files : e.dataTransfer.files,
+              i = 0;
+              for(; i < files.length; i++)
+              {
+                var src = files[i];
+                if(src.type.match(/image.*/))
                 {
-                  var e = document.documentElement;
-                  if(e.requestFullscreen)
-                  {
-                    e.requestFullscreen();
-                  }
-                  else if(e.mozRequestFullScreen)
-                  {
-                    e.mozRequestFullScreen();
-                  }
-                  else if(e.webkitRequestFullscreen)
-                  {
-                    e.webkitRequestFullscreen();
-                  }
-                  else if(e.msRequestFullscreen)
-                  {
-                    e.msRequestFullscreen();
-                  }
+                  if(empty != undefined) empty.style.display = "none";
+                  read(src);
                 }
                 else
                 {
-                  if(document.exitFullscreen)
-                  {
-                    document.exitFullscreen();
-                  }
-                  else if(document.mozCancelFullScreen)
-                  {
-                    document.mozCancelFullScreen();
-                  }
-                  else if(document.webkitExitFullscreen)
-                  {
-                    document.webkitExitFullscreen();
-                  }
+                  alert("File: "+src.name+" is not an image");
                 }
-              });
+              }
+          }
+          function fs()
+          {
+            // based on http://davidwalsh.name/fullscreen
+            if((document.fullscreenEnabled == false) || (document.mozFullScreen == false) || (document.webkitIsFullScreen == false))
+            {
+              var e = document.documentElement;
+              if(e.requestFullscreen)
+              {
+                e.requestFullscreen();
+              }
+              else if(e.mozRequestFullScreen)
+              {
+                e.mozRequestFullScreen();
+              }
+              else if(e.webkitRequestFullscreen)
+              {
+                e.webkitRequestFullscreen();
+              }
+              else if(e.msRequestFullscreen)
+              {
+                e.msRequestFullscreen();
+              }
+            }
+            else
+            {
+              if(document.exitFullscreen)
+              {
+                document.exitFullscreen();
+              }
+              else if(document.mozCancelFullScreen)
+              {
+                document.mozCancelFullScreen();
+              }
+              else if(document.webkitExitFullscreen)
+              {
+                document.webkitExitFullscreen();
+              }
+            }
+          }
           function read(file)
           {
             var reader = new FileReader();
@@ -445,6 +456,7 @@
               i.style.maxWidth = "19%";
               i.style.minWidth = "200px";
               grid.appendChild(i);
+              if(isset(i.y) && typeof window.scrollTo == "function") window.scrollTo(0,i.y);
               var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
               xmlhttp.addEventListener("readystatechange",function()
               {
@@ -793,6 +805,42 @@
       transition-duration: 0.2s;
       transition-property: all;
     }
+
+    .fileUpload {
+    	position: fixed;
+    	overflow: hidden;
+    	margin: 10px;
+      right: 0px;
+    }
+    .fileUpload input.upload {
+    	position: absolute;
+    	top: 0;
+    	right: 0;
+    	margin: 0;
+    	padding: 0;
+    	font-size: 20px;
+    	cursor: pointer;
+    	opacity: 0;
+    	filter: alpha(opacity=0);
+    }
+  *::-moz-selection
+  {
+    background: #222 none repeat scroll 0 0;
+    color: white;
+    text-shadow: none;
+  }
+  *::-webkit-selection
+  {
+    background: #222 none repeat scroll 0 0;
+    color: white;
+    text-shadow: none;
+  }
+  *::selection
+  {
+    background: #222 none repeat scroll 0 0;
+    color: white;
+    text-shadow: none;
+  }
   </style>
   </body>
   </html>
