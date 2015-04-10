@@ -407,7 +407,7 @@
             }
             if(parseInt(prog.style.width) != average)
             {
-              prog.style.width = average+"%";
+              prog.style.width = average*100+"%";
             }
             requestAnimationFrame(update_progress);
           }
