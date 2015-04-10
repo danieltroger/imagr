@@ -405,6 +405,7 @@
               var percentage = uploads[k[i]];
               average += percentage;
             }
+            average /= k.length;
             if(parseInt(prog.style.width) != average)
             {
               prog.style.width = average*100+"%";
