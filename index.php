@@ -23,20 +23,22 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
-      <script src="/phpjs.php?f=json_encode,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode,compat"></script>
+      <script src="http://natur-kultur.eu/phpjs.php?f=compat,json_encode,uniqid,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
+      <script src="StackBlur.js"></script>
       <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com//css?family=Ubuntu+Mono%7CUbuntu%3Aregular%2Cbold&amp;subset=Latin">
       <!--<script src="script.js"></script>-->
     <body>
-    <div id="grid">
-    </div>
-    <div id="bigpic" style="cursor:pointer;display:none"></div>
+      <span id="progress"></span>
+      <div id="grid">
+      </div>
+      <div id="bigpic" style="cursor:pointer;display:none"></div>
       <script>
       var thumbsize = 0,
       realsize="dyn",
       argr,args,
       mobile=false,
       info=false,
-      preload = false,
+      preload = true,
       loaded = false,
       mobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
       imgs=Array(<?php
@@ -46,12 +48,15 @@
       meta=json_decode(file_get_contents("meta?"+rand(1,200))),
       container=document.getElementById("bigpic"),
       isMobile=false,
-      desc=document.createElement("span"),
-      prevb=document.createElement("img"),
-      nextb=document.createElement("img"),
-      img=document.createElement("img"),
+      desc = CE("span"),
+      prevb = CE("img"),
+      nextb = CE("img"),
+      img = CE("img"),
       mdata = {},
-      empty;
+      empty,
+      prog = document.getElementById("progress"),
+      uploads = {},
+      features = <?php echo file_get_contents("features") ?>;
       bigpic.addEventListener("click",function (e)
       {
         if(e.target.id == this.id)
@@ -66,38 +71,34 @@
       prevb.classList.add("vertcent");
       prevb.style.width="10%";
       prevb.addEventListener("click",prev);
-      container.appendChild(prevb);
       nextb.src="next.svg";
       nextb.classList.add("next");
       nextb.classList.add("symbol");
       nextb.classList.add("vertcent");
       nextb.style.width="10%";
       nextb.addEventListener("click",next);
-      container.appendChild(nextb);
       img.classList.add("largepic");
       img.classList.add("cent");
-      container.appendChild(img);
-      var infobut=document.createElement("img")
+      var infobut = CE("img")
       infobut.src="info.svg"
       infobut.classList.add("symbol");
       infobut.style.width="7%";
       infobut.style.bottom="2%";
       infobut.addEventListener("click",infooverlay);
       infobut.classList.add("horcent");
-      container.appendChild(infobut);
-      var infolay = document.createElement("div");
+      var infolay = CE("div");
       infolay.classList.add("infolay");
       infolay.classList.add("horcent");
       infolay.classList.add("closed");
-      container.appendChild(infolay);
+      container.appendChilds(prevb,nextb,img,infobut,infolay);
       imgs.forEach(addimg);
       function ety()
       {
         if(!imgs.length)
         {
-          empty = document.createElement("div"),
-          h1 = document.createElement("h1"),
-          h2 = document.createElement("h2");
+          empty = CE("div"),
+          h1 = CE("h1"),
+          h2 = CE("h2");
           h1.appendChild(document.createTextNode("Noch nichts da..."));//"Nothing here yet."));
           h2.appendChild(document.createTextNode("Ziehe fotos auf diese Seite um sie hochzuladen"));//"Upload something by dragging images onto this page"));
           empty.id = "empty";
@@ -111,7 +112,7 @@
       ety();
       function addimg(image)
       {
-        var imgelem=document.createElement("img");
+        var imgelem=CE("img");
         if(thumbsize != 0)
         {
             imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
@@ -162,12 +163,7 @@
             {
               //var cw = img.clientWidth,
               //dynsize = cw > 2 ? cw : screen.width;
-              var w = window,
-              d = document,
-              e = d.documentElement,
-              g = d.getElementsByTagName('body')[0],
-              x = w.innerWidth|| e.clientWidth|| g.clientWidth;
-              img.src="download.php/resize/"+(x/100)*95+"/"+url;
+              img.src="download.php/resize/"+(winwidth()/100)*95+"/"+url;
             }
             else
             {
@@ -226,7 +222,7 @@
               if(sw != false && sw != null) inf += ", software: "+sw;
              	inf += lstr;
              	if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
-              inf += "<br /><button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
+              if(features.deleting) inf += "<br /><button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
             }
             /*
             TODO: fix this.
@@ -270,9 +266,9 @@
               alert("Ein fehler ist beim löschen aufgetreten.");
             }
           }
-          if(typeof Element.prototype.remove != "function")
+          if(typeof HTMLElement.prototype.remove != "function")
           {
-            Element.prototype.remove = function()
+            HTMLElement.prototype.remove = function()
             {
               this.parentElement.removeChild(this);
             }
@@ -323,31 +319,33 @@
             });
             window.addEventListener("load",lhash);
             window.addEventListener("load",startWorker);
-            var p;
+            window.addEventListener("load",update_progress);
             window.addEventListener("load",function ()
             {
               document.body.style.background = "black";
-              p = document.querySelector("#progress");
               var elem = document.body;
-              elem.addEventListener("dragover", function(e){e.preventDefault();});
-              elem.addEventListener("drop", function(e)
+              if(features.uploading)
               {
-                e.preventDefault();
-                var files = e.dataTransfer.files,
-                i = 0;
-                for(; i < files.length; i++)
+                elem.addEventListener("dragover", function(e){e.preventDefault();});
+                elem.addEventListener("drop", function(e)
                 {
-                  var src = files[i];
-                  if(src.type.match(/image.*/))
+                  e.preventDefault();
+                  var files = e.dataTransfer.files,
+                  i = 0;
+                  for(; i < files.length; i++)
                   {
-                    read(src);
+                    var src = files[i];
+                    if(src.type.match(/image.*/))
+                    {
+                      read(src);
+                    }
+                    else
+                    {
+                      alert("File: "+src.name+" is not an image");
+                    }
                   }
-                  else
-                  {
-                    alert("File: "+src.name+" is not an image");
-                  }
-                }
-              });
+                });
+              }
             });
             img.addEventListener("dblclick",function ()
             {
@@ -396,32 +394,99 @@
             });
             reader.readAsDataURL(file);
           }
+          function update_progress()
+          {
+            var k = Object.keys(uploads),
+            i = 0,
+            average = 0;
+            for(;i<k.length;i++)
+            {
+              var percentage = uploads[k[i]];
+              average += percentage;
+            }
+            if(parseInt(prog.style.width) != average)
+            {
+              prog.style.width = average+"%";
+            }
+            requestAnimationFrame(update_progress);
+          }
           function upload(binary,fname,date)
           {
-            var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-            xmlhttp.onreadystatechange=function()
+            var MAX_WIDTH = thumbsize != 0 ? thumbsize : ((winwidth()/100)*20),
+            timg = new Image(),
+            id = uniqid();
+            timg.src = binary;
+  			    timg.addEventListener("load",function ()
             {
-              if (xmlhttp.readyState==4 && xmlhttp.status == 200)
+              MAX_WIDTH *= 2;
+				      if(timg.width > MAX_WIDTH)
               {
-                var ret = json_decode(xmlhttp.responseText);
-                if(ret.success)
+					      timg.height *= MAX_WIDTH / timg.width;
+					      timg.width = MAX_WIDTH;
+				      }
+				      var canvas = CE("canvas"),
+              ctx = canvas.getContext("2d");
+				      ctx.clearRect(0, 0, canvas.width, canvas.height);
+				      canvas.width = timg.width;
+			      	canvas.height = timg.height;
+			       	ctx.drawImage(timg, 0, 0, timg.width, timg.height);
+              stackBlurCanvasRGBA(canvas,0,0, timg.width, timg.height,10);
+              ctx.font = (timg.height/100)*12+'px Ubuntu';
+              ctx.fillInversedText("Uploading image...", (timg.width/100)*20, (timg.height/100)*50);
+              var ri = canvas.toDataURL(),
+              i = new Image();
+              canvas.remove();
+              timg.remove();
+              i.src = ri;
+              i.classList.add("image");
+              i.style.maxWidth = "19%";
+              i.style.minWidth = "200px";
+              grid.appendChild(i);
+              var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+              xmlhttp.addEventListener("readystatechange",function()
+              {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                 {
-                  imgs.push(ret.file);
-                  addimg(ret.file);
-                  if(imgs.length != 0 && typeof empty != "undefined" && empty != undefined && empty.style.display != "none") empty.style.display = "none";
-                  console.log(ret.orig_file+" was successfully uploaded");
+                  delete uploads[id];
+                  i.remove();
+                  var ret = json_decode(xmlhttp.responseText);
+                  if(ret.success)
+                  {
+                    imgs.push(ret.file);
+                    addimg(ret.file);
+                    if(imgs.length != 0 && typeof empty != "undefined" && empty != undefined && empty.style.display != "none") empty.style.display = "none";
+                    console.log(ret.orig_file+" was successfully uploaded");
+                  }
+                  else
+                  {
+                    alert("There was an error while uploading: "+ret.error+", file: "+ret.file);
+                  }
+                }
+              });
+              xmlhttp.upload.addEventListener("progress",function (e)
+              {
+                if (e.lengthComputable)
+                {
+                  var percent = e.loaded / e.total;
+                  uploads[id] = percent;
                 }
                 else
                 {
-                  alert("There was an error while uploading: "+ret.error+", file: "+ret.file);
+                  console.warn("Unable to compute progress information since the total size is unknown");
                 }
-              }
-            }
-            xmlhttp.open("POST","upload.php",true);
-            xmlhttp.setRequestHeader("X-name",fname);
-            xmlhttp.setRequestHeader("X-date",date);
-            xmlhttp.send(binary);
+              });
+              xmlhttp.addEventListener("abort",error);
+              xmlhttp.addEventListener("timeout",error);
+              xmlhttp.addEventListener("error",error);
+              xmlhttp.open("POST","upload.php?name="+fname+"&date="+date,true);
+              xmlhttp.send(binary);
+              uploads[id] = 0;
+            });
           }
+     function error(e)
+     {
+       console.warn(e);
+     }
      function startWorker()
      {
        if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
@@ -521,6 +586,54 @@
             }
           }
         }
+    }
+    function winwidth()
+    {
+      var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth;
+      return x;
+    }
+
+    /**
+     * Canvas extension: fillInversedText
+     * By Ken Fyrstenberg Nilsen 2013. Beta 1.
+    */
+    CanvasRenderingContext2D.prototype.fillInversedText = function (txt, x, y) {
+
+        //measure
+        var tw = this.measureText(txt).width;
+        var th = parseInt(this.font, '10');
+        th = (th === 0) ? 16 : th;
+
+        //setupp off-screen canvas
+        var co = document.createElement('canvas');
+        co.width = tw;
+        co.height = th;
+
+        //fill text
+        var octx = co.getContext('2d');
+        octx.font = this.font;
+        octx.textBaseline = 'top';
+        octx.fillText(txt, 0, 0);
+
+        //get pixel buffers
+        var ddata = this.getImageData(x, y, tw, th);
+        var sdata = octx.getImageData(0, 0, tw, th);
+
+        var dd = ddata.data;
+        var ds = sdata.data;
+        var len = ds.length;
+
+        //invert
+        for (var i = 0; i < len; i += 4) {
+            if (ds[i + 3] > 0) {
+                dd[i] = (255 - dd[i]);
+                dd[i + 1] = (255 - dd[i + 1]);
+                dd[i + 2] = (255 - dd[i + 2]);
+            }
+        }
+
+        //result at x/y
+        this.putImageData(ddata, x, y);
     }
     </script>
     <noscript>
@@ -666,7 +779,18 @@
           width:0;
           height:0;
         }
-
+    #progress
+    {
+      background: orange;
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      width: 0%;
+      height: 3px;
+      z-index: 999;
+      transition-duration: 0.2s;
+      transition-property: all;
+    }
   </style>
   </body>
   </html>

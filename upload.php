@@ -2,8 +2,9 @@
 error_reporting(E_ALL);
 require "thumbs.php";
 header("Content-type: text/plain");
+if(json_decode(file_get_contents("features"))->uploading != true) x_err("Uploading not allowed");
 if(!is_writable(".")) x_err('Directory not writable');
-$h = getallheaders();
+//$h = getallheaders();
 $tn = tempnam(sys_get_temp_dir(), 'upl');
 $temp = fopen($tn,"w+");
 $in = fopen("php://input","r");
@@ -20,9 +21,9 @@ while(!feof($in))
 fclose($in);
 //$length = $h['X-length'];
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
-$fname = basename($h['X-name']);
+$fname = $_GET['name'];
 if(empty($fname)) x_err("Filename is empty");
-$date = (int) $h['X-date'];
+$date = (int) $_GET['date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
 fseek($temp,0);
@@ -50,7 +51,7 @@ touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 thumb($fname);
 if(file_exists($fname))
 {
-  exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $h['X-name'])));
+  exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $_GET['name'])));
 }
 else
 {

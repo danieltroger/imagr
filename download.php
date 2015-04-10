@@ -35,22 +35,29 @@ if($paths[0] == "exif")
 }
 elseif($paths[0] == "delete")
 {
-  @$f = basename($paths[1]);
-  if(empty($f))
+  if(json_decode(file_get_contents("features"))->deleting == true)
   {
-    $r = false;
-  }
-  else
-  {
-    @unlink($paths[1]);
-    if(file_exists($paths[1]))
+    @$f = basename($paths[1]);
+    if(empty($f))
     {
       $r = false;
     }
     else
     {
-      $r = true;
+      @unlink($paths[1]);
+      if(file_exists($paths[1]))
+      {
+        $r = false;
+      }
+      else
+      {
+        $r = true;
+      }
     }
+  }
+  else
+  {
+    $r = false;
   }
   exit(json_encode(Array('success' => $r)));
 }
