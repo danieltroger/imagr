@@ -399,16 +399,17 @@
           {
             var k = Object.keys(uploads),
             i = 0,
+            l = k.length,
             average = 0;
-            for(;i<k.length;i++)
+            for(;i<l;i++)
             {
               var percentage = uploads[k[i]];
               average += percentage;
             }
-            average /= k.length;
+            average /= l;
             if(parseInt(prog.style.width) != average)
             {
-              prog.style.width = average*100+"%";
+              prog.style.width = l == 0 ? "0%" : average*100+"%";
             }
             requestAnimationFrame(update_progress);
           }
