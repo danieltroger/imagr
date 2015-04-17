@@ -1287,7 +1287,7 @@ container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
   document.body.appendChilds(grid,container);
-  document.querySelector(".fileUpload").style.display = "none";
+  document.querySelector(".fileUpload").style.display = "";
   imgs.forEach(addimg);
   ety();
   lhash();
