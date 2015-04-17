@@ -6,7 +6,7 @@ Is an image and move viewer written in HTML5.
 
 ## Howto
 
-Place imagr on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
+Get the [newest release](https://github.com/danieltroger/imagr/releases/latest), extract it and place it on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
 
 ----------
 
@@ -43,6 +43,9 @@ You can toggle the features by setting their value to true respective false. For
   "deleting": false
 }
 ```
+### Building / Compressing the files
+
+Just execute `./build.sh` within imagr's working directory in a bash-shell, you'll basically need `java` and `wget` installed.
 
 ### Preload
 
@@ -98,3 +101,13 @@ f=myimage.jpg
 php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"));' | curl  yoursite.tld/imagr/upload.php?name=$f\&date=$(php -r 'echo filemtime("'$f'") . "000";') -d @-
 ```
 ----------
+
+## :/TODO/:
+
+* Movie uploading
+* Optimizations for mobile devices
+* An upload queue to not make the http request timeout when doing uploads of many images at once
+* Themes / more design options
+* Categories
+* Better user interface [?]
+* Somehow get more users and more people sharing their opinion about what's next ;)
