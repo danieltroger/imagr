@@ -7,7 +7,7 @@ self.onmessage=function(e)
     oReq.responseType = "blob";
     oReq.send();
     var blob = oReq.response;
-    var m = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    var m = typeof XMLHttpRequest == "function" ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     m.open("GET","download.php/exif/"+img,false);
     m.send();
     var json = m.response;

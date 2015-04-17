@@ -23,6 +23,7 @@
     <head>
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <script src="//code.jquery.com/jquery.min.js"></script>
       <script src="http://natur-kultur.eu/phpjs.php?f=json_encode,uniqid,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
       <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com//css?family=Ubuntu+Mono%7CUbuntu%3Aregular%2Cbold&amp;subset=Latin">

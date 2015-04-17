@@ -497,7 +497,7 @@ function error(e) // TODO: cancel upload from progress bar
      w = new Worker("preload.js");
      w.onmessage = function(e)
      {
-       var fname = e.data[1],
+       var fname = basename(e.data[1]),
        blob = e.data[0];
        var url = (window.URL || window.webkitURL).createObjectURL(blob);
        imgs[fname] = url;
@@ -1232,6 +1232,7 @@ if(typeof HTMLElement.prototype.remove != "function")
   }
 }
 var thumbsize = 0,
+svg = typeof SVGRect != "undefined" ? true : false,
 realsize = "dyn",
 argr,args,
 mobile = false,
@@ -1256,13 +1257,13 @@ container.id = "bigpic";
 container.style.cursor = "pointer";
 container.style.display = "none";
 container.addEventListener("click",iclick);
-prevb.src="prev.svg";
+prevb.src = svg ? "icons/prev.svg" : "icons/prev.png";
 prevb.classList.add("prev");
 prevb.classList.add("symbol");
 prevb.classList.add("vertcent");
 prevb.style.width="10%";
 prevb.addEventListener("click",prev);
-nextb.src="next.svg";
+nextb.src = svg ? "icons/next.svg" : "icons/next.png";
 nextb.classList.add("next");
 nextb.classList.add("symbol");
 nextb.classList.add("vertcent");
@@ -1272,7 +1273,7 @@ img.classList.add("largepic");
 img.classList.add("cent");
 img.addEventListener("dblclick",fs);
 var infobut = CE("img")
-infobut.src="info.svg"
+infobut.src = svg ? "icons/info.svg" : "icons/info.png";
 infobut.classList.add("symbol");
 infobut.style.width="7%";
 infobut.style.bottom="2%";
