@@ -444,7 +444,7 @@ function upload(binary,fname,date)
     i.style.maxWidth = "19%";
     i.style.minWidth = "200px";
     grid.appendChild(i);
-    if(isset(i.y) && typeof window.scrollTo == "function") window.scrollTo(0,i.y);
+    if(typeof window.scrollTo == "function") window.scrollTo(0,$(i).offset().top);
     var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.addEventListener("readystatechange",function()
     {
@@ -644,8 +644,8 @@ function kinput(e)
   if(kk == 105) infooverlay();
   if(kk == 102) fs();
   if(kk == 27) {e.preventDefault(); container.click();}
-  if(kk == 39) next();
-  if(kk == 37) prev();
+  if(kk == 39 || kk == 110) next();
+  if(kk == 37 || kk == 112) prev();
   if(kk == 8 || kk == 46){ e.preventDefault(); del();}
 }
 function addimg(image)
@@ -714,11 +714,11 @@ function openpic(srcthumb)
   var d = $(srcthumb).data();
   if("by" in d)
   {
-    by = meta['all'] != undefined ? meta['all'] : "Unknown";
+    by = d.by;
   }
   else
   {
-    by = d.by;
+    by = meta['all'] != undefined ? meta['all'] : "Unknown";
   }
   if("description" in d)
   {
@@ -1287,7 +1287,7 @@ infolay.classList.add("closed");
 container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
-  document.body.appendChilds(grid,container);
+  document.body.appendChilds(prog,grid,container);
   document.querySelector(".fileUpload").style.display = "";
   imgs.forEach(addimg);
   ety();
