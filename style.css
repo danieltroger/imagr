@@ -122,7 +122,7 @@
       color: white;
       cursor: default;
       min-height: 5%;
-      overflow: auto;
+      overflow: hidden;
       padding: 10px;
       position: fixed;
       text-align: center;

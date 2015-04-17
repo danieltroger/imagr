@@ -711,25 +711,26 @@ function openpic(srcthumb)
   $.data(img,'original',url);
   location.hash = "#!image="+basename(url);
   container.style.display="";
-  if(typeof $.data(srcthumb,'by') == "undefined")
+  var d = $(srcthumb).data();
+  if("by" in d)
   {
     by = meta['all'] != undefined ? meta['all'] : "Unknown";
   }
   else
   {
-    by = $.data(srcthumb,'description');
+    by = d.by;
   }
-  if(typeof $.data(srcthumb,'description') == "undefined")
+  if("description" in d)
   {
-    desc = "Unbenannt";
+    desc = d.description;
   }
   else
   {
-    desc = $.data(srcthumb,'description');
+    desc = "Unbenannt";
   }
   infobut.style.display="";
     var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
-    inf = $.data(srcthumb,'description')+", hochgeladen von "+$.data(srcthumb,'by'),
+    inf = desc+", hochgeladen von "+by,
     lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
     //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
     if($.data(srcthumb,'description') == "undefined")
@@ -1232,7 +1233,7 @@ if(typeof HTMLElement.prototype.remove != "function")
   }
 }
 var thumbsize = 0,
-svg = typeof SVGRect != "undefined" ? true : false,
+svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windows") < 0 ? true : false,
 realsize = "dyn",
 argr,args,
 mobile = false,
