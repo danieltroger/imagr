@@ -402,6 +402,7 @@ function do_upload(upload)
     if (this.readyState == 4 && this.status == 200)
     {
       uploads.active--;
+      uploads.queued--;
       upload.thumbnail.remove();
       var ret = json_decode(this.responseText);
       if(ret.success)
@@ -433,6 +434,7 @@ function do_upload(upload)
   });
   xmlhttp.addEventListener("abort",function ()
   {
+    uploads.queued--;
     upload.success = false;
     upload.thumbnail.remove();
     console.log("an error occurred with upload id #"+upload.id);
@@ -453,7 +455,7 @@ function update_progress()
   for(;i<l;i++)
   {
     var id = k[i];
-    if(id != "active")
+    if(id != "active" && id != "queued")
     {
       var upload = uploads[id];
       percentage = upload.uploaded;
@@ -464,10 +466,10 @@ function update_progress()
       }
     }
   }
-  average /= uploads.active;
+  average /= uploads.queued;
   if(parseInt(prog.style.width) != average)
   {
-    prog.style.width = uploads.active == 0 ? "0%" : average*100+"%";
+    prog.style.width = uploads.queued == 0 ? "0%" : average*100+"%";
   }
   requestAnimationFrame(update_progress);
 }
@@ -512,6 +514,7 @@ function upload(binary,fname,date)
     "uploading": false,
     "thumbnail": i,
     "id": id};
+    uploads.queued++;
   });
 }
 
@@ -1277,7 +1280,7 @@ img = CE("img"),
 mdata = {},
 empty,
 prog = CE("span"),
-uploads = {'active': 0};
+uploads = {'active': 0,'queued': 0};
 prog.id = "progress";
 container.id = "bigpic";
 container.style.cursor = "pointer";
