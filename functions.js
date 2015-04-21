@@ -394,6 +394,56 @@ function read(file)
   });
   reader.readAsDataURL(file);
 }
+function do_upload(upload)
+{
+  var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  xmlhttp.addEventListener("readystatechange",function ()
+  {
+    if (this.readyState == 4 && this.status == 200)
+    {
+      uploads.active--;
+      upload.thumbnail.remove();
+      var ret = json_decode(this.responseText);
+      if(ret.success)
+      {
+        upload.success = true;
+        upload.binary = "";
+        imgs.push(ret.file);
+        addimg(ret.file);
+        console.log(ret.orig_file+" was successfully uploaded");
+      }
+      else
+      {
+        upload.success = false;
+        alert("There was an error while uploading: "+ret.error+", file: "+ret.file);
+      }
+    }
+  });
+  xmlhttp.upload.addEventListener("progress",function (e)
+  {
+    if (e.lengthComputable)
+    {
+      var percent = e.loaded / e.total;
+      upload.uploaded = percent;
+    }
+    else
+    {
+      console.warn("Unable to compute progress information since the total size is unknown");
+    }
+  });
+  xmlhttp.addEventListener("abort",function ()
+  {
+    upload.success = false;
+    upload.thumbnail.remove();
+    console.log("an error occurred with upload id #"+upload.id);
+  });
+  xmlhttp.addEventListener("timeout",xmlhttp.abort);
+  xmlhttp.addEventListener("error",xmlhttp.abort);
+  xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date,true);
+  xmlhttp.send(upload.binary);
+  upload.uploading = true;
+  uploads.active++;
+}
 function update_progress()
 {
   var k = Object.keys(uploads),
@@ -402,13 +452,22 @@ function update_progress()
   average = 0;
   for(;i<l;i++)
   {
-    var percentage = uploads[k[i]];
-    average += percentage;
+    var id = k[i];
+    if(id != "active")
+    {
+      var upload = uploads[id];
+      percentage = upload.uploaded;
+      average += percentage;
+      if(!upload.uploading && uploads.active < 2)
+      {
+        do_upload(upload);
+      }
+    }
   }
-  average /= l;
+  average /= uploads.active;
   if(parseInt(prog.style.width) != average)
   {
-    prog.style.width = l == 0 ? "0%" : average*100+"%";
+    prog.style.width = uploads.active == 0 ? "0%" : average*100+"%";
   }
   requestAnimationFrame(update_progress);
 }
@@ -443,58 +502,24 @@ function upload(binary,fname,date)
     i.classList.add("image");
     i.style.maxWidth = "19%";
     i.style.minWidth = "200px";
+    i.style.cursor = "progress";
     grid.appendChild(i);
     if(typeof window.scrollTo == "function") window.scrollTo(0,$(i).offset().top);
-    var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.addEventListener("readystatechange",function()
-    {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-      {
-        delete uploads[id];
-        i.remove();
-        var ret = json_decode(xmlhttp.responseText);
-        if(ret.success)
-        {
-          imgs.push(ret.file);
-          addimg(ret.file);
-          console.log(ret.orig_file+" was successfully uploaded");
-        }
-        else
-        {
-          alert("There was an error while uploading: "+ret.error+", file: "+ret.file);
-        }
-      }
-    });
-    xmlhttp.upload.addEventListener("progress",function (e)
-    {
-      if (e.lengthComputable)
-      {
-        var percent = e.loaded / e.total;
-        uploads[id] = percent;
-      }
-      else
-      {
-        console.warn("Unable to compute progress information since the total size is unknown");
-      }
-    });
-    xmlhttp.addEventListener("abort",error);
-    xmlhttp.addEventListener("timeout",error);
-    xmlhttp.addEventListener("error",error);
-    xmlhttp.open("POST","upload.php?name="+fname+"&date="+date,true);
-    xmlhttp.send(binary);
-    uploads[id] = 0;
+    uploads[id] = {"binary": binary,
+    "fname": fname,
+    "date": date,
+    "uploaded": 0.0,
+    "uploading": false,
+    "thumbnail": i,
+    "id": id};
   });
 }
-function error(e) // TODO: cancel upload from progress bar
-{
- console.warn(e);
- console.log(this);
-}
+
  function startWorker()
  {
    if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
    {
-     w = new Worker("preload.js");
+     w = new Worker("preload.min.js");
      w.onmessage = function(e)
      {
        var fname = basename(e.data[1]),
@@ -873,9 +898,8 @@ function iclick(e)
     location.hash = "#!overview"
   }
 }
-/*
 
-StackBlur - a fast almost Gaussian Blur For Canvas
+/* StackBlur - a fast almost Gaussian Blur For Canvas
 
 Version: 	0.5
 Author:		Mario Klingemann
@@ -1225,6 +1249,7 @@ function BlurStack()
 	this.a = 0;
 	this.next = null;
 }
+// end stackBlur
 if(typeof HTMLElement.prototype.remove != "function")
 {
   HTMLElement.prototype.remove = function ()
@@ -1252,7 +1277,7 @@ img = CE("img"),
 mdata = {},
 empty,
 prog = CE("span"),
-uploads = {};
+uploads = {'active': 0};
 prog.id = "progress";
 container.id = "bigpic";
 container.style.cursor = "pointer";
