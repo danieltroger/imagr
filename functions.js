@@ -469,7 +469,6 @@ function update_progress()
       }
     }
   }
-  console.log("average = "+average+" queue = "+queue);
   average /= uploads.queued;
   if(parseInt(prog.style.width) != average)
   {

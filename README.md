@@ -106,7 +106,7 @@ php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"))
 
 * Movie uploading
 * Optimizations for mobile devices
-* An upload queue to not make the http request timeout when doing uploads of many images at once
+* Fix the "uploading image" text on the blurred canvas to be exactly centered
 * Themes / more design options
 * Categories
 * Better user interface [?]
