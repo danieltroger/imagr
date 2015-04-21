@@ -458,11 +458,14 @@ function update_progress()
     if(id != "active" && id != "queued")
     {
       var upload = uploads[id];
-      percentage = upload.uploaded;
-      average += percentage;
-      if(!upload.uploading && uploads.active < 2)
+      if(upload.uploaded != 1)
       {
-        do_upload(upload);
+        percentage = upload.uploaded;
+        average += percentage;
+        if(!upload.uploading && uploads.active < 2)
+        {
+          do_upload(upload);
+        }
       }
     }
   }
