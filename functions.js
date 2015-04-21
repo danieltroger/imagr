@@ -495,10 +495,10 @@ function upload(binary,fname,date)
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.width = timg.width;
     canvas.height = timg.height;
-     ctx.drawImage(timg, 0, 0, timg.width, timg.height);
+    ctx.drawImage(timg, 0, 0, timg.width, timg.height);
     stackBlurCanvasRGBA(canvas,0,0, timg.width, timg.height,10);
     ctx.font = (timg.height/100)*12+'px Ubuntu';
-    ctx.fillInversedText("Uploading image...", (timg.width/100)*20, (timg.height/100)*50);
+    ctx.fillInversedText("Uploading image...", (timg.width/100)*15, (timg.height/100)*50);
     var ri = canvas.toDataURL(),
     i = new Image();
     canvas.remove();
