@@ -49,23 +49,24 @@ while(file_exists($fname))
   $fname = "{$fi_new} ({$a}).{$ext[0]}";
   $a++;
 }
+rename($tn,$fname);
 if(!$raw)
 {
-  rename($tn,$fname);
+  chmod($fname,0644);
+  touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 }
 else
 {
-  $tn2 = rand() . ".cr2";
-  rename($tn,$tn2);
-  $im = new Imagick($tn2);
+  $nn = $fname . ".jpg";
+  $im = new Imagick($fname);
   $im->setImageFormat("jpg");
-  $im->writeImage($fname);
+  $im->writeImage($nn);
   $im->clear();
   $im->destroy();
-  unlink($tn2);
+  unlink($fname);
+  chmod($nn,0644);
+  touch(__DIR__ . DIRECTORY_SEPARATOR . $nn,$date);
 }
-chmod($fname,0644);
-touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 thumb($fname);
 if(file_exists($fname))
 {
