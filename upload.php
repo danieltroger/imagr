@@ -50,12 +50,7 @@ while(file_exists($fname))
   $a++;
 }
 rename($tn,$fname);
-if(!$raw)
-{
-  chmod($fname,0644);
-  touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
-}
-else
+if($raw)
 {
   $nn = $fname . ".jpg";
   $im = new Imagick($fname);
@@ -64,10 +59,11 @@ else
   $im->clear();
   $im->destroy();
   unlink($fname);
-  chmod($nn,0644);
-  touch(__DIR__ . DIRECTORY_SEPARATOR . $nn,$date);
+  $fname = $nn;
 }
-thumb($fname);
+chmod($fname,0644);
+touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
+thumb($nn);
 if(file_exists($fname))
 {
   exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $_GET['name'])));
