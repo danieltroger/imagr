@@ -1,15 +1,5 @@
 <?php
 error_reporting(E_ALL);
-
-/*
-****************
-
-This script is vulnerable! Sadly I've overseen this, but with a modified image file this script can be abused for arbitary code execution.
-
- Will be fixing ASAP!!
-
-*****************
-*/
 require "thumbs.php";
 header("Content-type: text/plain");
 if(json_decode(file_get_contents("features"))->uploading != true) x_err("Uploading not allowed");
@@ -33,6 +23,7 @@ fclose($in);
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
 $fname = $_GET['name'];
 if(empty($fname)) x_err("Filename is empty");
+if(strcasecmp(substr($fname,-4),".php") == 0) x_err("1337: b4d_h4x0r");
 $date = (int) $_GET['date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
