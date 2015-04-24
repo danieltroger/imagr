@@ -63,7 +63,7 @@ if($raw)
 }
 chmod($fname,0644);
 touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
-thumb($nn);
+thumb($fname);
 if(file_exists($fname))
 {
   exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $_GET['name'])));
