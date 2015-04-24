@@ -470,9 +470,10 @@ function update_progress()
     }
   }
   average /= uploads.queued;
+  average *= 100;
   if(parseInt(prog.style.width) != average)
   {
-    prog.style.width = uploads.queued == 0 ? "0%" : average*100+"%";
+    prog.style.width = uploads.queued == 0 ? "0%" : average+"%";
   }
   requestAnimationFrame(update_progress);
 }
