@@ -1,5 +1,15 @@
 <?php
 error_reporting(E_ALL);
+
+/*
+****************
+
+This script is vulnerable! Sadly I've overseen this, but with a modified image file this script can be abused for arbitary code execution.
+
+ Will be fixing ASAP!!
+
+*****************
+*/
 require "thumbs.php";
 header("Content-type: text/plain");
 if(json_decode(file_get_contents("features"))->uploading != true) x_err("Uploading not allowed");
