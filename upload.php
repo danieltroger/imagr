@@ -26,7 +26,7 @@ $raw = false;
 if(empty($fname)) x_err("Filename is empty");
 if(strcasecmp(substr($fname,-4),".php") == 0) x_err("1337: b4d_h4x0r");
 if(strcasecmp(substr($fname,-4),".cr2") == 0) $raw = true;
-if($raw && !extension_loaded('imagick')) x_err("please install the imagick extension for raw image support.");
+if($raw && !extension_loaded('imagick')) x_err("please install the imagick extension for raw image support");
 $date = (int) $_GET['date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
