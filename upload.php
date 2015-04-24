@@ -22,8 +22,11 @@ fclose($in);
 //$length = $h['X-length'];
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
 $fname = $_GET['name'];
+$raw = false;
 if(empty($fname)) x_err("Filename is empty");
 if(strcasecmp(substr($fname,-4),".php") == 0) x_err("1337: b4d_h4x0r");
+if(strcasecmp(substr($fname,-4),".cr2") == 0) $raw = true;
+if($raw && !extension_loaded('imagick')) x_err("please install the imagick extension for raw image support.");
 $date = (int) $_GET['date'];
 if(substr($date,-3) == 000) $date = substr($date,0,-3);
 $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -46,7 +49,21 @@ while(file_exists($fname))
   $fname = "{$fi_new} ({$a}).{$ext[0]}";
   $a++;
 }
-rename($tn,$fname);
+if(!$raw)
+{
+  rename($tn,$fname);
+}
+else
+{
+  $tn2 = rand() . ".cr2";
+  rename($tn,$tn2);
+  $im = new Imagick($tn2);
+  $im->setImageFormat("jpg");
+  $im->writeImage($fname);
+  $im->clear();
+  $im->destroy();
+  unlink($tn2);
+}
 chmod($fname,0644);
 touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 thumb($fname);

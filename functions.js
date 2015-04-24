@@ -481,7 +481,14 @@ function upload(binary,fname,date)
   var MAX_WIDTH = thumbsize != 0 ? thumbsize : ((winwidth()/100)*20),
   timg = new Image(),
   id = uniqid();
-  timg.src = binary;
+  if(substr(fname,-4).toLowerCase() == ".cr2")
+  {
+    timg.src = svg ? "icons/white.svg" : "icons/white.png";
+  }
+  else
+  {
+    timg.src = binary;
+  }
   timg.addEventListener("load",function ()
   {
     MAX_WIDTH *= 2;
@@ -691,7 +698,7 @@ function addimg(image)
   {
     imgelem.src="thumbs.dir/"+image+".jpg";
     imgelem.style.width="19%";
-    if(mobile){imgelem.style.width="92%";}
+    //if(mobile){imgelem.style.width="92%";}
     imgelem.style.minWidth="200px";
   }
   $.data(imgelem,'original',image);
