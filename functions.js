@@ -514,7 +514,6 @@ function upload(binary,fname,date)
     i.src = ri;
     i.classList.add("image");
     i.style.maxWidth = "19%";
-    i.style.minWidth = "200px";
     i.style.cursor = "progress";
     grid.appendChild(i);
     if(typeof window.scrollTo == "function") window.scrollTo(0,$(i).offset().top);
@@ -564,7 +563,7 @@ function upload(binary,fname,date)
         args = explode(",",argr);
         for(var i = 0;i<args.length;i++)
         {
-          var arg=explode("=",args[i]),key=arg[0],value=arg[1];
+          var arg = explode("=",args[i]),key=arg[0],value=arg[1];
           if(value == undefined)
           {
             //console.warn("No value given, assuming true");
@@ -699,8 +698,6 @@ function addimg(image)
   {
     imgelem.src="thumbs.dir/"+image+".jpg";
     imgelem.style.width="19%";
-    //if(mobile){imgelem.style.width="92%";}
-    imgelem.style.minWidth="200px";
   }
   $.data(imgelem,'original',image);
   imgelem.classList.add("image");
@@ -740,7 +737,7 @@ function openpic(srcthumb)
     {
       //var cw = img.clientWidth,
       //dynsize = cw > 2 ? cw : screen.width;
-      img.src="download.php/resize/"+(winwidth()/100)*95+"/"+url;
+      img.src="download.php/resize/"+(smalldev ? winwidth()*4 : (winwidth()/100)*95)+"/"+url;
     }
     else
     {
@@ -1271,19 +1268,59 @@ if(typeof HTMLElement.prototype.remove != "function")
     $(this).remove();
   }
 }
+// http://stackoverflow.com/a/27115070
+function detectswipe(ele,func) {
+  swipe_det = new Object();
+  swipe_det.sX = 0;
+  swipe_det.sY = 0;
+  swipe_det.eX = 0;
+  swipe_det.eY = 0;
+  var min_x = 20;  //min x swipe for horizontal swipe
+  var max_x = 40;  //max x difference for vertical swipe
+  var min_y = 40;  //min y swipe for vertical swipe
+  var max_y = 50;  //max y difference for horizontal swipe
+  var direc = "";
+  ele.addEventListener('touchstart',function(e){
+    var t = e.touches[0];
+    swipe_det.sX = t.screenX;
+    swipe_det.sY = t.screenY;
+  },false);
+  ele.addEventListener('touchmove',function(e){
+    e.preventDefault();
+    var t = e.touches[0];
+    swipe_det.eX = t.screenX;
+    swipe_det.eY = t.screenY;
+  },false);
+  ele.addEventListener('touchend',function(e){
+    //horizontal detection
+    if ((((swipe_det.eX - min_x > swipe_det.sX) || (swipe_det.eX + min_x < swipe_det.sX)) && ((swipe_det.eY < swipe_det.sY + max_y) && (swipe_det.sY > swipe_det.eY - max_y)))) {
+      if(swipe_det.eX > swipe_det.sX) direc = "r";
+      else direc = "l";
+    }
+    //vertical detection
+    if ((((swipe_det.eY - min_y > swipe_det.sY) || (swipe_det.eY + min_y < swipe_det.sY)) && ((swipe_det.eX < swipe_det.sX + max_x) && (swipe_det.sX > swipe_det.eX - max_x)))) {
+      if(swipe_det.eY > swipe_det.sY) direc = "d";
+      else direc = "u";
+    }
+
+    if (direc != "") {
+      if(typeof func == 'function') func(direc);
+    }
+    direc = "";
+  },false);
+}
+/* swipe func end */
 var thumbsize = 0,
 svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windows") < 0 ? true : false,
 realsize = "dyn",
 argr,args,
-mobile = false,
 info = false,
-preload = true,
+smalldev = $(window).width() < 678,
+preload = smalldev ? false : true,
 loaded = false,
-mobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 grid = CE("div"),
 meta = json_decode(file_get_contents("meta?"+rand(1,200))),
 container = CE("div"),
-isMobile = false,
 desc = CE("span"),
 prevb = CE("img"),
 nextb = CE("img"),
@@ -1301,7 +1338,7 @@ prevb.src = svg ? "icons/prev.svg" : "icons/prev.png";
 prevb.classList.add("prev");
 prevb.classList.add("symbol");
 prevb.classList.add("vertcent");
-prevb.style.width="10%";
+prevb.style.width = "10%";
 prevb.addEventListener("click",prev);
 nextb.src = svg ? "icons/next.svg" : "icons/next.png";
 nextb.classList.add("next");
@@ -1334,6 +1371,15 @@ function init()
   startWorker();
   update_progress();
   window.addEventListener("keypress",kinput);
+  if(smalldev)
+  {
+    detectswipe(img,function (d)
+    {
+      img.src = svg ? "icons/loading.svg" : "icons/loading.gif";
+      if(d == "l") next();
+      if(d == "r") prev();
+    });
+  }
   if(features.uploading)
   {
     var upbut = document.querySelector("input");
