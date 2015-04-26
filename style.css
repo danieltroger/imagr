@@ -191,10 +191,17 @@ text-shadow: none;
 {
     .image
     {
-      height: 80px !important;
+      height: 50px !important;
       border: none !important;
       box-shadow: none !important;
       margin: 0 !important;
       width: initial !important;
     }
+}
+.move
+{
+  transition-duration:0.4s;
+  transition-property:all;
+  -webkit-transition-duration:0.4s;
+  -webkit-transition-property:all;
 }
