@@ -1375,7 +1375,7 @@ function init()
   {
     detectswipe(img,function (d)
     {
-      img.src = svg ? "icons/loading.svg" : "icons/loading.gif";
+      if(d == "l" || d == "r") img.src = svg ? "icons/loading.svg" : "icons/loading.gif";
       if(d == "l") next();
       if(d == "r") prev();
     });
