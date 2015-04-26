@@ -696,7 +696,7 @@ function addimg(image)
   }
   else
   {
-    imgelem.src="thumbs.dir/"+image+".jpg";
+    imgelem.src=smalldev ? "download.php/resize/80/"+image : "thumbs.dir/"+image+".jpg";
     imgelem.style.width="19%";
   }
   $.data(imgelem,'original',image);
@@ -1375,7 +1375,10 @@ function init()
   {
     detectswipe(img,function (d)
     {
-      if(d == "l" || d == "r") img.src = svg ? "icons/loading.svg" : "icons/loading.gif";
+      if(d == "l" || d == "r")
+      {console.log("k");
+        img.src = svg ? "icons/loading.svg" : "icons/loading.gif";
+      }
       if(d == "l") next();
       if(d == "r") prev();
     });
