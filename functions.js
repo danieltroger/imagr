@@ -1456,10 +1456,11 @@ if(typeof HTMLElement.prototype.remove != "function")
 }
 function back()
 {
-  img.classList.add("move");
-  img.style.top = "50%";
-  img.style.left = "50%";
+  img.classList.remove("move");
   img.classList.add("cent");
+  img.style.top = "50%";
+  img.classList.add("move");
+  img.style.left = "50%";
 }
 var thumbsize = 0,
 svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windows") < 0 ? true : false,
@@ -1543,13 +1544,13 @@ function init()
       }
     },
     stop: function() {
-      img.classList.add("move");
       if(!o)
       {
         back();
       }
       else
       {
+        img.classList.add("move");
         if(!r)
         {
           img.style.left = -winwidth()+"px";
