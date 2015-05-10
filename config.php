@@ -5,4 +5,3 @@ $password = "password";
 $database = "imagr";
 $uploading = true;
 $deleting = true;
-// TEEEEEEEEEEEEST
