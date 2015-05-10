@@ -6,3 +6,5 @@ foreach($m as $im => $mdat)
   updatemeta($im,NULL,$mdat->description,$mdat->by);
   echo $im . PHP_EOL;
 }
+unlink("meta");
+unlink("migrate.php");

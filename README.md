@@ -33,6 +33,12 @@ The config file sets some variables and globals in the **PHP format**
 
 We had some here but since you aren't dumb you'll make it without.
 
+### Migrating from older `meta` files to MySQL
+
+Check that we've got writing permission and that MySQL is setup in `config.php` (and works) and just execute `migrate.php`.
+
+You're done.
+
 ### Building / Compressing the files
 
 Just execute `./build.sh` within imagr's working directory in a bash-shell, you'll basically need `java` and `wget` installed.
