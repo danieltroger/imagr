@@ -1,49 +1,30 @@
 <?php
-header("Content-type: text/plain");
 require "config.php";
 $conn = new mysqli($servername, $username, $password);
 if ($conn->connect_error)
 {
-  die("MySQL connection failed: " . $conn->connect_error . PHP_EOL);
+  die("MySQL connection failed: " . $conn->connect_error);
 }
 
 // try to create database if not exists
-if ($conn->query("CREATE DATABASE IF NOT EXISTS {$database}") === TRUE)
+if ($conn->query("CREATE DATABASE IF NOT EXISTS {$database}") !== TRUE)
 {
-  l("Database '{$database}' now exists.");
+  die("Error creating database: " . $conn->error);
 }
-else
+if($conn->select_db($database) !== TRUE)
 {
-    l("Error creating database: " . $conn->error);
+  die("Couldn't select database '{$database}'");
 }
-if($conn->select_db($database) === TRUE)
-{
-  l("Selected database '{$database}'");
-}
-else
-{
-  l("Couldn't select database '{$database}'");
-}
-// try to create table
 if ($conn->query("CREATE TABLE IF NOT EXISTS meta (
 image VARCHAR(255) NOT NULL,
 title VARCHAR(30),
 upby VARCHAR(30),
 description VARCHAR(1024)
-)") === TRUE)
+)") !== TRUE)
 {
-    l("Metadata table now exists");
+  die("Error creating table: " . $conn->error);
 }
-else
-{
-    l("Error creating table: " . $conn->error);
-}
-l($conn->error);
 $conn->close();
-function l($str)
-{
-  echo $str . PHP_EOL;
-}
 function updatemeta($img,$title,$desc,$by)
 {
   $GLOBALS['conn']->query("DELETE FROM meta WHERE image = '{$img}'");

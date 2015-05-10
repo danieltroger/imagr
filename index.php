@@ -8,6 +8,7 @@
     header("Pragma: no-cache");
     require "thumbs.php";
     require "imgs.php";
+    require "config.php";
 
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
@@ -32,7 +33,7 @@
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="functions.min.js"></script>
       <script>
-      var features = <?php echo file_get_contents("features") ?>,
+      var features = {"uploading": <?php echo uploading ? true : false; ?>, "deleting": <?php echo deleting ? true : false; ?>},
       imgs = Array(<?php
       imgs(1);
       ?>);

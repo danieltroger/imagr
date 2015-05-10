@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+require "sql.php";
 $paths = explode("/",substr($_SERVER['PATH_INFO'],1));
 if($paths[0] == "exif")
 {
@@ -41,7 +42,7 @@ elseif($paths[0] == "delete")
   header("Cache-Control: no-store, no-cache, must-revalidate");
   header("Cache-Control: post-check=0, pre-check=0", false);
   header("Pragma: no-cache");
-  if(json_decode(file_get_contents("features"))->deleting == true)
+  if(deleting)
   {
     @$f = basename($paths[1]);
     if(empty($f))
