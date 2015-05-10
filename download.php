@@ -69,6 +69,13 @@ elseif($paths[0] == "delete")
   }
   exit(json_encode(Array('success' => $r)));
 }
+elseif($paths[0] == "rename")
+{
+  $image = $paths[1];
+  $field = $paths[2];
+  $value = $paths[3];
+  // TODO
+}
 else
 {
   if($paths[0] == "resize")
@@ -187,6 +194,7 @@ else
   }
   fclose($h);
 }
+$conn->close();
 function calc($equation,$nocomma = true)
 {
   // Remove whitespaces

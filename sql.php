@@ -24,7 +24,6 @@ description VARCHAR(1024)
 {
   die("Error creating table: " . $conn->error);
 }
-$conn->close();
 function updatemeta($img,$title,$desc,$by)
 {
   $GLOBALS['conn']->query("DELETE FROM meta WHERE image = '{$img}'");

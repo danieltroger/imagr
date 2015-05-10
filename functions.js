@@ -651,9 +651,10 @@ function update_progress()
   }
   average /= uploads.queued;
   average *= 100;
-  if(parseInt(prog.style.width) != average)
+  var wi = uploads.queued == 0 ? "0%" : average+"%";
+  if(prog.style.width != wi)
   {
-    prog.style.width = uploads.queued == 0 ? "0%" : average+"%";
+    prog.style.width = wi;
   }
   requestAnimationFrame(update_progress);
 }
@@ -861,13 +862,16 @@ CanvasRenderingContext2D.prototype.fillInversedText = function (txt, x, y) {
 }
 function kinput(e)
 {
-  var kk = e.keyCode || e.which;
-  if(kk == 105) infooverlay();
-  if(kk == 102) fs();
-  if(kk == 27) {e.preventDefault(); container.click();}
-  if(kk == 39 || kk == 110) next();
-  if(kk == 37 || kk == 112) prev();
-  if(kk == 8 || kk == 46){ e.preventDefault(); del();}
+  if(!e.target.contentEditable)
+  {
+    var kk = e.keyCode || e.which;
+    if(kk == 105) infooverlay();
+    if(kk == 102) fs();
+    if(kk == 27) {e.preventDefault(); container.click();}
+    if(kk == 39 || kk == 110) next();
+    if(kk == 37 || kk == 112) prev();
+    if(kk == 8 || kk == 46){ e.preventDefault(); del();}
+  }
 }
 function addimg(image)
 {
@@ -898,11 +902,12 @@ function openpic(srcthumb)
     console.warn("srcthumb is undefined");
     return;
   }
-  url = $.data(srcthumb,'original'), blob = false, burl = imgs[url];
+  url = $.data(srcthumb,'original');
+  var blob = false, burl = imgs[url];
   if(substr(burl,0,4) == "blob")
   {
     console.info("Reading image "+url+" from "+burl);
-    img.src=burl;
+    img.src = burl;
     blob = true;
   }
   else
@@ -923,12 +928,53 @@ function openpic(srcthumb)
     }
   }
   $.data(img,'original',url);
-  console.log(url);
   location.hash = "#!image="+basename(url)+ (info ? ",info=true" : "");
   container.style.display="";
   infobut.style.display="";
+  while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
+  {
+    infolay.removeChild(infolay.firstChild);
+  }
   var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
   inf = "";
+  if(exif.meta != false)
+  {
+    var m = exif.meta, t = "";
+    if("title" in m)
+    {
+      t += m.title;
+    }
+    else
+    {
+      t += "Unbenannt";
+    }
+    var spt = CE("span");
+    spt.appendChild(document.createTextNode(t));
+    spt.contentEditable = true;
+    spt.id = "title";
+    infolay.appendChild(spt);
+    if("upby" in m)
+    {
+      infolay.appendChild(document.createTextNode(" von "));
+      var spb = CE("span");
+      spb.id = "by";
+      spb.appendChild(document.createTextNode(m.upby));
+      spb.contentEditable = true;
+      infolay.appendChild(spb);
+    }
+    if("description" in m)
+    {
+      var spd = CE("span");
+      spd.id = "description";
+      spd.appendChild(document.createTextNode("upby" in m ? ": "+ m.description : m.description));
+      spd.contentEditable = true;
+      infolay.appendChild(spd);
+    }
+  }
+  else
+  {
+    inf += "Unbenannt";
+  }
     if(exif != false && exif != null)
     {
        var width = exif['width'],
@@ -962,22 +1008,33 @@ function openpic(srcthumb)
        if(aperture != false) inf += ", Blende: "+aperture;
        if(exposure != false) inf += ", Belichtungszeit: "+exposure;
        if(flash != false) inf += ", Blitz aktiviert";
-       if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+       if(filesize != false) inf += ", Dateigröße: "+filesize;
        if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
        if(sw != false && sw != null) inf += ", software: "+sw;
-       //     lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
-       // if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
-      // if(features.deleting) inf += "&nbsp;&nbsp;&nbsp;&nbsp;<button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
+       infolay.appendChild(document.createTextNode(inf+" "));
+       var dl = CE("a");
+       dl.download = url;
+       dl.href = blob ? burl : url;
+       dl.appendChild(document.createTextNode("In Originalgröße downloaden"));
+       infolay.appendChild(dl);
+       if(gps != false)
+       {
+         var gpl = CE("a");
+         gpl.target = "_blank";
+         gpl.href = "//maps.apple.com/?q="+urlencode(gps);
+         gpl.appendChild(document.createTextNode("Ort in Karten öffnen"));
+         infolay.appendChild(gpl);
+       }
+       if(features.deleting)
+       {
+         infolay.appendChild(document.createTextNode("    "));
+         var but = CE("button");
+         but.addEventListener("click",del);
+         but.classList.add("delbut");
+         but.appendChild(document.createTextNode("Löschen"));
+         infolay.appendChild(but);
+       }
     }
-    /*
-    TODO: fix this.
-    while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
-    {
-      infolay.removeChild(infolay.firstChild);
-    }
-    infolay.appendChild(document.createTextNode(inf));
-    */
-    infolay.innerHTML = inf;
   }
 function infooverlay()
 {
