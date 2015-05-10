@@ -19,7 +19,9 @@ When the page loads, thumbnails will be loaded onto the page (if there are any i
 
 If you double click on the large image, fullscreen will be toggled if you permit it. (Your browser will probaly ask, I've only tested this feature on Chromium (Google Chrome) and Firefox (Developer edition) so far.)
 
-If you hit the Info button (i) you'll get some information about the image, if made available through EXIF, and an image title and uploaded by if specified in json format in the file `meta`.
+If you hit the Info button (i) you'll get some information about the image, if made available through EXIF, as an Title, uploaded by and a description (stored in mysql).
+
+If you want to rename an image click into the Title / Description / By field and enter a new value.
 
 When you upload images per drag 'n drop, a little orange progress bar will appear at the top of the page, displaying the total data uploaded.
 
