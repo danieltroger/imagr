@@ -5,3 +5,4 @@ $password = "password";
 $database = "imagr";
 $uploading = true;
 $deleting = true;
+// does it work? Or Am i to dumb
