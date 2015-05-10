@@ -1,7 +1,7 @@
 imagr
 =====
 
-Is an image and move viewer written in HTML5.
+Is an image viewer written in HTML5.
 
 
 ## Howto
