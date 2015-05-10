@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+require "sql.php";
 $paths = explode("/",substr($_SERVER['PATH_INFO'],1));
 if($paths[0] == "exif")
 {
@@ -29,7 +30,8 @@ if($paths[0] == "exif")
     'aperture' => aperture($we['FNumber']),
     'exposure' => exposure($we['ExposureTime']),
     'filesize' => formatsize($we['FileSize']),
-    'software' => sw($we['Software'])
+    'software' => sw($we['Software']),
+    'meta' => getmeta($paths[1])
   ));
   //echo json_last_error_msg();
 }
@@ -41,7 +43,7 @@ elseif($paths[0] == "delete")
   header("Cache-Control: no-store, no-cache, must-revalidate");
   header("Cache-Control: post-check=0, pre-check=0", false);
   header("Pragma: no-cache");
-  if(json_decode(file_get_contents("features"))->deleting == true)
+  if(deleting)
   {
     @$f = basename($paths[1]);
     if(empty($f))
@@ -66,6 +68,32 @@ elseif($paths[0] == "delete")
     $r = false;
   }
   exit(json_encode(Array('success' => $r)));
+}
+elseif($paths[0] == "rename")
+{
+  if(renaming)
+  {
+    function safr($str)
+    {
+      return str_replace("'","\'",$str);
+    }
+    $image = safr($paths[1]);
+    $field = safr($paths[2]);
+    $value = safr($paths[3]);
+    $om = getmeta($image);
+    $om[$field] = $value;
+    exit(
+         json_encode(
+                    Array('success' =>
+                    updatemeta($image,
+                    $om['title'],
+                    $om['description'],
+                    $om['upby']))));
+  }
+  else
+  {
+    exit(json_encode(Array('success' => false)));
+  }
 }
 else
 {
@@ -185,6 +213,7 @@ else
   }
   fclose($h);
 }
+$conn->close();
 function calc($equation,$nocomma = true)
 {
   // Remove whitespaces

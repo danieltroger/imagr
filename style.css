@@ -205,3 +205,11 @@ text-shadow: none;
   -webkit-transition-duration:0.4s;
   -webkit-transition-property:all;
 }
+.delbut
+{
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin: 1px;
+}
+a:hover,a:visited,a,button {color: white}

@@ -651,9 +651,10 @@ function update_progress()
   }
   average /= uploads.queued;
   average *= 100;
-  if(parseInt(prog.style.width) != average)
+  var wi = uploads.queued == 0 ? "0%" : average+"%";
+  if(prog.style.width != wi)
   {
-    prog.style.width = uploads.queued == 0 ? "0%" : average+"%";
+    prog.style.width = wi;
   }
   requestAnimationFrame(update_progress);
 }
@@ -726,6 +727,24 @@ function upload(binary,fname,date)
       console.info("Preload WebWorker started");
    }
  }
+ function update()
+ {
+   var rq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
+   u = url;
+   rq.open("GET","download.php/rename/"+u+"/"+this.id+"/"+this.textContent,true);
+   rq.addEventListener("readystatechange",function ()
+   {
+     if (this.readyState == 4 && this.status == 200)
+     {
+       if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
+        var m = typeof XMLHttpRequest == "function" ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+        m.open("GET","download.php/exif/"+u,false);
+        m.send();
+        mdata[u] = json_decode(m.response);
+     }
+   });
+   rq.send();
+ }
  function lhash()
  {
    requestAnimationFrame(lhash);
@@ -785,13 +804,16 @@ function upload(binary,fname,date)
           }
           if(key == "info")
           {
-            if(value == "true")
+            if(value == "true" && !info)
             {
               infolay.classList.remove("closed");
+              info = true;
+
             }
-            else if(value == "false")
+            else if(value == "false" && info)
             {
               infolay.classList.add("closed");
+              info = false;
             }
           }
           if(key == "preload")
@@ -858,13 +880,23 @@ CanvasRenderingContext2D.prototype.fillInversedText = function (txt, x, y) {
 }
 function kinput(e)
 {
-  var kk = e.keyCode || e.which;
-  if(kk == 105) infooverlay();
-  if(kk == 102) fs();
-  if(kk == 27) {e.preventDefault(); container.click();}
-  if(kk == 39 || kk == 110) next();
-  if(kk == 37 || kk == 112) prev();
-  if(kk == 8 || kk == 46){ e.preventDefault(); del();}
+  var tg = e.target,
+  ce = tg.contentEditable,
+  tn = tg.tagName,
+  kk = e.keyCode || e.which;
+  if(!ce || tn != "SPAN")
+  {
+    if(kk == 105) infooverlay();
+    if(kk == 102) fs();
+    if(kk == 27) {e.preventDefault(); container.click()}
+    if(kk == 39 || kk == 110) next();
+    if(kk == 37 || kk == 112) prev();
+    if(kk == 8 || kk == 46){ e.preventDefault(); del()}
+  }
+  if(ce && tn == "SPAN")
+  {
+    if(kk == 13) {e.preventDefault(); tg.blur()}
+  }
 }
 function addimg(image)
 {
@@ -881,11 +913,6 @@ function addimg(image)
   }
   $.data(imgelem,'original',image);
   imgelem.classList.add("image");
-  if(meta[image]!=undefined)
-  {
-    $.data(imgelem,'by',meta[image].by);
-    $.data(imgelem,'description',meta[image].description);
-  }
   imgelem.addEventListener("click",openpic);
   grid.appendChild(imgelem);
 }
@@ -900,11 +927,12 @@ function openpic(srcthumb)
     console.warn("srcthumb is undefined");
     return;
   }
-  var url = $.data(srcthumb,'original'), blob = false, burl = imgs[url];
+  url = $.data(srcthumb,'original');
+  var blob = false, burl = imgs[url];
   if(substr(burl,0,4) == "blob")
   {
     console.info("Reading image "+url+" from "+burl);
-    img.src=burl;
+    img.src = burl;
     blob = true;
   }
   else
@@ -925,34 +953,42 @@ function openpic(srcthumb)
     }
   }
   $.data(img,'original',url);
-  location.hash = "#!image="+basename(url);
+  location.hash = "#!image="+basename(url)+ (info ? ",info=true" : "");
   container.style.display="";
-  var d = $(srcthumb).data();
-  if("by" in d)
-  {
-    by = d.by;
-  }
-  else
-  {
-    by = meta['all'] != undefined ? meta['all'] : "Unknown";
-  }
-  if("description" in d)
-  {
-    desc = d.description;
-  }
-  else
-  {
-    desc = "Unbenannt";
-  }
   infobut.style.display="";
-    var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
-    inf = desc+", hochgeladen von "+by,
-    lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
-    //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
-    if($.data(srcthumb,'description') == "undefined")
+  while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
+  {
+    infolay.removeChild(infolay.firstChild);
+  }
+  var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
+  inf = "";
+    var m = exif.meta, t = "";
+    if(m == false) m = {};
+    if("title" in m && m.title != "")
     {
-     inf="Hochgeladen von "+$.data(srcthumb,'by');
+      t += m.title;
     }
+    else
+    {
+      t += "Unbenannt";
+    }
+    var spt = CE("span");
+    spt.appendChild(document.createTextNode(t));
+    if(features.renaming) spt.contentEditable = true;
+    spt.id = "title";
+    spt.addEventListener("blur",update);
+    var spb = CE("span");
+    spb.id = "upby";
+    spb.appendChild(document.createTextNode("upby" in m && m.upby != "" ? m.upby : "Unbekannt"));
+    if(features.renaming) spb.contentEditable = true;
+    spb.addEventListener("blur",update);
+    var spd = CE("span"),
+    dxc = "description" in m && m.description != "" ? m.description : "Unbeschrieben";
+    spd.id = "description";
+    spd.addEventListener("blur",update);
+    spd.appendChild(document.createTextNode(dxc));
+    if(features.renaming) spd.contentEditable = true;
+    infolay.appendChilds(spt,document.createTextNode(" von "),spb,document.createTextNode(": "),spd);
     if(exif != false && exif != null)
     {
        var width = exif['width'],
@@ -966,7 +1002,7 @@ function openpic(srcthumb)
        exposure = exif['exposure'],
        filesize = exif['filesize'],
        flash = exif['flash'],
-      sw = exif['software'];
+       sw = exif['software'];
        if(date != false) inf += ", fotografiert am "+date;
        if(date != false && make != false && model != false)
        {
@@ -986,26 +1022,39 @@ function openpic(srcthumb)
        if(aperture != false) inf += ", Blende: "+aperture;
        if(exposure != false) inf += ", Belichtungszeit: "+exposure;
        if(flash != false) inf += ", Blitz aktiviert";
-       if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
+       if(filesize != false) inf += ", Dateigröße: "+filesize;
        if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
-      if(sw != false && sw != null) inf += ", software: "+sw;
-       inf += lstr;
-       if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
-      if(features.deleting) inf += "&nbsp;&nbsp;&nbsp;&nbsp;<button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
+       if(sw != false && sw != null) inf += ", software: "+sw;
+       infolay.appendChild(document.createTextNode(inf+" "));
+       var dl = CE("a");
+       dl.download = url;
+       dl.href = blob ? burl : url;
+       dl.appendChild(document.createTextNode("In Originalgröße downloaden"));
+       infolay.appendChild(dl);
+       if(gps != false)
+       {
+         var gpl = CE("a");
+         gpl.target = "_blank";
+         gpl.href = "//maps.apple.com/?q="+urlencode(gps);
+         gpl.appendChild(document.createTextNode("Ort in Karten öffnen"));
+         infolay.appendChild(gpl);
+       }
+       if(features.deleting)
+       {
+         infolay.appendChild(document.createTextNode("    "));
+         var but = CE("button");
+         but.addEventListener("click",del);
+         but.classList.add("delbut");
+         but.appendChild(document.createTextNode("Löschen"));
+         infolay.appendChild(but);
+       }
     }
-    /*
-    TODO: fix this.
-    while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
-    {
-      infolay.removeChild(infolay.firstChild);
-    }
-    infolay.appendChild(document.createTextNode(inf));
-    */
-    infolay.innerHTML = inf;
   }
 function infooverlay()
 {
     infolay.classList.toggle("closed");
+    info = infolay.classList.contains("closed") ? false : true;
+    if(container.style.display != "none") location.hash = "#!image="+url+(info ? ",info=true" : "");
 }
 function findthumb(realsource)
 {
@@ -1467,11 +1516,11 @@ svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windo
 realsize = "dyn",
 argr,args,
 info = false,
-smalldev = $(window).width() < 678,
-preload = false,//smalldev ? false : true,
+smalldev = $(window).width() < 768,
+preload = smalldev ? false : true,
 loaded = false,
+url = "",
 grid = CE("div"),
-meta = json_decode(file_get_contents("meta?"+rand(1,200))),
 container = CE("div"),
 desc = CE("span"),
 prevb = CE("img"),
@@ -1516,7 +1565,6 @@ container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
   document.body.appendChilds(prog,grid,container);
-  document.querySelector(".fileUpload").style.display = "";
   imgs.forEach(addimg);
   ety();
   lhash();
@@ -1571,7 +1619,8 @@ function init()
   });
   if(features.uploading)
   {
-    var upbut = document.querySelector("input");
+    var upbut = document.querySelector(".upload");
+    document.querySelector(".fileUpload").style.display = "";
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);

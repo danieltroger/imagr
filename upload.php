@@ -1,8 +1,9 @@
 <?php
 error_reporting(E_ALL);
 require "thumbs.php";
+require "sql.php";
 header("Content-type: text/plain");
-if(json_decode(file_get_contents("features"))->uploading != true) x_err("Uploading not allowed");
+if(!uploading) x_err("Uploading not allowed");
 if(!is_writable(".")) x_err('Directory not writable');
 //$h = getallheaders();
 $tn = tempnam(sys_get_temp_dir(), 'upl');
