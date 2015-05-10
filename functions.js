@@ -727,6 +727,24 @@ function upload(binary,fname,date)
       console.info("Preload WebWorker started");
    }
  }
+ function update()
+ {
+   var rq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
+   u = url;
+   rq.open("GET","download.php/rename/"+u+"/"+this.id+"/"+this.textContent,true);
+   rq.addEventListener("readystatechange",function ()
+   {
+     if (this.readyState == 4 && this.status == 200)
+     {
+       if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
+        var m = typeof XMLHttpRequest == "function" ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+        m.open("GET","download.php/exif/"+u,false);
+        m.send();
+        mdata[u] = json_decode(m.response);
+     }
+   });
+   rq.send();
+ }
  function lhash()
  {
    requestAnimationFrame(lhash);
@@ -862,15 +880,22 @@ CanvasRenderingContext2D.prototype.fillInversedText = function (txt, x, y) {
 }
 function kinput(e)
 {
-  if(!e.target.contentEditable)
+  var tg = e.target,
+  ce = tg.contentEditable,
+  tn = tg.tagName,
+  kk = e.keyCode || e.which;
+  if(!ce || tn != "SPAN")
   {
-    var kk = e.keyCode || e.which;
     if(kk == 105) infooverlay();
     if(kk == 102) fs();
-    if(kk == 27) {e.preventDefault(); container.click();}
+    if(kk == 27) {e.preventDefault(); container.click()}
     if(kk == 39 || kk == 110) next();
     if(kk == 37 || kk == 112) prev();
-    if(kk == 8 || kk == 46){ e.preventDefault(); del();}
+    if(kk == 8 || kk == 46){ e.preventDefault(); del()}
+  }
+  if(ce && tn == "SPAN")
+  {
+    if(kk == 13) {e.preventDefault(); tg.blur()}
   }
 }
 function addimg(image)
@@ -937,10 +962,9 @@ function openpic(srcthumb)
   }
   var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
   inf = "";
-  if(exif.meta != false)
-  {
     var m = exif.meta, t = "";
-    if("title" in m)
+    if(m == false) m = {};
+    if("title" in m && m.title != "")
     {
       t += m.title;
     }
@@ -952,29 +976,19 @@ function openpic(srcthumb)
     spt.appendChild(document.createTextNode(t));
     spt.contentEditable = true;
     spt.id = "title";
-    infolay.appendChild(spt);
-    if("upby" in m)
-    {
-      infolay.appendChild(document.createTextNode(" von "));
-      var spb = CE("span");
-      spb.id = "by";
-      spb.appendChild(document.createTextNode(m.upby));
-      spb.contentEditable = true;
-      infolay.appendChild(spb);
-    }
-    if("description" in m)
-    {
-      var spd = CE("span");
-      spd.id = "description";
-      spd.appendChild(document.createTextNode("upby" in m ? ": "+ m.description : m.description));
-      spd.contentEditable = true;
-      infolay.appendChild(spd);
-    }
-  }
-  else
-  {
-    inf += "Unbenannt";
-  }
+    spt.addEventListener("blur",update);
+    var spb = CE("span");
+    spb.id = "upby";
+    spb.appendChild(document.createTextNode("upby" in m && m.upby != "" ? m.upby : "Unbekannt"));
+    spb.contentEditable = true;
+    spb.addEventListener("blur",update);
+    var spd = CE("span"),
+    dxc = "description" in m && m.description != "" ? m.description : "Unbeschrieben";
+    spd.id = "description";
+    spd.addEventListener("blur",update);
+    spd.appendChild(document.createTextNode(dxc));
+    spd.contentEditable = true;
+    infolay.appendChilds(spt,document.createTextNode(" von "),spb,document.createTextNode(": "),spd);
     if(exif != false && exif != null)
     {
        var width = exif['width'],
