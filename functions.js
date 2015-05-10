@@ -785,13 +785,16 @@ function upload(binary,fname,date)
           }
           if(key == "info")
           {
-            if(value == "true")
+            if(value == "true" && !info)
             {
               infolay.classList.remove("closed");
+              info = true;
+
             }
-            else if(value == "false")
+            else if(value == "false" && info)
             {
               infolay.classList.add("closed");
+              info = false;
             }
           }
           if(key == "preload")
@@ -881,11 +884,6 @@ function addimg(image)
   }
   $.data(imgelem,'original',image);
   imgelem.classList.add("image");
-  if(meta[image]!=undefined)
-  {
-    $.data(imgelem,'by',meta[image].by);
-    $.data(imgelem,'description',meta[image].description);
-  }
   imgelem.addEventListener("click",openpic);
   grid.appendChild(imgelem);
 }
@@ -900,7 +898,7 @@ function openpic(srcthumb)
     console.warn("srcthumb is undefined");
     return;
   }
-  var url = $.data(srcthumb,'original'), blob = false, burl = imgs[url];
+  url = $.data(srcthumb,'original'), blob = false, burl = imgs[url];
   if(substr(burl,0,4) == "blob")
   {
     console.info("Reading image "+url+" from "+burl);
@@ -925,34 +923,12 @@ function openpic(srcthumb)
     }
   }
   $.data(img,'original',url);
-  location.hash = "#!image="+basename(url);
+  console.log(url);
+  location.hash = "#!image="+basename(url)+ (info ? ",info=true" : "");
   container.style.display="";
-  var d = $(srcthumb).data();
-  if("by" in d)
-  {
-    by = d.by;
-  }
-  else
-  {
-    by = meta['all'] != undefined ? meta['all'] : "Unknown";
-  }
-  if("description" in d)
-  {
-    desc = d.description;
-  }
-  else
-  {
-    desc = "Unbenannt";
-  }
   infobut.style.display="";
-    var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
-    inf = desc+", hochgeladen von "+by,
-    lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
-    //lstr += "<br /><a style=\"color:white;\" href=\"#!image="+basename(url)+"\">Link this image</a>";
-    if($.data(srcthumb,'description') == "undefined")
-    {
-     inf="Hochgeladen von "+$.data(srcthumb,'by');
-    }
+  var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
+  inf = "";
     if(exif != false && exif != null)
     {
        var width = exif['width'],
@@ -966,7 +942,7 @@ function openpic(srcthumb)
        exposure = exif['exposure'],
        filesize = exif['filesize'],
        flash = exif['flash'],
-      sw = exif['software'];
+       sw = exif['software'];
        if(date != false) inf += ", fotografiert am "+date;
        if(date != false && make != false && model != false)
        {
@@ -988,10 +964,10 @@ function openpic(srcthumb)
        if(flash != false) inf += ", Blitz aktiviert";
        if(filesize != false) inf += ", Dateigr&ouml;sse: "+filesize;
        if(width != false && height != false) inf += ", Abmessungen: "+width+"x"+height;
-      if(sw != false && sw != null) inf += ", software: "+sw;
-       inf += lstr;
-       if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
-      if(features.deleting) inf += "&nbsp;&nbsp;&nbsp;&nbsp;<button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
+       if(sw != false && sw != null) inf += ", software: "+sw;
+       //     lstr = blob ? "<br /><a style=\"color:white;\" download=\""+url+"\" href=\""+burl+"\">In Originalgröße downloaden</a>" : "<br /><a style=\"color:white;\" href=\"download.php/"+url+"\">In Originalgröße downloaden</a>";
+       // if(gps != false) inf += " <a target=\"_blank\" style=\"color:white;\" href=\"http://maps.apple.com/?q="+urlencode(gps)+"\">Ort in Karten öffnen</a>";
+      // if(features.deleting) inf += "&nbsp;&nbsp;&nbsp;&nbsp;<button style='color: white; background: transparent; border: 1px solid white; border-radius: 5px; margin: 1px;' onclick='del(this);'>Löschen</button>";
     }
     /*
     TODO: fix this.
@@ -1006,6 +982,8 @@ function openpic(srcthumb)
 function infooverlay()
 {
     infolay.classList.toggle("closed");
+    info = infolay.classList.contains("closed") ? false : true;
+    if(container.style.display != "none") location.hash = "#!image="+url+(info ? ",info=true" : "");
 }
 function findthumb(realsource)
 {
@@ -1467,11 +1445,11 @@ svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windo
 realsize = "dyn",
 argr,args,
 info = false,
-smalldev = $(window).width() < 678,
-preload = false,//smalldev ? false : true,
+smalldev = $(window).width() < 768,
+preload = smalldev ? false : true,
 loaded = false,
+url = "",
 grid = CE("div"),
-meta = json_decode(file_get_contents("meta?"+rand(1,200))),
 container = CE("div"),
 desc = CE("span"),
 prevb = CE("img"),
