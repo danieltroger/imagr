@@ -738,7 +738,7 @@ function upload(binary,fname,date)
      {
        if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
         var m = typeof XMLHttpRequest == "function" ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        m.open("GET","download.php/exif/"+u,false);
+        m.open("GET","download.php/exif/"+u+"?"+rand(),false);
         m.send();
         mdata[u] = json_decode(m.response);
      }
@@ -1592,6 +1592,7 @@ function init()
       }
     },
     stop: function() {
+      img.style.width = ""; // reset width that jQury sets which makes the images streched
       if(!o)
       {
         back();
