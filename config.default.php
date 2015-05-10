@@ -5,3 +5,4 @@ $password = "password";
 $database = "imagr";
 define("uploading",true);
 define("deleting",true);
+define("renaming",true);

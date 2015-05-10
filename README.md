@@ -1,5 +1,3 @@
-## This branch is a developing branch of the SQL support
-
 imagr
 =====
 
@@ -8,7 +6,10 @@ Is an image and move viewer written in HTML5.
 
 ## Howto
 
+*in theory*, just:
 Get the [newest release](https://github.com/danieltroger/imagr/releases/latest), extract it and place it on your webserver, ensure that we can write there, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
+
+**BUT** we actually don't care about theory, because you will get an outdated version. Just clone this repository, copy config.default.php to config.php, set up your database info's and enable / disable the features you need and you're ballin'.
 
 ----------
 
@@ -24,27 +25,14 @@ When you upload images per drag 'n drop, a little orange progress bar will appea
 
 ### Feature enabling and disabling
 
-You can enable and / or disable features in the `features` file.
-The features file is in json format and you can toggle the upload and deletion features there.
+You can enable and / or disable features in the ~~`features`~~ `config.php` file as you need to configure MySQL / MariaDB there.
+~~The features file is in json format and you can toggle the upload and deletion features there.~~
+The config file sets some variables and globals in the **PHP format**
 
-**Examples**
+~~**Examples**~~
 
-The default content of the features file is:
-```
-{
-  "uploading": true,
-  "deleting": true
-}
-```
+We had some here but since you aren't dumb you'll make it without.
 
-You can toggle the features by setting their value to true respective false. For example, if you would like to disable deletion and only enable uploading, the file would look like this:
-
-```
-{
-  "uploading": true,
-  "deleting": false
-}
-```
 ### Building / Compressing the files
 
 Just execute `./build.sh` within imagr's working directory in a bash-shell, you'll basically need `java` and `wget` installed.
@@ -106,10 +94,13 @@ php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"))
 
 ## :/TODO/:
 
-* Movie uploading
-* Optimizations for mobile devices
+* ~~Movie uploading~~ This is an *image* viewer, didn't you read?
+* ~~Optimizations for mobile devices~~
 * Fix the "uploading image" text on the blurred canvas to be exactly centered
-* Themes / more design options
+* ~~Themes / more design options~~ Seriously...
 * Categories
-* Better user interface [?]
-* Somehow get more users and more people sharing their opinion about what's next ;)
+* ~~Better user interface [?]~~ Look at some flowers (in real world) if you don't want to look at this crap
+* ~~Somehow get more users and more people sharing their opinion about what's next ;)~~ Users may  cause problems...
+* ~~Fix some more beautiful/faster generation of the info overlay~~
+* ~~MySQL database support instead of JSON files~~
+* ~~Renaming feature~~

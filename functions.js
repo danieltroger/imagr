@@ -974,20 +974,20 @@ function openpic(srcthumb)
     }
     var spt = CE("span");
     spt.appendChild(document.createTextNode(t));
-    spt.contentEditable = true;
+    if(features.renaming) spt.contentEditable = true;
     spt.id = "title";
     spt.addEventListener("blur",update);
     var spb = CE("span");
     spb.id = "upby";
     spb.appendChild(document.createTextNode("upby" in m && m.upby != "" ? m.upby : "Unbekannt"));
-    spb.contentEditable = true;
+    if(features.renaming) spb.contentEditable = true;
     spb.addEventListener("blur",update);
     var spd = CE("span"),
     dxc = "description" in m && m.description != "" ? m.description : "Unbeschrieben";
     spd.id = "description";
     spd.addEventListener("blur",update);
     spd.appendChild(document.createTextNode(dxc));
-    spd.contentEditable = true;
+    if(features.renaming) spd.contentEditable = true;
     infolay.appendChilds(spt,document.createTextNode(" von "),spb,document.createTextNode(": "),spd);
     if(exif != false && exif != null)
     {
@@ -1565,7 +1565,6 @@ container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
   document.body.appendChilds(prog,grid,container);
-  document.querySelector(".fileUpload").style.display = "";
   imgs.forEach(addimg);
   ety();
   lhash();
@@ -1620,7 +1619,8 @@ function init()
   });
   if(features.uploading)
   {
-    var upbut = document.querySelector("input");
+    var upbut = document.querySelector(".upload");
+    document.querySelector(".fileUpload").style.display = "";
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);

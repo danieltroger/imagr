@@ -71,22 +71,29 @@ elseif($paths[0] == "delete")
 }
 elseif($paths[0] == "rename")
 {
-  function safr($str)
+  if(renaming)
   {
-    return str_replace("'","\'",$str);
+    function safr($str)
+    {
+      return str_replace("'","\'",$str);
+    }
+    $image = safr($paths[1]);
+    $field = safr($paths[2]);
+    $value = safr($paths[3]);
+    $om = getmeta($image);
+    $om[$field] = $value;
+    exit(
+         json_encode(
+                    Array('success' =>
+                    updatemeta($image,
+                    $om['title'],
+                    $om['description'],
+                    $om['upby']))));
   }
-  $image = safr($paths[1]);
-  $field = safr($paths[2]);
-  $value = safr($paths[3]);
-  $om = getmeta($image);
-  $om[$field] = $value;
-  exit(
-       json_encode(
-                  Array('success' =>
-                  updatemeta($image,
-                  $om['title'],
-                  $om['description'],
-                  $om['upby']))));
+  else
+  {
+    exit(json_encode(Array('success' => false)));
+  }
 }
 else
 {

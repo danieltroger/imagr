@@ -19,6 +19,7 @@
       $dir = implode("/",$dir);
       file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
     }
+    if(!file_exists("config.php")) die("Please create a config.php file");
     ?><!DOCTYPE html>
     <html>
     <head>
@@ -33,7 +34,7 @@
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="functions.min.js"></script>
       <script>
-      var features = {"uploading": <?php echo uploading ? true : false; ?>, "deleting": <?php echo deleting ? true : false; ?>},
+      var features = {"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
       imgs = Array(<?php
       imgs(1);
       ?>);
