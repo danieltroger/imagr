@@ -212,4 +212,4 @@ text-shadow: none;
   border-radius: 5px;
   margin: 1px;
 }
-a:hover,a:visited,a,button {color: white}
+a:hover, a:visited, a:active, a, button {color: white}
