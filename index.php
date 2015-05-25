@@ -9,7 +9,7 @@
     require "thumbs.php";
     require "imgs.php";
     require "config.php";
-
+    require "sql.php";
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
     {
@@ -26,12 +26,9 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <script src="//code.jquery.com/jquery.min.js"></script>
-      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-      <script src="http://natur-kultur.eu/phpjs.php?f=json_encode,uniqid,urlencode,urldecode,explode,substr,basename,rand,isset,in_array,file_get_contents,json_decode"></script>
-      <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com//css?family=Ubuntu+Mono%7CUbuntu%3Aregular%2Cbold&amp;subset=Latin">
       <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
       <link rel="stylesheet" type="text/css" href="style.min.css">
+      <script src="external.min.js"></script>
       <script src="functions.min.js"></script>
       <script>
       var features = {"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
