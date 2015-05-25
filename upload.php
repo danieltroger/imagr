@@ -5,7 +5,6 @@ header("Content-type: text/plain");
 if(!uploading) x_err("Uploading not allowed");
 if(!is_writable(".")) x_err('Directory not writable');
 //$h = getallheaders();
-register_shutdown_function("x_err");
 $tn = tempnam(sys_get_temp_dir(), 'upl');
 $temp = fopen($tn,"w+");
 $in = fopen("php://input","r");

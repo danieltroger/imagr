@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(0);
 require "sql.php";
 $paths = explode("/",substr($_SERVER['PATH_INFO'],1));
 if($paths[0] == "exif")
@@ -30,7 +30,7 @@ if($paths[0] == "exif")
     'aperture' => aperture($we['FNumber']),
     'exposure' => exposure($we['ExposureTime']),
     'filesize' => formatsize($we['FileSize']),
-    'software' => sw($we['Software']),
+    'software' => sw(@$we['Software']),
     'meta' => getmeta($paths[1])
   ));
   //echo json_last_error_msg();

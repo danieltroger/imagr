@@ -71969,13 +71969,13 @@ Rawson.Control.FileProgress = Rawson.Control.Base.extend({
             <h3>Opening File</h3> \
         </div> \
         <div class="modal-body"> \
-            <h4>Reading file <span class="filename">{{fileName}}</span></h4><br /> \
+            <h4>Reading raw file, this may take a while</h4><br /> \
                 <div class="progress progress-striped"> \
                     <div class="bar" style="width: 0%;"></div> \
                 </div> \
         </div> \
         <div class="modal-footer"> \
-            <a href="#" class="btn" data-dismiss="modal">Cancel</a> \
+            <a href="#" class="btn" data-dismiss="modal" style="text-decoration: none;">Cancel</a> \
         </div> \
     </div> ',
     viewerEvents: {

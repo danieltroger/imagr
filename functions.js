@@ -5,11 +5,12 @@ function fqueue(e)
     i = 0;
     for(; i < files.length; i++)
     {
-      var src = files[i];
-      if(src.type.match(/image.*/))
+      var src = files[i],
+      raw = (substr(src.name,-3).toLowerCase() == "cr2");
+      if(src.type.match(/image.*/) || raw)
       {
         if(empty != undefined) empty.style.display = "none";
-        read(src);
+        read(src,raw);
       }
       else
       {
@@ -56,16 +57,20 @@ function fs()
     }
   }
 }
-function read(file)
+function read(file,raw)
 {
-  console.log(e.type,e.filename);
-  /*
-  var reader = new FileReader();
-  reader.addEventListener("load",function (e){
-    upload(e.target.result,file.name,file.lastModified);
-  });
-  reader.readAsDataURL(file);
-  */
+  if(raw)
+  {
+    raws.push(file);
+  }
+  else
+  {
+    var reader = new FileReader();
+    reader.addEventListener("load",function (e) {
+      upload(e.target.result,file.name,file.lastModified);
+    });
+    reader.readAsDataURL(file);
+  }
 }
 function do_upload(upload)
 {
@@ -119,8 +124,21 @@ function do_upload(upload)
   upload.uploading = true;
   uploads.active++;
 }
+function parsed(canvas,file)
+{
+  console.log(canvas,file);
+  upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified);
+  $(canvas).remove();
+  raws.splice(0,1);
+  busy = false;
+}
 function update_progress()
 {
+  if(raws.length > 0 && !busy)
+  {
+    busy = true;
+    rawViewer.readFile(raws[0], parsed);
+  }
   var k = Object.keys(uploads),
   i = 0,
   l = k.length,
@@ -629,7 +647,11 @@ img = CE("img"),
 mdata = {},
 empty,
 prog = CE("span"),
-uploads = {'active': 0,'queued': 0};
+uploads = {'active': 0,'queued': 0},
+raws = [],
+busy = false;
+
+
 prog.id = "progress";
 container.id = "bigpic";
 container.style.cursor = "pointer";
@@ -727,6 +749,14 @@ function init()
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
   }
+  window.rawViewer = new Rawson.Viewer('preview',{
+      formats: {
+          read: ['RAW']
+      },
+      controls: [
+          new Rawson.Control.FileProgress()
+      ]
+  });
   if(features.srs == undefined)
   {
     var x = new xhr();
