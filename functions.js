@@ -66,7 +66,7 @@ function read(file)
 }
 function do_upload(upload)
 {
-  var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  var xmlhttp = new xhr();
   xmlhttp.addEventListener("readystatechange",function ()
   {
     if (this.readyState == 4 && this.status == 200)
@@ -219,7 +219,7 @@ function upload(binary,fname,date)
  }
  function update()
  {
-   var rq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
+   var rq = new xhr(),
    u = url;
    rq.open("GET","download.php/rename/"+u+"/"+this.id+"/"+this.textContent,true);
    rq.addEventListener("readystatechange",function ()
@@ -227,7 +227,7 @@ function upload(binary,fname,date)
      if (this.readyState == 4 && this.status == 200)
      {
        if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
-        var m = typeof XMLHttpRequest == "function" ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+        var m = new xhr();
         m.open("GET","download.php/exif/"+u+"?"+rand(),false);
         m.send();
         mdata[u] = json_decode(m.response);
@@ -658,6 +658,7 @@ var infolay = CE("div");
 infolay.classList.add("infolay");
 infolay.classList.add("horcent");
 infolay.classList.add("closed");
+window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
 container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
@@ -722,5 +723,18 @@ function init()
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
+  }
+  if(features.srs == undefined)
+  {
+    var x = new xhr();
+    x.open("GET","download.php/rawtest",true);
+    x.addEventListener("readystatechange",function ()
+    {
+      if (this.readyState == 4 && this.status == 200)
+      {
+        this.response == "true" ? features.srs = true : features.srs = false;
+      }
+    });
+    x.send();
   }
 }

@@ -71966,8 +71966,7 @@ Rawson.Control.FileProgress = Rawson.Control.Base.extend({
     CLASS_NAME: 'Rawson.Control.FileProgress',
     template: '<div id="{{controlId}}-progressmodal" class="modal hide" style="display: none; "> \
         <div class="modal-header"> \
-            <button type="button" class="close" data-dismiss="modal">Ã—</button> \
-            <h3>Opening Files</h3> \
+            <h3>Opening File</h3> \
         </div> \
         <div class="modal-body"> \
             <h4>Reading file <span class="filename">{{fileName}}</span></h4><br /> \

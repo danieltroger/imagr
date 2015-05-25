@@ -26,13 +26,13 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
+      <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="external.min.js"></script>
       <script src="functions.min.js"></script>
       <script src="raw.min.js"></script>
       <script>
-      var features = {"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
+      var features = {<?php echo (file_exists(".raw") ? '"srs":' . file_get_contents(".raw") . "," : ""); ?>"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
       imgs = Array(<?php
       imgs(1);
       ?>);

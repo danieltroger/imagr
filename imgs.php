@@ -6,7 +6,7 @@ function imgs($print = false)
   $imglen = sizeof($imgs)-1;
   $invalid_files_length = 0;
   $rkey = 0;
-  $invalid_extensions = Array("icons","sh","jar","css","features","php","zip","txt","ign","html","html~","php~","json","json~","log","mov","svg~","license","dir","zip","meta","js","md");
+  $invalid_extensions = Array("icons","test","cr2","sh","jar","raw","css","features","php","zip","txt","ign","html","html~","php~","json","json~","log","mov","svg~","license","dir","zip","meta","js","md");
   foreach($imgs as $key => $img)
   {
     $extension = getextension($img);

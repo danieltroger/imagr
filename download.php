@@ -35,6 +35,38 @@ if($paths[0] == "exif")
   ));
   //echo json_last_error_msg();
 }
+elseif($paths[0] == "rawtest")
+{
+  $tn = "server_test_image_do_not_delete.cr2";
+  $on = "out.test";
+  if(!extension_loaded('imagick'))
+  {
+    file_put_contents(".raw","false");
+    echo "false";
+    exit;
+  }
+  try
+  {
+    $im = new Imagick($tn);
+    $im->setImageFormat("jpg");
+    $im->writeImage($on);
+    $im->clear();
+    $im->destroy();
+   }
+   catch(ImagickException $e)
+   {
+     file_put_contents(".raw","false");
+     echo "false";
+   }
+   @$is = getimagesize($on);
+   if($is[0] > 1900 && $is[1] > 1290) //pass
+   {
+     file_put_contents(".raw","true");
+     echo "true";
+   }
+   @unlink($on);
+   exit;
+}
 elseif($paths[0] == "delete")
 {
   header("Content-type: text/html; charset=utf-8");

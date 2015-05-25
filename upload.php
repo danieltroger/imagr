@@ -1,11 +1,11 @@
 <?php
 error_reporting(E_ALL);
 require "thumbs.php";
-require "sql.php";
 header("Content-type: text/plain");
 if(!uploading) x_err("Uploading not allowed");
 if(!is_writable(".")) x_err('Directory not writable');
 //$h = getallheaders();
+register_shutdown_function("x_err");
 $tn = tempnam(sys_get_temp_dir(), 'upl');
 $temp = fopen($tn,"w+");
 $in = fopen("php://input","r");
@@ -53,14 +53,22 @@ while(file_exists($fname))
 rename($tn,$fname);
 if($raw)
 {
-  $nn = $fname . ".jpg";
-  $im = new Imagick($fname);
-  $im->setImageFormat("jpg");
-  $im->writeImage($nn);
-  $im->clear();
-  $im->destroy();
-  unlink($fname);
-  $fname = $nn;
+  try
+  {
+    $nn = $fname . ".jpg";
+    $im = new Imagick($fname);
+    $im->setImageFormat("jpg");
+    $im->writeImage($nn);
+    $im->clear();
+    $im->destroy();
+    unlink($fname);
+    $fname = $nn;
+   }
+   catch (ImagickException $e)
+   {
+       x_err("ImagickException: " . print_r($e,1));
+   }
+
 }
 chmod($fname,0644);
 touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
