@@ -28,7 +28,7 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="external.min.js"></script>
-      <script src="functions.js"></script>
+      <script src="functions.min.js"></script>
       <script src="raw.min.js"></script>
       <script>
       var features = {<?php echo (file_exists(".raw") ? '"srs":' . file_get_contents(".raw") . "," : ""); ?>"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
