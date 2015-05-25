@@ -30,6 +30,7 @@
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="external.min.js"></script>
       <script src="functions.min.js"></script>
+      <script src="raw.min.js"></script>
       <script>
       var features = {"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
       imgs = Array(<?php
@@ -41,6 +42,9 @@
       <div style="display: none;" class="fileUpload btn btn-primary">
         <span>Upload image</span>
         <input type="file" multiple class="upload" />
+      </div>
+      <div id="preview-container">
+        <img id="preview">
       </div>
     <noscript>
       Sorry, but you need javascript to get this page working.
