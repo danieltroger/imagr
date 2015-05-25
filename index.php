@@ -26,7 +26,7 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+      <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"/>
       <link rel="stylesheet" type="text/css" href="style.min.css">
       <script src="external.min.js"></script>
       <script src="functions.min.js"></script>

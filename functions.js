@@ -58,11 +58,14 @@ function fs()
 }
 function read(file)
 {
+  console.log(e.type,e.filename);
+  /*
   var reader = new FileReader();
   reader.addEventListener("load",function (e){
     upload(e.target.result,file.name,file.lastModified);
   });
   reader.readAsDataURL(file);
+  */
 }
 function do_upload(upload)
 {
