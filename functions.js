@@ -59,7 +59,7 @@ function fs()
 }
 function read(file,raw)
 {
-  if(raw)
+  if(raw && !features.srs)
   {
     raws.push(file);
   }
@@ -749,14 +749,17 @@ function init()
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
   }
-  window.rawViewer = new Rawson.Viewer('preview',{
-      formats: {
-          read: ['RAW']
-      },
-      controls: [
-          new Rawson.Control.FileProgress()
-      ]
-  });
+  if(!features.srs)
+  {
+    window.rawViewer = new Rawson.Viewer('preview',{
+        formats: {
+            read: ['RAW']
+        },
+        controls: [
+            new Rawson.Control.FileProgress()
+        ]
+    });
+  }
   if(features.srs == undefined)
   {
     var x = new xhr();
