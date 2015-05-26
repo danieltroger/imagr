@@ -154,7 +154,7 @@ function update_progress()
         percentage = upload.uploaded;
         average += percentage;
       }
-      if(!upload.uploading && uploads.active < 2)
+      if(!upload.uploading && uploads.active < 4)
       {
         do_upload(upload);
       }
