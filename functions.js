@@ -60,7 +60,7 @@ function fs()
 function read(file,raw)
 {
   while(upname == null || upname.length < 2) upname = prompt("Please enter your name","");
-  if(raw && !features.srs)
+  if(raw && !features.srs && !smalldev)
   {
     raws.push(file);
   }
@@ -168,7 +168,7 @@ function update_progress()
         percentage = upload.uploaded;
         average += percentage;
       }
-      if(!upload.uploading && uploads.active < 2)
+      if(!upload.uploading && uploads.active < 1)
       {
         do_upload(upload);
       }
@@ -628,7 +628,7 @@ function iclick(e)
 }
 function rawloop()
 {
-  if(raws.length > 0 && !busy)
+  if(raws.length > 0 && !busy && !smalldev)
   {
     busy = true;
     rawViewer.readFile(raws[0], parsed);
@@ -772,7 +772,7 @@ function init()
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
   }
-  if(!features.srs)
+  if(!features.srs && !smalldev)
   {
     var x = new xhr();
     x.open("GET","raw.min.js",false);
