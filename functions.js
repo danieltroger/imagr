@@ -9,7 +9,7 @@ function fqueue(e)
       raw = (substr(src.name,-3).toLowerCase() == "cr2");
       if(src.type.match(/image.*/) || raw)
       {
-        if(empty != undefined) empty.style.display = "none";
+        if(typeof empty != "undefined" && empty != undefined) empty.style.display = "none";
         read(src,raw);
       }
       else
@@ -59,6 +59,7 @@ function fs()
 }
 function read(file,raw)
 {
+  while(upname == null || upname.length < 2) upname = prompt("Please enter your name","");
   if(raw && !features.srs)
   {
     raws.push(file);
@@ -121,6 +122,22 @@ function do_upload(upload)
   xmlhttp.addEventListener("error",xmlhttp.abort);
   xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date,true);
   xmlhttp.send(upload.binary);
+  var mr = new xhr(),
+  u = basename(upload.fname); // TODO: do the following in the request which is being sent above
+  mr.open("GET","download.php/rename/"+u+"/upby/"+upname,true);
+  mr.addEventListener("readystatechange",function ()
+  {
+    if (this.readyState == 4 && this.status == 200)
+    {
+      if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
+       var m = new xhr();
+       m.open("GET","download.php/exif/"+u+"?"+rand(),false);
+       m.send();
+       mdata[u] = json_decode(m.response);
+    }
+  });
+  mr.send();
+  // three requests for one upload, a shame :( ....
   upload.uploading = true;
   uploads.active++;
 }
@@ -134,11 +151,6 @@ function parsed(canvas,file)
 }
 function update_progress()
 {
-  if(raws.length > 0 && !busy)
-  {
-    busy = true;
-    rawViewer.readFile(raws[0], parsed);
-  }
   var k = Object.keys(uploads),
   i = 0,
   l = k.length,
@@ -346,7 +358,6 @@ function winwidth()
   var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth;
   return x;
 }
-
 function kinput(e)
 {
   var tg = e.target,
@@ -613,7 +624,15 @@ function iclick(e)
     location.hash = "#!overview"
   }
 }
-
+function rawloop()
+{
+  if(raws.length > 0 && !busy)
+  {
+    busy = true;
+    rawViewer.readFile(raws[0], parsed);
+  }
+  setTimeout(rawloop,3000);
+}
 if(typeof HTMLElement.prototype.remove != "function")
 {
   HTMLElement.prototype.remove = function ()
@@ -629,70 +648,72 @@ function back()
   img.classList.add("move");
   img.style.left = "50%";
 }
-var thumbsize = 0,
-svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windows") < 0 ? true : false,
-realsize = "dyn",
-argr,args,
-info = false,
-smalldev = $(window).width() < 768,
-preload = smalldev ? false : true,
-loaded = false,
-url = "",
-grid = CE("div"),
-container = CE("div"),
-desc = CE("span"),
-prevb = CE("img"),
-nextb = CE("img"),
-img = CE("img"),
-mdata = {},
-empty,
-prog = CE("span"),
-uploads = {'active': 0,'queued': 0},
-raws = [],
-busy = false;
 
-
-prog.id = "progress";
-container.id = "bigpic";
-container.style.cursor = "pointer";
-container.style.display = "none";
-container.addEventListener("click",iclick);
-prevb.src = svg ? "icons/prev.svg" : "icons/prev.png";
-prevb.classList.add("prev");
-prevb.classList.add("symbol");
-prevb.classList.add("vertcent");
-prevb.style.width = "10%";
-prevb.addEventListener("click",prev);
-nextb.src = svg ? "icons/next.svg" : "icons/next.png";
-nextb.classList.add("next");
-nextb.classList.add("symbol");
-nextb.classList.add("vertcent");
-nextb.style.width="10%";
-nextb.addEventListener("click",next);
-img.classList.add("largepic");
-img.classList.add("cent");
-img.addEventListener("dblclick",fs);
-var infobut = CE("img")
-infobut.src = svg ? "icons/info.svg" : "icons/info.png";
-infobut.classList.add("symbol");
-infobut.style.width="7%";
-infobut.style.bottom="2%";
-infobut.addEventListener("click",infooverlay);
-infobut.classList.add("horcent");
-var infolay = CE("div");
-infolay.classList.add("infolay");
-infolay.classList.add("horcent");
-infolay.classList.add("closed");
-window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
-container.appendChilds(prevb,nextb,img,infobut,infolay);
 function init()
 {
+  window.thumbsize = 0;
+  window.svg = typeof SVGRect != "undefined" && window.navigator.userAgent.indexOf("Windows") < 0 ? true : false;
+  window.realsize = "dyn";
+  window.argr = "";
+  window.args = [];
+  window.info = false;
+  window.smalldev = $(window).width() < 768;
+  window.preload = smalldev ? false : true;
+  window.loaded = false;
+  window.url = "";
+  window.grid = CE("div");
+  window.container = CE("div");
+  window.desc = CE("span");
+  window.prevb = CE("img");
+  window.nextb = CE("img");
+  window.img = CE("img");
+  window.mdata = {};
+  window.empty;
+  window.prog = CE("span");
+  window.uploads = {'active': 0,'queued': 0};
+  window.raws = [];
+  window.busy = false;
+  window.upname = "";
+  window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
+  prog.id = "progress";
+  container.id = "bigpic";
+  container.style.cursor = "pointer";
+  container.style.display = "none";
+  container.addEventListener("click",iclick);
+  prevb.src = svg ? "icons/prev.svg" : "icons/prev.png";
+  prevb.classList.add("prev");
+  prevb.classList.add("symbol");
+  prevb.classList.add("vertcent");
+  prevb.style.width = "10%";
+  prevb.addEventListener("click",prev);
+  nextb.src = svg ? "icons/next.svg" : "icons/next.png";
+  nextb.classList.add("next");
+  nextb.classList.add("symbol");
+  nextb.classList.add("vertcent");
+  nextb.style.width="10%";
+  nextb.addEventListener("click",next);
+  img.classList.add("largepic");
+  img.classList.add("cent");
+  img.addEventListener("dblclick",fs);
+  window.infobut = CE("img");
+  infobut.src = svg ? "icons/info.svg" : "icons/info.png";
+  infobut.classList.add("symbol");
+  infobut.style.width="7%";
+  infobut.style.bottom="2%";
+  infobut.addEventListener("click",infooverlay);
+  infobut.classList.add("horcent");
+  window.infolay = CE("div");
+  infolay.classList.add("infolay");
+  infolay.classList.add("horcent");
+  infolay.classList.add("closed");
+  container.appendChilds(prevb,nextb,img,infobut,infolay);
   document.body.appendChilds(prog,grid,container);
   imgs.forEach(addimg);
   ety();
   lhash();
   startWorker();
   update_progress();
+  rawloop();
   window.addEventListener("keypress",kinput);
   var o = false,
   r = false;
@@ -751,6 +772,10 @@ function init()
   }
   if(!features.srs)
   {
+    var x = new xhr();
+    x.open("GET","raw.min.js",false);
+    x.send();
+    eval(x.responseText);
     window.rawViewer = new Rawson.Viewer('preview',{
         formats: {
             read: ['RAW']
