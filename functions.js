@@ -144,8 +144,10 @@ function do_upload(upload)
 function parsed(canvas,file)
 {
   console.log(canvas,file);
+  // rawViewer.previews.image_filenamecr2.getMetadata()
+  // TODO: need to do something smart with that.
   upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified);
-  $(canvas).remove();
+  canvas.remove();
   raws.splice(0,1);
   busy = false;
 }
