@@ -13,7 +13,8 @@ function imgs($rfiles = true)
     }
   }
   if($rfiles) return $files;
-  echo "{" . PHP_EOL;
+  //echo "{" . PHP_EOL;
+  $carr = Array();
   foreach($files as $i => $file)
   {
     $fdt = 0;
@@ -33,7 +34,23 @@ function imgs($rfiles = true)
     {
       $fdt = filemtime($file);
     }
-    echo "{$fdt}: \"{$file}\"" . ($i == sizeof($files)-1 ? "" : ",") . PHP_EOL;
+    if(!isset($carr[$fdt]))
+    {
+      $carr[$fdt] = $file;
+    }
+    else
+    {
+      if(is_array($carr[$fdt]))
+      {
+        $carr[$fdt][] = $file;
+      }
+      else
+      {
+        $temp = $carr[$fdt];
+        $carr[$fdt] = Array($temp,$file);
+      }
+    }
+    //echo "\"{$file}\": {$fdt}" . ($i == sizeof($files)-1 ? "" : ",") . PHP_EOL;
   }
-  echo "}";
+  return json_encode($carr);
 }

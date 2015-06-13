@@ -716,8 +716,19 @@ function init()
   for(; i < mdts.length; i++)
   {
     var imag = files[mdts[i]];
-    addimg(imag);
-    imgs.push(imag);
+    if(typeof imag != "string")
+    {
+      imag.forEach(function (image)
+      {
+        addimg(image);
+        imgs.push(image);
+      });
+    }
+    else
+    {
+      addimg(imag);
+      imgs.push(imag);
+    }
   }
   ety();
   lhash();
