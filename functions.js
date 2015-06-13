@@ -568,6 +568,7 @@ function del()
 }
 function next(e)
 {
+  img.src = "";
   var nextindex = (findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))+1);
   if(nextindex == imgs.length)
   {
@@ -608,6 +609,7 @@ function showctl()
 }
 function prev(e)
 {
+  img.src = "";
   var previndex = findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))-1;
   if(previndex < 0)
   {
