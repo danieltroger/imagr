@@ -26,9 +26,9 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <link rel="stylesheet" type="text/css" href="style.min.css">
-      <script src="external.min.js"></script>
-      <script src="functions.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="style.min.css?s">
+      <script src="external.min.js?e"></script>
+      <script src="functions.min.js?f"></script>
       <script>
       var features = {<?php echo (file_exists(".raw") ? '"srs":' . file_get_contents(".raw") . "," : ""); ?>"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
       files = json_decode('<?php
