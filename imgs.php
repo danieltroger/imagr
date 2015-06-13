@@ -1,18 +1,21 @@
 <?php
+error_reporting(E_ALL);
 function imgs($rfiles = true)
 {
   $valid_extensions = Array("tiff","jpg","jpeg","png","gif");
   $files = Array();
   foreach($valid_extensions as $extension)
   {
-    $files = array_merge($files,glob("*.{$extension}"));
-    $files = array_merge($files,glob("*." . strtoupper($extension)));
+    foreach(array_merge(glob("*.{$extension}"),glob("*." . strtoupper($extension))) as $file)
+    {
+      $files[] = $file;
+      thumb($file);
+    }
   }
   if($rfiles) return $files;
-  $images = Array();
-  foreach($files as $file)
+  echo "{" . PHP_EOL;
+  foreach($files as $i => $file)
   {
-    echo $file;
     $fdt = 0;
     if(function_exists("exif_read_data")) $exif = @exif_read_data($file);
     if($exif !== FALSE && is_array($exif))
@@ -30,7 +33,7 @@ function imgs($rfiles = true)
     {
       $fdt = filemtime($file);
     }
-    $images[] = Array($fdt,$file);
+    echo "{$fdt}: \"{$file}\"" . ($i == sizeof($files)-1 ? "" : ",") . PHP_EOL;
   }
-  return $images;
+  echo "}";
 }

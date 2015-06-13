@@ -385,12 +385,12 @@ function addimg(image)
   var imgelem=CE("img");
   if(thumbsize != 0)
   {
-      imgelem.src="download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
+      imgelem.src = "download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
       imgelem.style.width = thumbsize+"px";
   }
   else
   {
-    imgelem.src=smalldev ? "download.php/resize/110/"+image : "thumbs.dir/"+image+".jpg";
+    imgelem.src = smalldev ? "download.php/resize/110/"+image : "thumbs.dir/"+image+".jpg";
     imgelem.style.width="19%";
   }
   $.data(imgelem,'original',image);
@@ -421,7 +421,7 @@ function openpic(srcthumb)
   {
     if(realsize == 0)
     {
-    img.src=url;
+    img.src = url;
     }
     else if(realsize == "dyn")
     {
@@ -676,6 +676,7 @@ function init()
   window.raws = [];
   window.busy = false;
   window.upname = "";
+  window.imgs = [];
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   prog.id = "progress";
   container.id = "bigpic";
@@ -710,7 +711,14 @@ function init()
   infolay.classList.add("closed");
   container.appendChilds(prevb,nextb,img,infobut,infolay);
   document.body.appendChilds(prog,grid,container);
-  imgs.forEach(addimg);
+  var mdts = Object.keys(files).sort(),
+  i = 0;
+  for(; i < mdts.length; i++)
+  {
+    var imag = files[mdts[i]];
+    addimg(imag);
+    imgs.push(imag);
+  }
   ety();
   lhash();
   startWorker();
