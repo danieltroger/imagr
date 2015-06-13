@@ -327,7 +327,7 @@ function edate($a,$b)
 {
   if(empty($a) && empty($b)) return false;
   if(!empty($a)) return $a;
-  return date("Y:m:d \u\m H:i:s",$b);
+  return date("Y:m:d H:i:s",$b);
 }
 function model($model)
 {

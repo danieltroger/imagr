@@ -31,9 +31,9 @@
       <script src="functions.min.js"></script>
       <script>
       var features = {<?php echo (file_exists(".raw") ? '"srs":' . file_get_contents(".raw") . "," : ""); ?>"uploading": <?php echo uploading ? "true" : "false"; ?>, "deleting": <?php echo deleting ? "true" : "false"; ?>, "renaming": <?php echo renaming ? "true" : "false"; ?>},
-      imgs = Array(<?php
-      imgs(1);
-      ?>);
+      imgs = json_decode("<?php
+      echo json_encode(imgs(0));
+      ?>");
       window.addEventListener("load",function (){if(typeof(init) != "function"){alert("Error loading page, please try again")}init()});
       </script>
     <body>

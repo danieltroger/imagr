@@ -1,35 +1,36 @@
 <?php
-function imgs($print = false)
+function imgs($rfiles = true)
 {
+  $valid_extensions = Array("tiff","jpg","jpeg","png","gif");
   $files = Array();
-  $imgs = glob("*");
-  $imglen = sizeof($imgs)-1;
-  $invalid_files_length = 0;
-  $rkey = 0;
-  $invalid_extensions = Array("icons","test","cr2","sh","jar","raw","css","features","php","zip","txt","ign","html","html~","php~","json","json~","log","mov","svg~","license","dir","zip","meta","js","md");
-  foreach($imgs as $key => $img)
+  foreach($valid_extensions as $extension)
   {
-    $extension = getextension($img);
-    if(in_array($extension,$invalid_extensions))
-    {
-      $invalid_files_length++;
-    }
+    $files = array_merge($files,glob("*.{$extension}"));
+    $files = array_merge($files,glob("*." . strtoupper($extension)));
   }
-  //echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
-  foreach($imgs as $key => $img)
+  if($rfiles) return $files;
+  $images = Array();
+  foreach($files as $file)
   {
-    $extension = getextension($img);
-    if(!in_array($extension,$invalid_extensions))
+    echo $file;
+    $fdt = 0;
+    if(function_exists("exif_read_data")) $exif = @exif_read_data($file);
+    if($exif !== FALSE && is_array($exif))
     {
-      if($print) echo "\"" . thumb($img) . "\"";
-      $files[] = $img;
-      if($rkey != $imglen-$invalid_files_length && $print)
+      if(!empty($exif['DateTime']))
       {
-        echo ",";
+        $fdt = strtotime($exif['DateTime']);
       }
-      $rkey++;
+      else
+      {
+        $fdt = $exif['FileDateTime'];
+      }
     }
-    //echo " /* file = {$img}, extension = {$extension}, key = {$key}, rkey = {$rkey}*/\n";
+    else
+    {
+      $fdt = filemtime($file);
+    }
+    $images[] = Array($fdt,$file);
   }
-  return $files;
+  return $images;
 }
