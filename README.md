@@ -10,7 +10,7 @@ Get the [newest release](https://github.com/danieltroger/imagr/releases/latest),
 
 PS: If you are planning to use imagr in the root directory of your website, the automatic `.htaccess` creation won't work.
 
-** ONLY IF ABOVE APPLIES TO YOU (you want to be able to reach imagr at yoursite.tld/ instead of (for example) yoursite.tld/imagr/) ** Put the following into it (the `.htaccess` file in the root directory of imagr):
+**ONLY IF ABOVE APPLIES TO YOU (you want to be able to reach imagr at yoursite.tld/ instead of (for example) yoursite.tld/imagr/)** Put the following into it (the `.htaccess` file in the root directory of imagr):
 ```
 <IfModule mod_rewrite.c>
 RewriteEngine On
