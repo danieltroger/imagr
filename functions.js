@@ -219,7 +219,7 @@ function upload(binary,fname,date)
     timg.remove();
     i.src = ri;
     i.classList.add("image");
-    i.style.maxWidth = "19%";
+    i.style.maxWidth = "10%";
     i.style.cursor = "progress";
     grid.appendChild(i);
     $('html,body').animate({scrollTop: $(i).offset().top}, 1000);
@@ -351,6 +351,10 @@ function upload(binary,fname,date)
           {
             if(value == "true" || value == true) if(container.style.display != "none") container.click();
           }
+          if(key == "smalldev")
+          {
+            value == "true" || value == true ? smalldev = true : false;
+          }
         }
       }
     }
@@ -382,7 +386,8 @@ function kinput(e)
 }
 function addimg(image)
 {
-  var imgelem=CE("img");
+  var imgelem = CE("img");
+  imgelem.classList.add("loadingbg");
   if(thumbsize != 0)
   {
       imgelem.src = "download.php/resize/"+(parseInt(thumbsize)+(parseInt(thumbsize)/10))+"/"+image;
@@ -391,7 +396,7 @@ function addimg(image)
   else
   {
     imgelem.src = smalldev ? "download.php/resize/110/"+image : "thumbs.dir/"+image+".jpg";
-    imgelem.style.width="19%";
+    imgelem.style.width = "10%";
   }
   $.data(imgelem,'original',image);
   imgelem.classList.add("image");
@@ -510,7 +515,7 @@ function openpic(srcthumb)
        infolay.appendChild(document.createTextNode(inf+" "));
        var dl = CE("a");
        dl.download = url;
-       dl.href = blob ? burl : url;
+       dl.href = blob ? burl : "download.php/"+basename(url);
        dl.appendChild(document.createTextNode("In Originalgröße downloaden"));
        infolay.appendChild(dl);
        if(gps != false)
@@ -589,7 +594,7 @@ function moov()
 function hidectl()
 {
   chidden = true;
-  console.log("Hiding controls");
+  //console.log("Hiding controls");
   infobut.classList.add("hidden");
   prevb.classList.add("hidden");
   nextb.classList.add("hidden");
@@ -600,7 +605,7 @@ function hidectl()
 function showctl()
 {
   chidden = false;
-  console.log("Showing controls");
+  //console.log("Showing controls");
   infobut.classList.remove("hidden");
   prevb.classList.remove("hidden");
   nextb.classList.remove("hidden");
@@ -654,7 +659,7 @@ function iclick(e)
 }
 function rawloop()
 {
-  if(raws.length > 0 && !busy && !smalldev)
+  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object")
   {
     busy = true;
     rawViewer.readFile(raws[0], parsed);
@@ -729,6 +734,7 @@ function init()
   img.classList.add("largepic");
   img.classList.add("cent");
   img.classList.add("fade");
+  img.classList.add("loadingbg");
   img.addEventListener("dblclick",fs);
   window.infobut = CE("img");
   infobut.src = svg ? "icons/info.svg" : "icons/info.png";
@@ -834,17 +840,23 @@ function init()
   if(!features.srs && !smalldev)
   {
     var x = new xhr();
-    x.open("GET","raw.min.js",false);
-    x.send();
-    eval(x.responseText);
-    window.rawViewer = new Rawson.Viewer('preview',{
-        formats: {
-            read: ['RAW']
-        },
-        controls: [
-            new Rawson.Control.FileProgress()
-        ]
+    x.open("GET","raw.min.js",true);
+    x.addEventListener("readystatechange", function ()
+    {
+      if (this.readyState == 4 && this.status == 200)
+      {
+        eval(this.responseText);
+        window.rawViewer = new Rawson.Viewer('preview',{
+            formats: {
+                read: ['RAW']
+            },
+            controls: [
+                new Rawson.Control.FileProgress()
+            ]
+        });
+      }
     });
+    x.send();
   }
   if(features.srs == undefined)
   {
