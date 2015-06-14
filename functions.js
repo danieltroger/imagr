@@ -361,7 +361,7 @@ function upload(binary,fname,date)
 }
 function winwidth()
 {
-  var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth;
+  var w = window,d = document,e = d.documentElement,g = d.getElementsByTagName('body')[0],x = w.innerWidth || e.clientWidth || g.clientWidth;
   return x;
 }
 function kinput(e)
@@ -659,11 +659,7 @@ function iclick(e)
 }
 function rawloop()
 {
-<<<<<<< HEAD
-  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object")
-=======
-  if(raws.length > 0 && !busy && !smalldev && features.uploading)
->>>>>>> e7ab41c02695590940571b9eacc3d64d6908a17f
+  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object" && features.uploading)
   {
     busy = true;
     rawViewer.readFile(raws[0], parsed);
@@ -840,45 +836,27 @@ function init()
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
-<<<<<<< HEAD
-  }
-  if(!features.srs && !smalldev)
-  {
-    var x = new xhr();
-    x.open("GET","raw.min.js",true);
-    x.addEventListener("readystatechange", function ()
-    {
-      if (this.readyState == 4 && this.status == 200)
-      {
-        eval(this.responseText);
-        window.rawViewer = new Rawson.Viewer('preview',{
-            formats: {
-                read: ['RAW']
-            },
-            controls: [
-                new Rawson.Control.FileProgress()
-            ]
-        });
-      }
-    });
-    x.send();
-=======
     if(!features.srs && !smalldev)
     {
       var x = new xhr();
-      x.open("GET","raw.min.js",false);
-      x.send();
-      eval(x.responseText);
-      window.rawViewer = new Rawson.Viewer('preview',{
-          formats: {
-              read: ['RAW']
-          },
-          controls: [
-              new Rawson.Control.FileProgress()
-          ]
+      x.open("GET","raw.min.js",true);
+      x.addEventListener("readystatechange", function ()
+      {
+        if (this.readyState == 4 && this.status == 200)
+        {
+          eval(this.responseText);
+          window.rawViewer = new Rawson.Viewer('preview',{
+              formats: {
+                  read: ['RAW']
+              },
+              controls: [
+                  new Rawson.Control.FileProgress()
+              ]
+          });
+        }
       });
+      x.send();
     }
->>>>>>> e7ab41c02695590940571b9eacc3d64d6908a17f
   }
   if(features.srs == undefined)
   {
