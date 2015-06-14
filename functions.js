@@ -60,7 +60,7 @@ function fs()
 function read(file,raw)
 {
   while(upname == null || upname.length < 2) upname = prompt("Please enter your name","");
-  if(raw && !features.srs && !smalldev)
+  if(raw && !features.srs && !smalldev && features.uploading)
   {
     raws.push(file);
   }
@@ -659,7 +659,11 @@ function iclick(e)
 }
 function rawloop()
 {
+<<<<<<< HEAD
   if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object")
+=======
+  if(raws.length > 0 && !busy && !smalldev && features.uploading)
+>>>>>>> e7ab41c02695590940571b9eacc3d64d6908a17f
   {
     busy = true;
     rawViewer.readFile(raws[0], parsed);
@@ -836,6 +840,7 @@ function init()
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
+<<<<<<< HEAD
   }
   if(!features.srs && !smalldev)
   {
@@ -857,6 +862,23 @@ function init()
       }
     });
     x.send();
+=======
+    if(!features.srs && !smalldev)
+    {
+      var x = new xhr();
+      x.open("GET","raw.min.js",false);
+      x.send();
+      eval(x.responseText);
+      window.rawViewer = new Rawson.Viewer('preview',{
+          formats: {
+              read: ['RAW']
+          },
+          controls: [
+              new Rawson.Control.FileProgress()
+          ]
+      });
+    }
+>>>>>>> e7ab41c02695590940571b9eacc3d64d6908a17f
   }
   if(features.srs == undefined)
   {
