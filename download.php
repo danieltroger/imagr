@@ -84,7 +84,8 @@ elseif($paths[0] == "delete")
     }
     else
     {
-      @unlink($paths[1]);
+      //@unlink($paths[1]);
+      rename($f,"deleted.dir/{$f}");
       if(file_exists($paths[1]))
       {
         $r = false;

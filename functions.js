@@ -181,6 +181,15 @@ function update_progress()
   {
     prog.style.width = wi;
   }
+  var diff = time() - lastmove;
+  if(diff > 2)
+  {
+    hidectl();
+  }
+  else if(chidden)
+  {
+    showctl();
+  }
   requestAnimationFrame(update_progress);
 }
 function upload(binary,fname,date)
@@ -378,6 +387,10 @@ function kinput(e)
     if(kk == 39 || kk == 110) next();
     if(kk == 37 || kk == 112) prev();
     if(kk == 8 || kk == 46){ e.preventDefault(); del()}
+  }
+  else
+  {
+    lastmove = time();
   }
   if(ce && tn == "SPAN")
   {
@@ -584,12 +597,7 @@ function next(e)
 }
 function moov()
 {
-  if(chidden) showctl();
-  clearTimeout(htimeout);
-  var now = time(),
-  diff = now - lastmove;
-  lastmove = now;
-  htimeout = setTimeout(hidectl,2000);
+  lastmove = time();
 }
 function hidectl()
 {
@@ -709,7 +717,6 @@ function init()
   window.upname = "";
   window.imgs = [];
   window.lastmove = 0;
-  window.htimeout = 0;
   window.chidden = false;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   prog.id = "progress";
