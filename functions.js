@@ -601,10 +601,8 @@ function next(e)
   var thumb = findthumb(imgs[nextindex]);
   openpic(thumb);
 }
-function moov()
-{
-  lastmove = time();
-}
+function moov() {lastmove = time()}
+function mmoov(event) {if(!event.target.classList.contains("largepic")) lastmove = time()}
 function hidectl()
 {
   chidden = true;
@@ -713,7 +711,7 @@ function init()
   window.busy = false;
   window.upname = "";
   window.imgs = [];
-  window.lastmove = 0;
+  window.lastmove = time();
   window.chidden = false;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   prog.id = "progress";
@@ -778,13 +776,11 @@ function init()
   startWorker();
   loop();
   window.addEventListener("keypress",kinput);
-  if(!smalldev)
-  {
-    window.addEventListener("mousemove",moov);
-    window.addEventListener("touchmove",moov);
-    window.addEventListener("touchstart",moov);
-    window.addEventListener("click",moov);
-  }
+  window.addEventListener("mousemove",moov);
+  window.addEventListener("click",moov);
+  window.addEventListener("touchmove",mmoov);
+  window.addEventListener("touchstart",mmoov);
+  window.addEventListener("touchend",mmoov);
   var o = false,
   r = false;
   $(img).draggable({
