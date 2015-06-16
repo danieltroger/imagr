@@ -151,8 +151,9 @@ function parsed(canvas,file)
   raws.splice(0,1);
   busy = false;
 }
-function update_progress()
+function loop()
 {
+  // check for uploads, update the progress bar and start sending uploads when "ready"
   var k = Object.keys(uploads),
   i = 0,
   l = k.length,
@@ -181,16 +182,110 @@ function update_progress()
   {
     prog.style.width = wi;
   }
+  // enter presentation mode when user ist inactive for more than 2 seconds
   var diff = time() - lastmove;
-  if(diff > 2 && !chidden)
+  if(diff > 2)
   {
-    hidectl();
+    if(!chidden) hidectl();
   }
-  else if(chidden)
+  else
   {
-    showctl();
+    if(chidden) showctl();
   }
-  requestAnimationFrame(update_progress);
+  // start converting raw files when there are some to convert
+  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object" && features.uploading)
+  {
+    busy = true;
+    rawViewer.readFile(raws[0], parsed);
+  }
+  // parse the location hash
+  var hash = location.hash;
+  if(hash[1] == "!")
+   {
+     //console.info("Parsing URL paramenters...");
+     if(hash.length <= 2)
+     {
+       console.warn("No arguments provided but #!. Stopping.");
+     }
+     else
+     {
+       argr = substr(hash,2);
+       args = explode(",",argr);
+       for(var i = 0;i<args.length;i++)
+       {
+         var arg = explode("=",args[i]),key=arg[0],value=arg[1];
+         if(value == undefined)
+         {
+           //console.warn("No value given, assuming true");
+           value = true;
+         }
+         if(arg.length > 2)
+         {
+           console.warn("Multiple values specified, using first one");
+         }
+         //console.log("Key: "+key+" value: "+value);
+         if(key == "ts")
+         {
+           if(value != "")
+           {
+             thumbsize=value;
+           }
+         }
+         if(key == "rs")
+         {
+           if(value != "")
+           {
+             realsize=value;
+           }
+         }
+         if(key == "image")
+         {
+           if(value != "" && value != undefined)
+           {
+             var hidden = (container.style.display == "none");
+             if(hidden || $.data(img,'original') != value)
+             {
+               var t = findthumb(value);
+               if(t != undefined && ($.data(img,'original') != $.data(t,'original') || hidden))
+               {
+                 openpic(t);
+               }
+             }
+           }
+         }
+         if(key == "info")
+         {
+           if(value == "true" && !info)
+           {
+             infolay.classList.remove("closed");
+             info = true;
+
+           }
+           else if(value == "false" && info)
+           {
+             infolay.classList.add("closed");
+             info = false;
+           }
+         }
+         if(key == "preload")
+         {
+           //console.log(value);
+           if(value == "false" || value == false) preload = false;
+           if(value == "true" || value == true) preload = true;
+         }
+         if(key == "overview")
+         {
+           if(value == "true" || value == true) if(container.style.display != "none") container.click();
+         }
+         if(key == "smalldev")
+         {
+           value == "true" || value == true ? smalldev = true : false;
+         }
+       }
+     }
+   }
+   // request the next run. The browser will try to run this function 60 times per second if possible.
+  requestAnimationFrame(loop);
 }
 function upload(binary,fname,date)
 {
@@ -279,95 +374,6 @@ function upload(binary,fname,date)
    });
    rq.send();
  }
- function lhash()
- {
-   requestAnimationFrame(lhash);
-   var hash = location.hash;
-   if(hash[1] == "!")
-    {
-      //console.info("Parsing URL paramenters...");
-      if(hash.length <= 2)
-      {
-        console.warn("No arguments provided but #!. Stopping.");
-      }
-      else
-      {
-        argr = substr(hash,2);
-        args = explode(",",argr);
-        for(var i = 0;i<args.length;i++)
-        {
-          var arg = explode("=",args[i]),key=arg[0],value=arg[1];
-          if(value == undefined)
-          {
-            //console.warn("No value given, assuming true");
-            value = true;
-          }
-          if(arg.length > 2)
-          {
-            console.warn("Multiple values specified, using first one");
-          }
-          //console.log("Key: "+key+" value: "+value);
-          if(key == "ts")
-          {
-            if(value != "")
-            {
-              thumbsize=value;
-            }
-          }
-          if(key == "rs")
-          {
-            if(value != "")
-            {
-              realsize=value;
-            }
-          }
-          if(key == "image")
-          {
-            if(value != "" && value != undefined)
-            {
-              var hidden = (container.style.display == "none");
-              if(hidden || $.data(img,'original') != value)
-              {
-                var t = findthumb(value);
-                if(t != undefined && ($.data(img,'original') != $.data(t,'original') || hidden))
-                {
-                  openpic(t);
-                }
-              }
-            }
-          }
-          if(key == "info")
-          {
-            if(value == "true" && !info)
-            {
-              infolay.classList.remove("closed");
-              info = true;
-
-            }
-            else if(value == "false" && info)
-            {
-              infolay.classList.add("closed");
-              info = false;
-            }
-          }
-          if(key == "preload")
-          {
-            //console.log(value);
-            if(value == "false" || value == false) preload = false;
-            if(value == "true" || value == true) preload = true;
-          }
-          if(key == "overview")
-          {
-            if(value == "true" || value == true) if(container.style.display != "none") container.click();
-          }
-          if(key == "smalldev")
-          {
-            value == "true" || value == true ? smalldev = true : false;
-          }
-        }
-      }
-    }
-}
 function winwidth()
 {
   var w = window,d = document,e = d.documentElement,g = d.getElementsByTagName('body')[0],x = w.innerWidth || e.clientWidth || g.clientWidth;
@@ -607,7 +613,7 @@ function hidectl()
   prevb.classList.add("hidden");
   nextb.classList.add("hidden");
   img.classList.add("pmode");
-  bigpic.style.background = "rgba(0,0,0,0.9)";
+  container.style.background = "rgba(0,0,0,0.9)";
   if(info) infooverlay();
 }
 function showctl()
@@ -618,7 +624,7 @@ function showctl()
   prevb.classList.remove("hidden");
   nextb.classList.remove("hidden");
   img.classList.remove("pmode");
-  bigpic.style.background = "";
+  container.style.background = "";
 }
 function prev(e)
 {
@@ -664,15 +670,6 @@ function iclick(e)
     this.style.display="none";
     location.hash = "#!overview"
   }
-}
-function rawloop()
-{
-  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object" && features.uploading)
-  {
-    busy = true;
-    rawViewer.readFile(raws[0], parsed);
-  }
-  setTimeout(rawloop,3000);
 }
 if(typeof HTMLElement.prototype.remove != "function")
 {
@@ -755,6 +752,7 @@ function init()
   infolay.classList.add("infolay");
   infolay.classList.add("horcent");
   infolay.classList.add("closed");
+  container.classList.add("fade");
   container.appendChilds(prevb,nextb,img,infobut,infolay);
   document.body.appendChilds(prog,grid,container);
   var mdts = Object.keys(files).sort(),
@@ -777,10 +775,8 @@ function init()
     }
   }
   ety();
-  lhash();
   startWorker();
-  update_progress();
-  rawloop();
+  loop();
   window.addEventListener("keypress",kinput);
   if(!smalldev)
   {
