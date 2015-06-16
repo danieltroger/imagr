@@ -202,7 +202,12 @@ text-shadow: none;
       border: none !important;
       box-shadow: none !important;
       margin: 0 !important;
-      width: initial !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+    #bigpic
+    {
+      background: rgba(0,0,0,0.9) !important;
     }
 }
 .move

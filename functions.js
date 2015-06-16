@@ -609,11 +609,11 @@ function hidectl()
   infobut.classList.add("hidden");
   prevb.classList.add("hidden");
   nextb.classList.add("hidden");
-  container.style.background = "rgba(0,0,0,0.9)";
   if(!smalldev)
   {
     img.classList.add("pmode");
     if(info) infooverlay();
+    container.style.background = "rgba(0,0,0,0.9)";
   }
 }
 function showctl()
@@ -623,9 +623,9 @@ function showctl()
   infobut.classList.remove("hidden");
   prevb.classList.remove("hidden");
   nextb.classList.remove("hidden");
-  container.style.background = "";
   if(!smalldev)
   {
+    container.style.background = "";
     img.classList.remove("pmode");
   }
 }
