@@ -182,7 +182,7 @@ function update_progress()
     prog.style.width = wi;
   }
   var diff = time() - lastmove;
-  if(diff > 2)
+  if(diff > 2 && !chidden)
   {
     hidectl();
   }
