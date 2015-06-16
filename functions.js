@@ -602,7 +602,6 @@ function next(e)
   openpic(thumb);
 }
 function moov() {lastmove = time()}
-function mmoov(event) {if(!event.target.classList.contains("largepic")) lastmove = time()}
 function hidectl()
 {
   chidden = true;
@@ -610,9 +609,12 @@ function hidectl()
   infobut.classList.add("hidden");
   prevb.classList.add("hidden");
   nextb.classList.add("hidden");
-  img.classList.add("pmode");
   container.style.background = "rgba(0,0,0,0.9)";
-  if(info) infooverlay();
+  if(!smalldev)
+  {
+    img.classList.add("pmode");
+    if(info) infooverlay();
+  }
 }
 function showctl()
 {
@@ -621,8 +623,11 @@ function showctl()
   infobut.classList.remove("hidden");
   prevb.classList.remove("hidden");
   nextb.classList.remove("hidden");
-  img.classList.remove("pmode");
   container.style.background = "";
+  if(!smalldev)
+  {
+    img.classList.remove("pmode");
+  }
 }
 function prev(e)
 {
@@ -737,6 +742,7 @@ function init()
   img.classList.add("cent");
   img.classList.add("fade");
   img.classList.add("loadingbg");
+  if(smalldev) img.classList.add("pmode");
   img.addEventListener("dblclick",fs);
   window.infobut = CE("img");
   infobut.src = svg ? "icons/info.svg" : "icons/info.png";
@@ -778,9 +784,9 @@ function init()
   window.addEventListener("keypress",kinput);
   window.addEventListener("mousemove",moov);
   window.addEventListener("click",moov);
-  window.addEventListener("touchmove",mmoov);
-  window.addEventListener("touchstart",mmoov);
-  window.addEventListener("touchend",mmoov);
+  window.addEventListener("touchmove",moov);
+  window.addEventListener("touchstart",moov);
+  window.addEventListener("touchend",moov);
   var o = false,
   r = false;
   $(img).draggable({
