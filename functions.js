@@ -790,6 +790,7 @@ function init()
   $(img).draggable({
     start: function() {
       img.classList.remove("cent");
+      img.classList.remove("fade");
       img.classList.remove("move");
       o = false;
     },
@@ -814,6 +815,7 @@ function init()
       else
       {
         img.classList.add("move");
+        img.classList.add("fade");
         if(!r)
         {
           img.style.left = -winwidth()+"px";
