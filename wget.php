@@ -1,6 +1,5 @@
 <?php
 require "imgs.php";
-require "thumbs.php";
 header("Content-type: text/plain");
 $a = imgs();
 $b = explode("/",getextension($_SERVER['PHP_SELF'],true)[1]);

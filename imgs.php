@@ -1,4 +1,5 @@
 <?php
+require_once "thumbs.php";
 error_reporting(E_ALL);
 function imgs($rfiles = true)
 {

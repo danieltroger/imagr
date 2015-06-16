@@ -6,7 +6,6 @@
     header("Cache-Control: no-store, no-cache, must-revalidate");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
-    require "thumbs.php";
     require "imgs.php";
     require "config.php";
     require "sql.php";
@@ -17,7 +16,14 @@
       $dir = explode("/",$_SERVER["PHP_SELF"]);
       unset($dir[sizeof($dir)-1]);
       $dir = implode("/",$dir);
-      file_put_contents(".htaccess","<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {$dir}\nRewriteRule ^download\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$dir}/download.php [L]\n</IfModule>");
+      file_put_contents(".htaccess","<IfModule mod_rewrite.c>" . PHP_EOL . "RewriteEngine On" . PHP_EOL . "RewriteBase " . (strlen($dir) < 1 ? "/" : $dir) . PHP_EOL . "RewriteRule ^download\.php$ - [L]" . PHP_EOL . "RewriteCond %{REQUEST_FILENAME} !-f" . PHP_EOL . "RewriteCond %{REQUEST_FILENAME} !-d" . PHP_EOL . "RewriteRule . {$dir}/download.php [L]" . PHP_EOL . "</IfModule>");
+    }
+    if(!is_dir("deleted.dir"))
+    {
+      if(!is_writable(".")) die("Cannot create deleted.dir, probaly permission denied.");
+      mkdir("deleted.dir");
+      if(!is_writable("deleted.dir")) die("Cannot write to deleted.dir");
+      file_put_contents("deleted.dir/.htaccess","Order deny,Allow" . PHP_EOL . "Deny from all" . PHP_EOL);
     }
     if(!file_exists("config.php")) die("Please create a config.php file");
     ?><!DOCTYPE html>
