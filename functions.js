@@ -684,18 +684,17 @@ if(typeof HTMLElement.prototype.remove != "function")
 function mimg(event)
 {
   var target = event.target,
-  x = ($.data(target,"x") || 0) + event.dx,
-  w = winwidth(),
-  hw = w / 2;
-  $.data(target,"x",x);
-  x = (x / (hw / 100)) - 50;
+  x = (ix || 0) + event.dx;
+  ix = x;
+  x -= iwi / 2;
     target.style.webkitTransform =
     target.style.transform =
-      'translate(' +x + '%, -50%)';
+      'translate(' +x + 'px, -50%)';
 }
 function smimg(event)
 {
   var target = event.target;
+  iwi = $(target).width();
   target.classList.remove("fade");
   target.classList.remove("cent");
 }
@@ -703,9 +702,12 @@ function emimg(event)
 {
   var target = event.target;
   target.classList.add("cent");
-  $.data(target,"x",0);
+  ix = 0;
   target.setAttribute("style","");
   target.classList.add("fade");
+  var x = event.clientX;
+  if(x < (winwidth()/100)*10) prev();
+  if(x > (winwidth()/100)*90) next();
 }
 function init()
 {
@@ -735,6 +737,8 @@ function init()
   window.imgs = [];
   window.lastmove = time();
   window.chidden = false;
+  window.iwi = 0;
+  window.ix = 0;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   prog.id = "progress";
   container.id = "bigpic";
@@ -811,54 +815,8 @@ function init()
    onstart: smimg,
    onend: emimg,
    onmove: mimg,
+   axis: "x"
   });
-  /*$(img).draggable({
-    start: function() {
-      img.classList.remove("cent");
-      img.classList.remove("fade");
-      img.classList.remove("move");
-      o = false;
-    },
-    drag: function(e) {
-      if(e.clientX < (winwidth()/100)*10)
-      {
-        o = true;
-        r = false;
-      }
-      if(e.clientX > (winwidth()/100)*90)
-      {
-        o = true;
-        r = true;
-      }
-    },
-    stop: function() {
-      img.style.width = ""; // reset width that jQury sets which makes the images streched
-      if(!o)
-      {
-        back();
-      }
-      else
-      {
-        img.classList.add("move");
-        img.classList.add("fade");
-        if(!r)
-        {
-          img.style.left = -winwidth()+"px";
-          setTimeout(prev,500);
-          setTimeout("img.classList.remove('move');img.style.left = winwidth()+'px'",500);
-          setTimeout(back,1000);
-        }
-        else
-        {
-          img.style.left = winwidth()+"px";
-          setTimeout(next,500);
-          setTimeout("img.classList.remove('move');img.style.left = -winwidth()+'px'",500);
-          setTimeout(back,1000);
-        }
-      }
-    },
-    axis: "x"
-  });*/
   if(features.uploading)
   {
     var upbut = document.querySelector(".upload");
