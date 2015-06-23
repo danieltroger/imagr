@@ -7,12 +7,10 @@ if ($conn->connect_error)
 }
 
 // try to create database if not exists
-/*
 if ($conn->query("CREATE DATABASE IF NOT EXISTS {$database}") !== TRUE)
 {
   die("Error creating database: " . $conn->error);
 }
-*/
 if($conn->select_db($database) !== TRUE)
 {
   die("Couldn't select database '{$database}'");

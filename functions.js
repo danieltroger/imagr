@@ -169,7 +169,7 @@ function loop()
         percentage = upload.uploaded;
         average += percentage;
       }
-      if(!upload.uploading && uploads.active < 1)
+      if(!upload.uploading && uploads.active < 4)
       {
         do_upload(upload);
       }
@@ -681,15 +681,32 @@ if(typeof HTMLElement.prototype.remove != "function")
     $(this).remove();
   }
 }
-function back()
+function mimg(event)
 {
-  img.classList.remove("move");
-  img.classList.add("cent");
-  img.style.top = "50%";
-  img.classList.add("move");
-  img.style.left = "50%";
+  var target = event.target,
+  x = ($.data(target,"x") || 0) + event.dx,
+  w = winwidth(),
+  hw = w / 2;
+  $.data(target,"x",x);
+  x = (x / (hw / 100)) - 50;
+    target.style.webkitTransform =
+    target.style.transform =
+      'translate(' +x + '%, -50%)';
 }
-
+function smimg(event)
+{
+  var target = event.target;
+  target.classList.remove("fade");
+  target.classList.remove("cent");
+}
+function emimg(event)
+{
+  var target = event.target;
+  target.classList.add("cent");
+  $.data(target,"x",0);
+  target.setAttribute("style","");
+  target.classList.add("fade");
+}
 function init()
 {
   window.thumbsize = 0;
@@ -789,7 +806,13 @@ function init()
   window.addEventListener("touchend",moov);
   var o = false,
   r = false;
-  $(img).draggable({
+  window.intr = interact(img).draggable({
+   inertia: true,
+   onstart: smimg,
+   onend: emimg,
+   onmove: mimg,
+  });
+  /*$(img).draggable({
     start: function() {
       img.classList.remove("cent");
       img.classList.remove("fade");
@@ -835,7 +858,7 @@ function init()
       }
     },
     axis: "x"
-  });
+  });*/
   if(features.uploading)
   {
     var upbut = document.querySelector(".upload");
