@@ -415,7 +415,7 @@ function addimg(image)
   else
   {
     imgelem.src = smalldev ? "download.php/resize/110/"+image : "thumbs.dir/"+image+".jpg";
-    imgelem.style.width = "10%";
+    imgelem.style.maxWidth = "10%";
   }
   $.data(imgelem,'original',image);
   imgelem.classList.add("image");
@@ -757,7 +757,7 @@ function init()
   nextb.classList.add("symbol");
   nextb.classList.add("vertcent");
   nextb.classList.add("fade");
-  nextb.style.width="10%";
+  nextb.style.width = "10%";
   nextb.addEventListener("click",next);
   img.classList.add("largepic");
   img.classList.add("cent");
