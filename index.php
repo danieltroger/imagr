@@ -32,7 +32,7 @@
       <title>Imagr</title>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <link rel="stylesheet" type="text/css" href="style.min.css">
+      <link rel="stylesheet" type="text/css" href="style.min.css?a">
       <script src="external.min.js"></script>
       <script src="functions.min.js?a"></script>
       <script>
