@@ -1,35 +1,57 @@
 <?php
-function imgs($print = false)
+require_once "thumbs.php";
+error_reporting(E_ALL);
+function imgs($rfiles = true)
 {
+  $valid_extensions = Array("tiff","jpg","jpeg","png","gif");
   $files = Array();
-  $imgs = glob("*");
-  $imglen = sizeof($imgs)-1;
-  $invalid_files_length = 0;
-  $rkey = 0;
-  $invalid_extensions = Array("icons","test","cr2","sh","jar","raw","css","features","php","zip","txt","ign","html","html~","php~","json","json~","log","mov","svg~","license","dir","zip","meta","js","md");
-  foreach($imgs as $key => $img)
+  foreach($valid_extensions as $extension)
   {
-    $extension = getextension($img);
-    if(in_array($extension,$invalid_extensions))
+    foreach(array_merge(glob("*.{$extension}"),glob("*." . strtoupper($extension))) as $file)
     {
-      $invalid_files_length++;
+      $files[] = $file;
+      thumb($file);
     }
   }
-  //echo "/*imglength = {$imglen}, invalid_files_length = {$invalid_files_length}*/\n";
-  foreach($imgs as $key => $img)
+  if($rfiles) return $files;
+  //echo "{" . PHP_EOL;
+  $carr = Array();
+  foreach($files as $i => $file)
   {
-    $extension = getextension($img);
-    if(!in_array($extension,$invalid_extensions))
+    $fdt = 0;
+    if(function_exists("exif_read_data")) $exif = @exif_read_data($file);
+    if($exif !== FALSE && is_array($exif))
     {
-      if($print) echo "\"" . thumb($img) . "\"";
-      $files[] = $img;
-      if($rkey != $imglen-$invalid_files_length && $print)
+      if(!empty($exif['DateTime']))
       {
-        echo ",";
+        $fdt = strtotime($exif['DateTime']);
       }
-      $rkey++;
+      else
+      {
+        $fdt = $exif['FileDateTime'];
+      }
     }
-    //echo " /* file = {$img}, extension = {$extension}, key = {$key}, rkey = {$rkey}*/\n";
+    else
+    {
+      $fdt = filemtime($file);
+    }
+    if(!isset($carr[$fdt]))
+    {
+      $carr[$fdt] = $file;
+    }
+    else
+    {
+      if(is_array($carr[$fdt]))
+      {
+        $carr[$fdt][] = $file;
+      }
+      else
+      {
+        $temp = $carr[$fdt];
+        $carr[$fdt] = Array($temp,$file);
+      }
+    }
+    //echo "\"{$file}\": {$fdt}" . ($i == sizeof($files)-1 ? "" : ",") . PHP_EOL;
   }
-  return $files;
+  return json_encode($carr);
 }

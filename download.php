@@ -84,7 +84,8 @@ elseif($paths[0] == "delete")
     }
     else
     {
-      @unlink($paths[1]);
+      //@unlink($paths[1]);
+      rename($f,"deleted.dir/{$f}");
       if(file_exists($paths[1]))
       {
         $r = false;
@@ -327,7 +328,7 @@ function edate($a,$b)
 {
   if(empty($a) && empty($b)) return false;
   if(!empty($a)) return $a;
-  return date("Y:m:d \u\m H:i:s",$b);
+  return date("Y:m:d H:i:s",$b);
 }
 function model($model)
 {
