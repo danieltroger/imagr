@@ -8,20 +8,6 @@ Is an image viewer written in HTML5.
 
 Get the [newest version](https://github.com/danieltroger/imagr/archive/master.zip), extract it and place it on your webserver, ensure that we can write there, edit move `config.default.php` to `config.php`, edit it to fit your needs, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
 
-PS: If you are planning to use imagr in the root directory of your website, the automatic `.htaccess` creation won't work.
-
-**ONLY IF ABOVE APPLIES TO YOU (you want to be able to reach imagr at yoursite.tld/ instead of (for example) yoursite.tld/imagr/)** Put the following into it (the `.htaccess` file in the root directory of imagr):
-```
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteBase /
-RewriteRule ^download\.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /download.php [L]
-</IfModule>
-```
-
 ----------
 
 ### The viewer GUI
