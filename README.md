@@ -6,7 +6,7 @@ Is an image viewer written in HTML5.
 
 ## Howto
 
-Get the [newest release](https://github.com/danieltroger/imagr/releases/latest), extract it and place it on your webserver, ensure that we can write there, edit `config.php` to fit your needs, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
+Get the [newest version](https://github.com/danieltroger/imagr/archive/master.zip), extract it and place it on your webserver, ensure that we can write there, edit move `config.default.php` to `config.php`, edit it to fit your needs, place your images in the root folder of this script or just simply drag and drop them into the page. Enjoy!
 
 PS: If you are planning to use imagr in the root directory of your website, the automatic `.htaccess` creation won't work.
 
