@@ -1,6 +1,6 @@
 <?php
-require_once "thumbs.php";
 error_reporting(E_ALL);
+require_once "thumbs.php";
 function imgs($rfiles = true)
 {
   $valid_extensions = Array("tiff","jpg","jpeg","png","gif");
@@ -10,6 +10,7 @@ function imgs($rfiles = true)
     foreach(array_merge(glob("*.{$extension}"),glob("*." . strtoupper($extension))) as $file)
     {
       $files[] = $file;
+      echo "// {$file}" . PHP_EOL;
       thumb($file);
     }
   }
