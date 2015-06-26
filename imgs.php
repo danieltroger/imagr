@@ -7,10 +7,17 @@ function imgs($rfiles = true)
   $files = Array();
   foreach($valid_extensions as $extension)
   {
-    foreach(array_merge(glob("*.{$extension}"),glob("*." . strtoupper($extension))) as $file)
+     // f***** array_merge doesn't work on my webhost. sorry for using this crappy method.
+    $g1 = glob("*.{$extension}");
+    $g2 = glob("*." . strtoupper($extension));
+    foreach($g1 as $file)
     {
       $files[] = $file;
-      echo "// {$file}" . PHP_EOL;
+      thumb($file);
+    }
+    foreach($g2 as $file)
+    {
+      $files[] = $file;
       thumb($file);
     }
   }
