@@ -152,7 +152,7 @@ function loop()
         percentage = upload.uploaded;
         average += percentage;
       }
-      if(!upload.uploading && uploads.active < 4)
+      if(!upload.uploading && uploads.active < 1)
       {
         do_upload(upload);
       }
