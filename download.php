@@ -2,7 +2,7 @@
 error_reporting(0);
 require "sql.php";
 $paths = explode("/",@substr($_SERVER['PATH_INFO'],1));
-if(!empty($paths))
+if(!empty($paths) && strlen($paths[0]) > 1)
 {
   if($paths[0] == "exif")
   {
@@ -363,7 +363,7 @@ function pexif($file)
     'exposure' => exposure($we['ExposureTime']),
     'filesize' => formatsize($we['FileSize']),
     'software' => sw(@$we['Software']),
-    'meta' => getmeta($paths[1])
+    'meta' => getmeta($file)
   );
 }
 ?>

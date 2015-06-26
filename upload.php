@@ -71,11 +71,11 @@ if($raw)
    }
 
 }
-chmod($fname,0644);
-touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
-thumb($fname);
 if(file_exists($fname))
 {
+  chmod($fname,0644);
+  touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
+  thumb($fname);
   $om = getmeta($image);
   $om['upby'] = $uname;
   $umd = updatemeta($image,
@@ -88,7 +88,7 @@ if(file_exists($fname))
                         /*'date' => $date,*/
                         'file' => $fname,
                         'orig_file' => $_GET['name'],
-                        'exif' => pexif())));
+                        'exif' => pexif($fname))));
 }
 else
 {

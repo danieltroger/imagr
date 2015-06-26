@@ -126,10 +126,10 @@ function do_upload(upload)
   upload.uploading = true;
   uploads.active++;
 }
-function parsed(canvas,file)
+function parsed(canvas,file,preview)
 {
   console.log(canvas,file,preview,preview.getMetadata());
-  upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified);
+  upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified/*,preview.getMetadata()*/);
   canvas.remove();
   raws.splice(0,1);
   busy = false;
@@ -270,9 +270,13 @@ function loop()
    // request the next run. The browser will try to run this function 60 times per second if possible.
   requestAnimationFrame(loop);
 }
-function upload(binary,fname,date)
+function upload()
 {
-  var MAX_WIDTH = thumbsize != 0 ? thumbsize : ((winwidth()/100)*20),
+  var binary = arguments[0],
+  fname = arguments[1],
+  date = arguments[2]/*,
+  meta = arguments[3] != undefined ? arguments[3] : undefined*/;
+  MAX_WIDTH = thumbsize != 0 ? thumbsize : ((winwidth()/100)*20),
   timg = new Image(),
   id = uniqid();
   if(substr(fname,-4).toLowerCase() == ".cr2")
@@ -316,7 +320,8 @@ function upload(binary,fname,date)
     "uploaded": 0.0,
     "uploading": false,
     "thumbnail": i,
-    "id": id};
+    "id": id/*,
+    "meta": meta*/};
     uploads.queued++;
   });
 }
@@ -593,7 +598,7 @@ function hidectl()
   if(!smalldev)
   {
     img.classList.add("pmode");
-    if(info) infooverlay();
+    //if(info) infooverlay();
     container.style.background = "rgba(0,0,0,0.9)";
   }
 }
