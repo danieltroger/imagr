@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
-require "thumbs.php";
+require_once "thumbs.php";
+require_once "download.php";
 header("Content-type: text/plain");
 if(!uploading) x_err("Uploading not allowed");
 if(!is_writable(".")) x_err('Directory not writable');
@@ -22,6 +23,7 @@ fclose($in);
 //$length = $h['X-length'];
 //if(filesize($tn) != $length) exit(json_encode(Array('error' => "Filesize doesn't match: " . filesize($tn) . " != " . $length)));
 $fname = $_GET['name'];
+$uname = $_GET['by'];
 $raw = false;
 if(empty($fname)) x_err("Filename is empty");
 if(strcasecmp(substr($fname,-4),".php") == 0) x_err("1337: b4d_h4x0r");
@@ -74,7 +76,19 @@ touch(__DIR__ . DIRECTORY_SEPARATOR . $fname,$date);
 thumb($fname);
 if(file_exists($fname))
 {
-  exit(json_encode(Array('success' => true,/*'date' => $date,*/'file' => $fname,'orig_file' => $_GET['name'])));
+  $om = getmeta($image);
+  $om['upby'] = $uname;
+  $umd = updatemeta($image,
+                  $om['title'],
+                  $om['description'],
+                  $om['upby']);
+  exit(json_encode(Array(
+                        'success' => true,
+                        "naming_success" => $umd,
+                        /*'date' => $date,*/
+                        'file' => $fname,
+                        'orig_file' => $_GET['name'],
+                        'exif' => pexif())));
 }
 else
 {
@@ -85,4 +99,8 @@ function x_err($e)
   // try to clean up if neccessary
   @unlink($GLOBALS['tn']);
   exit(json_encode(Array('success' => false, 'error' => $e,'file' => $GLOBALS['fname'])));
+}
+function safr($str)
+{
+  return str_replace("'","\'",$str);
 }

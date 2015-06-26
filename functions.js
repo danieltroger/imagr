@@ -90,6 +90,7 @@ function do_upload(upload)
         upload.binary = "";
         imgs.push(ret.file);
         addimg(ret.file);
+        mdata[ret.file] = ret.exif;
         console.log(ret.orig_file+" was successfully uploaded");
       }
       else
@@ -120,32 +121,14 @@ function do_upload(upload)
   });
   xmlhttp.addEventListener("timeout",xmlhttp.abort);
   xmlhttp.addEventListener("error",xmlhttp.abort);
-  xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date,true);
+  xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date+"&by="+upname,true);
   xmlhttp.send(upload.binary);
-  var mr = new xhr(),
-  u = basename(upload.fname); // TODO: do the following in the request which is being sent above
-  mr.open("GET","download.php/rename/"+u+"/upby/"+upname,true);
-  mr.addEventListener("readystatechange",function ()
-  {
-    if (this.readyState == 4 && this.status == 200)
-    {
-      if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
-       var m = new xhr();
-       m.open("GET","download.php/exif/"+u+"?"+rand(),false);
-       m.send();
-       mdata[u] = json_decode(m.response);
-    }
-  });
-  mr.send();
-  // three requests for one upload, a shame :( ....
   upload.uploading = true;
   uploads.active++;
 }
 function parsed(canvas,file)
 {
-  console.log(canvas,file);
-  // rawViewer.previews.image_filenamecr2.getMetadata()
-  // TODO: need to do something smart with that.
+  console.log(canvas,file,preview,preview.getMetadata());
   upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified);
   canvas.remove();
   raws.splice(0,1);
@@ -338,42 +321,40 @@ function upload(binary,fname,date)
   });
 }
 
- function startWorker()
+function startWorker()
+{
+ if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
  {
-   if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
+   w = new Worker("preload.min.js");
+   w.onmessage = function(e)
    {
-     w = new Worker("preload.min.js");
-     w.onmessage = function(e)
-     {
-       var fname = basename(e.data[1]),
-       blob = e.data[0];
-       var url = (window.URL || window.webkitURL).createObjectURL(blob);
-       imgs[fname] = url;
-       mdata[fname] = json_decode(e.data[2]);
-       console.info("WebWorker has successfully downloaded "+fname+" to "+url);
-      };
-      w.postMessage(imgs);
-      console.info("Preload WebWorker started");
+     var fname = basename(e.data[1]),
+     blob = e.data[0];
+     var url = (window.URL || window.webkitURL).createObjectURL(blob);
+     imgs[fname] = url;
+     mdata[fname] = json_decode(e.data[2]);
+     console.info("WebWorker has successfully downloaded "+fname+" to "+url);
+    };
+    w.postMessage(imgs);
+    console.info("Preload WebWorker started");
+ }
+}
+function update()
+{
+ var rq = new xhr(),
+ u = url;
+ rq.open("GET","download.php/rename/"+u+"/"+this.id+"/"+this.textContent,true);
+ rq.addEventListener("readystatechange",function ()
+ {
+   if (this.readyState == 4 && this.status == 200)
+   {
+     var rt = json_decode(this.responseText);
+     if(!rt.success) alert("Something went wrong while renaming");
+      mdata[u] = rt.exif;
    }
- }
- function update()
- {
-   var rq = new xhr(),
-   u = url;
-   rq.open("GET","download.php/rename/"+u+"/"+this.id+"/"+this.textContent,true);
-   rq.addEventListener("readystatechange",function ()
-   {
-     if (this.readyState == 4 && this.status == 200)
-     {
-       if(!json_decode(this.responseText).success) alert("Something went wrong while renaming");
-        var m = new xhr();
-        m.open("GET","download.php/exif/"+u+"?"+rand(),false);
-        m.send();
-        mdata[u] = json_decode(m.response);
-     }
-   });
-   rq.send();
- }
+ });
+ rq.send();
+}
 function winwidth()
 {
   var w = window,d = document,e = d.documentElement,g = d.getElementsByTagName('body')[0],x = w.innerWidth || e.clientWidth || g.clientWidth;

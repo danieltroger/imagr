@@ -1,252 +1,231 @@
 <?php
 error_reporting(0);
 require "sql.php";
-$paths = explode("/",substr($_SERVER['PATH_INFO'],1));
-if($paths[0] == "exif")
+$paths = explode("/",@substr($_SERVER['PATH_INFO'],1));
+if(!empty($paths))
 {
-  header("Content-type: text/plain");
-  if(strlen($paths[1]) <1)
+  if($paths[0] == "exif")
   {
-    die(json_encode(array("error" => "please specify an filename")));
-  }
-  $we = exif_read_data($paths[1],"FILE");
-  unset($we['MakerNote']);
-  $gmaps = false;
-  if(strpos($we['SectionsFound'],"GPS") !== false)
-  {
-    $gmaps = calc($we['GPSLatitude'][0]) . '°' . calc($we['GPSLatitude'][1]) . "'" . calc($we['GPSLatitude'][2]) . '"N';
-    $gmaps .= " " . calc($we['GPSLongitude'][0]) . "°" . calc($we['GPSLongitude'][1]) . "'" . calc($we['GPSLongitude'][2]) . '"E';
-  }
-  echo json_encode(
-  array(
-    'width' => w($we['ExifImageWidth']),
-    'height' => h($we['ExifImageLength']),
-    'flash' => flash($we['Flash']),
-    'make' => maker($we['Make']),
-    'model' => model($we['Model']),
-    'GPS' => $gmaps,
-    'date' => edate($we['DateTime'],$we['FileDateTime']),
-    'ISO' => ISO($we['ISOSpeedRatings']),
-    'aperture' => aperture($we['FNumber']),
-    'exposure' => exposure($we['ExposureTime']),
-    'filesize' => formatsize($we['FileSize']),
-    'software' => sw(@$we['Software']),
-    'meta' => getmeta($paths[1])
-  ));
-  //echo json_last_error_msg();
-}
-elseif($paths[0] == "rawtest")
-{
-  $tn = "server_test_image_do_not_delete.cr2";
-  $on = "out.test";
-  if(!extension_loaded('imagick'))
-  {
-    file_put_contents(".raw","false");
-    echo "false";
-    exit;
-  }
-  try
-  {
-    $im = new Imagick($tn);
-    $im->setImageFormat("jpg");
-    $im->writeImage($on);
-    $im->clear();
-    $im->destroy();
-   }
-   catch(ImagickException $e)
-   {
-     file_put_contents(".raw","false");
-     echo "false";
-   }
-   @$is = getimagesize($on);
-   if($is[0] > 1900 && $is[1] > 1290) //pass
-   {
-     file_put_contents(".raw","true");
-     echo "true";
-   }
-   @unlink($on);
-   exit;
-}
-elseif($paths[0] == "delete")
-{
-  header("Content-type: text/html; charset=utf-8");
-  header("Expires: on, 01 Jan 1970 00:00:00 GMT");
-  header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-  header("Cache-Control: no-store, no-cache, must-revalidate");
-  header("Cache-Control: post-check=0, pre-check=0", false);
-  header("Pragma: no-cache");
-  if(deleting)
-  {
-    @$f = basename($paths[1]);
-    if(empty($f))
+    header("Content-type: text/plain");
+    if(strlen($paths[1]) <1)
     {
-      $r = false;
+      die(json_encode(array("error" => "please specify an filename")));
     }
-    else
+    exit(json_encode(pexif($paths[1])));
+  }
+  elseif($paths[0] == "rawtest")
+  {
+    $tn = "server_test_image_do_not_delete.cr2";
+    $on = "out.test";
+    if(!extension_loaded('imagick'))
     {
-      //@unlink($paths[1]);
-      rename($f,"deleted.dir/{$f}");
-      if(file_exists($paths[1]))
+      file_put_contents(".raw","false");
+      echo "false";
+      exit;
+    }
+    try
+    {
+      $im = new Imagick($tn);
+      $im->setImageFormat("jpg");
+      $im->writeImage($on);
+      $im->clear();
+      $im->destroy();
+     }
+     catch(ImagickException $e)
+     {
+       file_put_contents(".raw","false");
+       echo "false";
+     }
+     @$is = getimagesize($on);
+     if($is[0] > 1900 && $is[1] > 1290) //pass
+     {
+       file_put_contents(".raw","true");
+       echo "true";
+     }
+     @unlink($on);
+     exit;
+  }
+  elseif($paths[0] == "delete")
+  {
+    header("Content-type: text/html; charset=utf-8");
+    header("Expires: on, 01 Jan 1970 00:00:00 GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+    header("Cache-Control: no-store, no-cache, must-revalidate");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+    if(deleting)
+    {
+      @$f = basename($paths[1]);
+      if(empty($f))
       {
         $r = false;
       }
       else
       {
-        $r = true;
+        //@unlink($paths[1]);
+        rename($f,"deleted.dir/{$f}");
+        if(file_exists($paths[1]))
+        {
+          $r = false;
+        }
+        else
+        {
+          $r = true;
+        }
       }
     }
-  }
-  else
-  {
-    $r = false;
-  }
-  exit(json_encode(Array('success' => $r)));
-}
-elseif($paths[0] == "rename")
-{
-  if(renaming)
-  {
-    function safr($str)
+    else
     {
-      return str_replace("'","\'",$str);
+      $r = false;
     }
-    $image = safr($paths[1]);
-    $field = safr($paths[2]);
-    $value = safr($paths[3]);
-    $om = getmeta($image);
-    $om[$field] = $value;
-    exit(
-         json_encode(
-                    Array('success' =>
-                    updatemeta($image,
-                    $om['title'],
-                    $om['description'],
-                    $om['upby']))));
+    exit(json_encode(Array('success' => $r)));
   }
-  else
+  elseif($paths[0] == "rename")
   {
-    exit(json_encode(Array('success' => false)));
-  }
-}
-else
-{
-  if($paths[0] == "resize")
-  {
-    $size = explode("x",strtolower($paths[1]));
-    $file = $paths[2];
-  }
-  else
-  {
-    $file = $paths[0];
-  }
-  if(strlen($file) < 1)
-  {
-    die("Please specify a file<br />Usage: {$_SERVER['PHP_SELF']}[/resize/width/[height]]/imagefilename to download an image<br />{$_SERVER['PHP_SELF']}/exif/filename returns json encoded exif data from filename");
-  }
-  if(!file_exists($file))
-  {
-    die("File doesn't exist");
-  }
-  $finfo = finfo_open(FILEINFO_MIME_TYPE);
-  $cont = finfo_file($finfo,$file);
-  $fsize = filesize($file);
-  if(substr(strtolower($cont),0,6) != "image/")
-  {
-    die("Not an image (mime-type: {$cont} file: {$file})");
-  }
-  finfo_close($finfo);
-  if(!isset($size))
-  {
-    $rname = "thumbs.dir/" . basename($file);
-    if(!is_dir("thumbs.dir")){mkdir("thumbs.dir");}
-    if(!file_exists($rname))
+    if(renaming)
     {
-      $e = exif_read_data($file);
-      $r = @$e['Orientation'];
-      if(!empty($r) && ($r == 8 || $r == 3 || $r == 6))
+      function safr($str)
       {
-        header("X-exif-rotation: {$r}");
-        header("Content-type: image/jpeg-dl");
-        switch($e['Orientation'])
+        return str_replace("'","\'",$str);
+      }
+      $image = safr($paths[1]);
+      $field = safr($paths[2]);
+      $value = safr($paths[3]);
+      $om = getmeta($image);
+      $om[$field] = $value;
+      exit(
+           json_encode(
+                      Array('success' =>
+                      updatemeta($image,
+                      $om['title'],
+                      $om['description'],
+                      $om['upby']),
+                      'exif' => pexif($image))));
+    }
+    else
+    {
+      exit(json_encode(Array('success' => false)));
+    }
+  }
+  else
+  {
+    if($paths[0] == "resize")
+    {
+      $size = explode("x",strtolower($paths[1]));
+      $file = $paths[2];
+    }
+    else
+    {
+      $file = $paths[0];
+    }
+    if(strlen($file) < 1)
+    {
+      die("Please specify a file<br />Usage: {$_SERVER['PHP_SELF']}[/resize/width/[height]]/imagefilename to download an image<br />{$_SERVER['PHP_SELF']}/exif/filename returns json encoded exif data from filename");
+    }
+    if(!file_exists($file))
+    {
+      die("File doesn't exist");
+    }
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $cont = finfo_file($finfo,$file);
+    $fsize = filesize($file);
+    if(substr(strtolower($cont),0,6) != "image/")
+    {
+      die("Not an image (mime-type: {$cont} file: {$file})");
+    }
+    finfo_close($finfo);
+    if(!isset($size))
+    {
+      $rname = "thumbs.dir/" . basename($file);
+      if(!is_dir("thumbs.dir")){mkdir("thumbs.dir");}
+      if(!file_exists($rname))
+      {
+        $e = exif_read_data($file);
+        $r = @$e['Orientation'];
+        if(!empty($r) && ($r == 8 || $r == 3 || $r == 6))
         {
-            case 8:
-                $image =  imagecreatefromstring(file_get_contents($file));
-                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),90,0),$rname);
-                break;
-            case 3:
-                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),180,0),$rname);
-                break;
-            case 6:
-                imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),-90,0),$rname);
-                break;
+          header("X-exif-rotation: {$r}");
+          header("Content-type: image/jpeg-dl");
+          switch($e['Orientation'])
+          {
+              case 8:
+                  $image =  imagecreatefromstring(file_get_contents($file));
+                  imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),90,0),$rname);
+                  break;
+              case 3:
+                  imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),180,0),$rname);
+                  break;
+              case 6:
+                  imagejpeg(imagerotate(imagecreatefromstring(file_get_contents($file)),-90,0),$rname);
+                  break;
+          }
+          $dfile = $rname;
         }
-        $dfile = $rname;
+        else
+        {
+          $dfile = $file;
+        }
       }
       else
       {
-        $dfile = $file;
+        $dfile = $rname;
       }
     }
     else
     {
-      $dfile = $rname;
+      require_once "thumbs.php";
+      $ext = getextension($file,true);
+      $oname = "thumbs.dir"  . DIRECTORY_SEPARATOR . $ext[1] . "-" .  $paths[1] . "." .  $ext[0];
+      thumb($file,$oname,$size[0],$size[1]);
+      $dfile = $oname;
     }
-  }
-  else
-  {
-    require "thumbs.php";
-    $ext = getextension($file,true);
-    $oname = "thumbs.dir"  . DIRECTORY_SEPARATOR . $ext[1] . "-" .  $paths[1] . "." .  $ext[0];
-    thumb($file,$oname,$size[0],$size[1]);
-    $dfile = $oname;
-  }
-  // downloader
-  $offset = 0;
-  $range = @$_SERVER['HTTP_RANGE'];
-  $buffsize = 1048576;
-  $fsize = filesize($dfile);
-  $h = fopen($dfile,"r");
-  if(!empty($range))
-  {
-    $a = explode("=",$range);
-    unset($a[0]);
-    $a = explode("-",implode("=",$a));
-    $offset = $a[0];
-    if(empty($a[1]))
+    // downloader
+    $offset = 0;
+    $range = @$_SERVER['HTTP_RANGE'];
+    $buffsize = 1048576;
+    $fsize = filesize($dfile);
+    $h = fopen($dfile,"r");
+    if(!empty($range))
     {
-      $stop = $fsize;
+      $a = explode("=",$range);
+      unset($a[0]);
+      $a = explode("-",implode("=",$a));
+      $offset = $a[0];
+      if(empty($a[1]))
+      {
+        $stop = $fsize;
+      }
+      else
+      {
+        $stop = explode("/",$a[1])[0]+1;
+      }
+      $length = $stop-$offset;
+      header('HTTP/1.1 206 Partial Content');
+      header('Accept-Ranges: bytes');
+      header("Content-type: {$cont}-download");
+      header("Content-Range: bytes " . $offset . "-" . ($stop-1) . "/" . $fsize);
+      header("Content-length: {$length}");
+      if($length == 0) exit;
+      fseek($h, $offset);
+      for(;$offset+$buffsize < $stop;$offset += $buffsize)
+      {
+        echo fread($h,$buffsize);
+      }
+      echo fread($h,$stop-$offset);
     }
     else
     {
-      $stop = explode("/",$a[1])[0]+1;
+      header('Accept-Ranges: bytes');
+      header("Content-type: {$cont}-download");
+      header("Content-length: {$fsize}");
+      while(!feof($h))
+      {
+        echo fread($h,$buffsize);
+      }
     }
-    $length = $stop-$offset;
-    header('HTTP/1.1 206 Partial Content');
-    header('Accept-Ranges: bytes');
-    header("Content-type: {$cont}-download");
-    header("Content-Range: bytes " . $offset . "-" . ($stop-1) . "/" . $fsize);
-    header("Content-length: {$length}");
-    if($length == 0) exit;
-    fseek($h, $offset);
-    for(;$offset+$buffsize < $stop;$offset += $buffsize)
-    {
-      echo fread($h,$buffsize);
-    }
-    echo fread($h,$stop-$offset);
+    fclose($h);
   }
-  else
-  {
-    header('Accept-Ranges: bytes');
-    header("Content-type: {$cont}-download");
-    header("Content-length: {$fsize}");
-    while(!feof($h))
-    {
-      echo fread($h,$buffsize);
-    }
-  }
-  fclose($h);
 }
-$conn->close();
 function calc($equation,$nocomma = true)
 {
   // Remove whitespaces
@@ -360,5 +339,31 @@ function h($t)
 function sw($soft)
 {
   return empty($soft) ? false : $soft;
+}
+function pexif($file)
+{
+  $we = exif_read_data($file,"FILE");
+  unset($we['MakerNote']);
+  $gmaps = false;
+  if(strpos($we['SectionsFound'],"GPS") !== false)
+  {
+    $gmaps = calc($we['GPSLatitude'][0]) . '°' . calc($we['GPSLatitude'][1]) . "'" . calc($we['GPSLatitude'][2]) . '"N';
+    $gmaps .= " " . calc($we['GPSLongitude'][0]) . "°" . calc($we['GPSLongitude'][1]) . "'" . calc($we['GPSLongitude'][2]) . '"E';
+  }
+  return Array(
+    'width' => w($we['ExifImageWidth']),
+    'height' => h($we['ExifImageLength']),
+    'flash' => flash($we['Flash']),
+    'make' => maker($we['Make']),
+    'model' => model($we['Model']),
+    'GPS' => $gmaps,
+    'date' => edate($we['DateTime'],$we['FileDateTime']),
+    'ISO' => ISO($we['ISOSpeedRatings']),
+    'aperture' => aperture($we['FNumber']),
+    'exposure' => exposure($we['ExposureTime']),
+    'filesize' => formatsize($we['FileSize']),
+    'software' => sw(@$we['Software']),
+    'meta' => getmeta($paths[1])
+  );
 }
 ?>

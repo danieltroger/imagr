@@ -71348,7 +71348,7 @@ Rawson.Viewer = Rawson.Class.extend({
                         self.events.trigger('files:loaded');
                     }
                 if (callback){
-                    callback(this,file);
+                    callback(this,file,preview);
                 }
             });
             self.previews[preview.id] = preview;
