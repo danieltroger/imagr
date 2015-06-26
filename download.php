@@ -7,7 +7,7 @@ if(!empty($paths))
   if($paths[0] == "exif")
   {
     header("Content-type: text/plain");
-    if(strlen($paths[1]) <1)
+    if(strlen($paths[1]) < 1)
     {
       die(json_encode(array("error" => "please specify an filename")));
     }
