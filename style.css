@@ -717,6 +717,8 @@ input[type="submit"].btn::-moz-focus-inner {
 }
 .hidden
 {
+  filter: blur(10px);
+  -webkit-filter: blur(10px);
   opacity: 0;
 }
 .pmode
