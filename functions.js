@@ -448,6 +448,8 @@ function openpic(srcthumb)
   $.data(img,'original',url);
   location.hash = "#!image="+basename(url)+ (info ? ",info=true" : "");
   container.style.display = "";
+  grid.style.webkitFilter =
+  grid.style.filter = "blur(9px)";
   while(infolay.firstChild) // http://jsperf.com/innerhtml-vs-removechild
   {
     infolay.removeChild(infolay.firstChild);
@@ -656,7 +658,9 @@ function iclick(e)
 {
   if(e.target.id == this.id)
   {
-    this.style.display="none";
+    this.style.display = "none";
+    grid.style.webkitFilter =
+    grid.style.filter = "";
     location.hash = "#!overview"
   }
 }
@@ -726,6 +730,11 @@ function init()
   window.iwi = 0;
   window.ix = 0;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
+  var gs = grid.style;
+  gs.webkitTransitionDuration =
+  gs.oTransitionDuration =
+  gs.msTransitionDuration =
+  gs.transitionDuration = "0.7s";
   prog.id = "progress";
   container.id = "bigpic";
   container.style.cursor = "pointer";
