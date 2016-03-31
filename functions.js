@@ -580,15 +580,18 @@ function del()
 }
 function next(e)
 {
-  img.src = "";
   var nextindex = (findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))+1);
   if(nextindex == imgs.length)
   {
     nextindex = 0;
   }
   var thumb = findthumb(imgs[nextindex]);
+  img.style.width = img.width+"px";
+  img.style.height = img.height+"px";
+  img.src = thumb.src;
   openpic(thumb);
 }
+function rstx(){if(i&1 == 1 && this.src.indexOf("thumbs.dir") === -1){this.style.width = "";this.style.height =""}i++}
 function moov() {lastmove = time()}
 function hidectl()
 {
@@ -619,13 +622,16 @@ function showctl()
 }
 function prev(e)
 {
-  img.src = "";
   var previndex = findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))-1;
   if(previndex < 0)
   {
     previndex = (imgs.length-1);
   }
-    openpic(findthumb(imgs[previndex]));
+  var thumb = findthumb(imgs[previndex]);
+  img.style.width = img.width+"px";
+  img.style.height = img.height+"px";
+  img.src = thumb.src;
+  openpic(thumb);
 }
 function findimg(imgurl)
 {
@@ -729,6 +735,7 @@ function init()
   window.chidden = false;
   window.iwi = 0;
   window.ix = 0;
+  window.i = 0;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   var gs = grid.style;
   gs.webkitTransitionDuration =
@@ -803,6 +810,7 @@ function init()
   window.addEventListener("touchmove",moov);
   window.addEventListener("touchstart",moov);
   window.addEventListener("touchend",moov);
+  img.addEventListener("load",rstx);
   var o = false,
   r = false;
   window.intr = interact(img).draggable({
