@@ -60,7 +60,7 @@ function create_thumb($src,$dest,$desired_width = false, $desired_height = false
   else if ($ext == 'png')
   imagepng($virtual_image,$dest,1);
   else if ($ext == 'jpg' || $ext == 'jpeg')
-  imagejpeg($virtual_image,$dest,100);
+  imagejpeg($virtual_image,$dest,65);
 
   return array(
     'width'     => $width,
