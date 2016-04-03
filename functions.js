@@ -587,8 +587,8 @@ function next(e)
     nextindex = 0;
   }
   var thumb = findthumb(imgs[nextindex]);
-  img.style.width = img.width+"px";
-  img.style.height = img.height+"px";
+  img.style.width = img.clientWidth+"px";
+  img.style.height = img.clientHeight+"px";
   img.src = thumb.src;
   openpic(thumb);
 }
@@ -629,8 +629,8 @@ function prev(e)
     previndex = (imgs.length-1);
   }
   var thumb = findthumb(imgs[previndex]);
-  img.style.width = img.width+"px";
-  img.style.height = img.height+"px";
+  img.style.width = img.clientWidth+"px";
+  img.style.height = img.clientHeight+"px";
   img.src = thumb.src;
   openpic(thumb);
 }
