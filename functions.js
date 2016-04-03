@@ -587,8 +587,8 @@ function next(e)
     nextindex = 0;
   }
   var thumb = findthumb(imgs[nextindex]);
-  img.style.width = img.clientWidth+"px";
-  img.style.height = img.clientHeight+"px";
+  img.style.width = (img.clientWidth < 10 ? window.innerWidth : img.clientWidth)+"px";
+  img.style.height = (img.clientHeight < 10 ? window.innerHeight : img.clientHeight)+"px";
   img.src = thumb.src;
   openpic(thumb);
 }
