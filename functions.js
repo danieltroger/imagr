@@ -410,6 +410,7 @@ function addimg(image)
 }
 function openpic(srcthumb)
 {
+  ib = 0;
   if(this.tagName == "IMG")
   {
     srcthumb = this;
@@ -591,7 +592,7 @@ function next(e)
   img.src = thumb.src;
   openpic(thumb);
 }
-function rstx(){if(i&1 == 1 && this.src.indexOf("thumbs.dir") === -1){this.style.width = "";this.style.height =""}i++}
+function rstx(){if(ib&1){this.style.width = "";this.style.height =""}ib++}
 function moov() {lastmove = time()}
 function hidectl()
 {
@@ -735,7 +736,7 @@ function init()
   window.chidden = false;
   window.iwi = 0;
   window.ix = 0;
-  window.i = 0;
+  window.ib = 0;
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   var gs = grid.style;
   gs.webkitTransitionDuration =
