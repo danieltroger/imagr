@@ -303,11 +303,13 @@ function ISO($iso)
   if(strlen($iso) < 1) return false;
   return $iso;
 }
-function edate($a,$b)
+function edate($a,$b,$c,$d)
 {
-  if(empty($a) && empty($b)) return false;
+  if(empty($a) && empty($b) && empty($c) && empty($d)) return false;
   if(!empty($a)) return $a;
-  return date("Y:m:d H:i:s",$b);
+  if(!empty($b)) return $b;
+  if(!empty($c)) return $c;
+  return date("Y:m:d H:i:s",$d);
 }
 function model($model)
 {
@@ -357,7 +359,7 @@ function pexif($file)
     'make' => maker($we['Make']),
     'model' => model($we['Model']),
     'GPS' => $gmaps,
-    'date' => edate($we['DateTime'],$we['FileDateTime']),
+    'date' => edate($we['DateTimeOriginal'],$we['DateTimeDigitized'],$we['DateTime'],$we['FileDateTime']),
     'ISO' => ISO($we['ISOSpeedRatings']),
     'aperture' => aperture($we['FNumber']),
     'exposure' => exposure($we['ExposureTime']),
