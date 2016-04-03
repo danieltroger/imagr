@@ -587,9 +587,12 @@ function next(e)
     nextindex = 0;
   }
   var thumb = findthumb(imgs[nextindex]);
-  img.style.width = (img.clientWidth < 10 ? window.innerWidth : img.clientWidth)+"px";
-  img.style.height = (img.clientHeight < 10 ? window.innerHeight : img.clientHeight)+"px";
-  img.src = thumb.src;
+  if(!badbrowser)
+  {
+    img.style.width = img.width+"px";
+    img.style.height = img.height+"px";
+    img.src = thumb.src;
+  }
   openpic(thumb);
 }
 function rstx(){if(ib&1){this.style.width = "";this.style.height =""}ib++}
@@ -629,9 +632,12 @@ function prev(e)
     previndex = (imgs.length-1);
   }
   var thumb = findthumb(imgs[previndex]);
-  img.style.width = img.clientWidth+"px";
-  img.style.height = img.clientHeight+"px";
-  img.src = thumb.src;
+  if(!badbrowser)
+  {
+    img.style.width = img.width+"px";
+    img.style.height = img.height+"px";
+    img.src = thumb.src;
+  }
   openpic(thumb);
 }
 function findimg(imgurl)
@@ -737,6 +743,7 @@ function init()
   window.iwi = 0;
   window.ix = 0;
   window.ib = 0;
+  window.badbrowser = navigator.userAgent.toLowerCase().indexOf("webkit") !== -1; // Webkit....
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   var gs = grid.style;
   gs.webkitTransitionDuration =
@@ -811,7 +818,7 @@ function init()
   window.addEventListener("touchmove",moov);
   window.addEventListener("touchstart",moov);
   window.addEventListener("touchend",moov);
-  img.addEventListener("load",rstx);
+  if(!badbrowser) img.addEventListener("load",rstx);
   var o = false,
   r = false;
   window.intr = interact(img).draggable({
