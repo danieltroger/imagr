@@ -30,9 +30,12 @@ function imgs($rfiles = true)
     if(function_exists("exif_read_data")) $exif = @exif_read_data($file);
     if($exif !== FALSE && is_array($exif))
     {
-      if(!empty($exif['DateTime']))
+      @$dt = $we['DateTime'];
+      @$dt = $we['DateTimeDigitized'];
+      @$dt = $we['DateTimeOriginal'];
+      if(!$dt)
       {
-        $fdt = strtotime($exif['DateTime']);
+        $fdt = strtotime($dt);
       }
       else
       {
