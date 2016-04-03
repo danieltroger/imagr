@@ -9,7 +9,7 @@
     require "imgs.php";
     require "config.php";
     require "sql.php";
-    $vp = false;
+    /*$vp = false;
     $sum = hash("sha256",$_SERVER['REMOTE_ADDR'] . date("Y-m") . $_SERVER['HTTP_USER_AGENT']);
     $users = json_decode(file_get_contents("users.json"));
     if(isset($_POST['user']) && isset($_POST['pw']))
@@ -23,7 +23,7 @@
     if(!in_array($sum,$users))
     {
       die("<!DOCTYPE html>\n<html>\n<body>\n<form method='post' action='/photowalking/'>\n" . ($vp ? "Wrong password, try again.\n<br />\n" : "") . "<input placeholder='Benutzername' name='user' />\n<br />\n<input placeholder='Passwort' type='password' name='pw' />\n<br />\n<input type='submit' value='Anmelden' /></form>\n</body>\n</html>\n");
-    }
+    }*/
     // init a .htaccess if there's no one
     if(!file_exists(".htaccess"))
     {
