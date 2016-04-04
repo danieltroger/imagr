@@ -3,6 +3,9 @@ imagr
 
 Is an image viewer written in HTML5.
 
+# Warning, this readme is outdated. The [code](https://github.com/danieltroger/imagr) is obvious.
+---------
+
 
 ## Howto
 
@@ -93,7 +96,7 @@ If you really want to upload images with the command line, see that you've `php`
 
 ```
 f=myimage.jpg
-php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"));' | curl  yoursite.tld/imagr/upload.php?name=$f\&date=$(php -r 'echo filemtime("'$f'") . "000";') -d @-
+php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"));' | curl  yoursite.tld/imagr/upload.php?by=Paul\&name=$f\&date=$(php -r 'echo filemtime("'$f'") . "000";') -d @-
 ```
 ----------
 
