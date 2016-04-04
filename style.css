@@ -193,24 +193,6 @@ background: #222 none repeat scroll 0 0;
 color: white;
 text-shadow: none;
 }
-/* mobile stylings */
-@media all and (max-width: 769px)
-{
-    .image
-    {
-      height: 50px !important;
-      border: none !important;
-      box-shadow: none !important;
-      margin: 0 !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-    }
-    #bigpic
-    {
-      background: rgba(0,0,0,0.9) !important;
-    }
-}
-
 .delbut
 {
   background: transparent;
@@ -752,7 +734,6 @@ input[type="submit"].btn::-moz-focus-inner {
     top: 0px;
     height: 100%;
     position: fixed;
-    z-index: 11111111;
     overflow: scroll;
     width: 3%;
     padding: 0%;
@@ -761,4 +742,29 @@ input[type="submit"].btn::-moz-focus-inner {
 {
   width: 10%;
   padding: 0.5%;
+}
+/* mobile stylings */
+@media all and (max-width: 769px)
+{
+    .image
+    {
+      height: 50px !important;
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+    #bigpic
+    {
+      background: rgba(0,0,0,0.9) !important;
+    }
+    #sidebar
+    {
+      width: 20%;
+    }
+    #sidebar:hover
+    {
+      width: 90%;
+    }
 }

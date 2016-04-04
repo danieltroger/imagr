@@ -137,7 +137,7 @@ function parsed(canvas,file,preview)
 }
 function loop()
 {
-  if(uploads.queued != 0) $(sidebar).fadeIn();
+  uploads.queued != 0 ? $(sidebar).fadeIn() : $(sidebar).fadeOut();
   // check for uploads, update the progress bar and start sending uploads when "ready"
   var k = Object.keys(uploads),
   i = 0,
@@ -547,12 +547,13 @@ function infooverlay()
 }
 function findthumb(realsource)
 {
-  acs("image",function(thumb){
-    if($.data(thumb,'original') == realsource)
+  return acs("image",function(thumb,realsource){
+    var orig = $.data(thumb,'original');
+    if(orig == realsource)
     {
       return thumb;
     }
-  });
+  },realsource);
 }
 function del()
 {
@@ -706,11 +707,17 @@ function emimg(event)
 }
 function acs(slct,code)
 {
-  var eles = document.getElementsByClassName(slct), ij = 0;
+  var eles = document.getElementsByClassName(slct), ij = 0, retval = 0,rt;
   for(;ij<eles.length;ij++)
   {
-    code(eles[ij]);
+    if(arguments[2] != undefined && arguments[2].length > 1)
+    {
+      rt = code(eles[ij],arguments[2]);
+      if(!retval) retval = rt;
+    }
+    else{code(eles[ij])}
   }
+  return retval;
 }
 function hidestatus(){
   acs("uptext",function(e){e.style.opacity = 0});
@@ -802,7 +809,7 @@ function init()
   container.classList.add("fade");
   container.appendChilds(prevb,nextb,img,infobut,infolay);
   document.body.appendChilds(prog,grid,container,sidebar);
-  $(sidebar).fadeOut();
+  $(sidebar).fadeOut(0);
   var mdts = Object.keys(files).sort(),
   i = 0;
   for(; i < mdts.length; i++)
@@ -832,7 +839,9 @@ function init()
   window.addEventListener("touchstart",moov);
   window.addEventListener("touchend",moov);
   sidebar.addEventListener("mouseover",showstatus);
+  sidebar.addEventListener("touchstart",showstatus);
   sidebar.addEventListener("mouseout",hidestatus);
+  sidebar.addEventListener("touchend",hidestatus);
   if(!badbrowser) img.addEventListener("load",rstx);
   var o = false,
   r = false;

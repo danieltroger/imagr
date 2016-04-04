@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 require_once "thumbs.php";
 require_once "download.php";
 header("Content-type: text/plain");
