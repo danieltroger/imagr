@@ -727,3 +727,38 @@ input[type="submit"].btn::-moz-focus-inner {
   max-height: 100%;
   cursor: none;
 }
+.uptext {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    border-radius: 10px;
+    padding: 6%;
+    background: rgba(0, 0, 0, 0.5) none repeat scroll 0% 0%;
+    opacity: 0;
+}
+.upthumb {
+    max-width: 100%;
+}
+.upfile {
+    position: relative;
+    margin: 0%;
+}
+#sidebar {
+    background: rgba(0, 135, 189, 0.7) none repeat scroll 0% 0%;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    position: fixed;
+    z-index: 11111111;
+    overflow: scroll;
+    width: 3%;
+    padding: 0%;
+}
+#sidebar:hover
+{
+  width: 10%;
+  padding: 0.5%;
+}

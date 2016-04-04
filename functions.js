@@ -82,12 +82,12 @@ function do_upload(upload)
     {
       uploads.active--;
       uploads.queued--;
-      upload.thumbnail.remove();
       var ret = json_decode(this.responseText);
       if(ret.success)
       {
         upload.success = true;
         upload.binary = "";
+        $(upload.container).remove();
         imgs.push(ret.file);
         addimg(ret.file);
         mdata[ret.file] = ret.exif;
@@ -105,6 +105,7 @@ function do_upload(upload)
     if (e.lengthComputable)
     {
       var percent = e.loaded / e.total;
+      upload.label.innerHTML = round(percent*100,0)+"%";
       upload.uploaded = percent;
     }
     else
@@ -116,13 +117,13 @@ function do_upload(upload)
   {
     uploads.queued--;
     upload.success = false;
-    upload.thumbnail.remove();
+    $(upload.container).remove();
     console.log("an error occurred with upload id #"+upload.id);
   });
   xmlhttp.addEventListener("timeout",xmlhttp.abort);
   xmlhttp.addEventListener("error",xmlhttp.abort);
   xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date+"&by="+upname,true);
-  xmlhttp.send(upload.binary);
+  xmlhttp.send(upload.binary != undefined ? upload.binary : upload.image.src);
   upload.uploading = true;
   uploads.active++;
 }
@@ -136,6 +137,7 @@ function parsed(canvas,file,preview)
 }
 function loop()
 {
+  if(uploads.queued != 0) $(sidebar).fadeIn();
   // check for uploads, update the progress bar and start sending uploads when "ready"
   var k = Object.keys(uploads),
   i = 0,
@@ -274,56 +276,48 @@ function upload()
 {
   var binary = arguments[0],
   fname = arguments[1],
-  date = arguments[2]/*,
-  meta = arguments[3] != undefined ? arguments[3] : undefined*/;
-  MAX_WIDTH = thumbsize != 0 ? thumbsize : ((winwidth()/100)*20),
+  date = arguments[2],
   timg = new Image(),
-  id = uniqid();
+  id = uniqid(),
+  uf = CE("div"),
+  label = CE("span");
   if(substr(fname,-4).toLowerCase() == ".cr2")
   {
     timg.src = svg ? "icons/white.svg" : "icons/white.png";
-  }
-  else
-  {
-    timg.src = binary;
-  }
-  timg.addEventListener("load",function ()
-  {
-    MAX_WIDTH *= 2;
-    if(timg.width > MAX_WIDTH)
-    {
-      timg.height *= MAX_WIDTH / timg.width;
-      timg.width = MAX_WIDTH;
-    }
-    var canvas = CE("canvas"),
-    ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = timg.width;
-    canvas.height = timg.height;
-    ctx.drawImage(timg, 0, 0, timg.width, timg.height);
-    stackBlurCanvasRGBA(canvas,0,0, timg.width, timg.height,10);
-    ctx.font = (timg.height/100)*12+'px Ubuntu';
-    ctx.fillInversedText("Uploading image...", (timg.width/100)*15, (timg.height/100)*50);
-    var ri = canvas.toDataURL(),
-    i = new Image();
-    canvas.remove();
-    timg.remove();
-    i.src = ri;
-    i.classList.add("image");
-    i.style.maxWidth = "10%";
-    i.style.cursor = "progress";
-    grid.appendChild(i);
-    $('html,body').animate({scrollTop: $(i).offset().top}, 1000);
     uploads[id] = {"binary": binary,
     "fname": fname,
     "date": date,
     "uploaded": 0.0,
     "uploading": false,
-    "thumbnail": i,
-    "id": id/*,
-    "meta": meta*/};
+    "id": id,
+    "label": label,
+    "container": uf};
     uploads.queued++;
-  });
+  }
+  else
+  {
+    timg.src = binary;
+    timg.addEventListener("load",function ()
+    {
+      uploads[id] = {image: timg,
+      "fname": fname,
+      "date": date,
+      "uploaded": 0.0,
+      "uploading": false,
+      "id": id,
+      "label": label,
+      "container": uf};
+      uploads.queued++;
+    });
+  }
+  uf.classList.add("upfile");
+  timg.classList.add("upthumb");
+  label.classList.add("uptext");
+  label.classList.add("fade");
+  timg.classList.add("fade");
+  label.appendChild(document.createTextNode("Waiting..."));
+  uf.appendChilds(timg,label);
+  sidebar.appendChild(uf);
 }
 
 function startWorker()
@@ -553,14 +547,12 @@ function infooverlay()
 }
 function findthumb(realsource)
 {
-  var thumbs = document.getElementsByClassName("image");
-  for(i = 0;i<thumbs.length;i++)
-  {
-    if($.data(thumbs[i],'original') == realsource)
+  acs("image",function(thumb){
+    if($.data(thumb,'original') == realsource)
     {
-      return thumbs[i];
+      return thumb;
     }
-  }
+  });
 }
 function del()
 {
@@ -712,6 +704,23 @@ function emimg(event)
   if(x < (winwidth()/100)*10) prev();
   if(x > (winwidth()/100)*90) next();
 }
+function acs(slct,code)
+{
+  var eles = document.getElementsByClassName(slct), ij = 0;
+  for(;ij<eles.length;ij++)
+  {
+    code(eles[ij]);
+  }
+}
+function hidestatus(){
+  acs("uptext",function(e){e.style.opacity = 0});
+  acs("upfile",function(e){e.style.margin = 0})
+
+}
+function showstatus(){
+  acs("uptext",function(e){e.style.opacity = 1});
+  acs("upfile",function(e){e.style.margin = "0.5%"})
+}
 function init()
 {
   window.thumbsize = 0;
@@ -743,6 +752,7 @@ function init()
   window.iwi = 0;
   window.ix = 0;
   window.ib = 0;
+  window.sidebar = CE("div");
   window.badbrowser = navigator.userAgent.toLowerCase().indexOf("webkit") !== -1; // Webkit....
   window.xhr = function (){return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP")};
   var gs = grid.style;
@@ -750,6 +760,8 @@ function init()
   gs.oTransitionDuration =
   gs.msTransitionDuration =
   gs.transitionDuration = "0.7s";
+  sidebar.classList.add("fade");
+  sidebar.id = "sidebar";
   prog.id = "progress";
   container.id = "bigpic";
   container.style.cursor = "pointer";
@@ -789,7 +801,8 @@ function init()
   infolay.classList.add("closed");
   container.classList.add("fade");
   container.appendChilds(prevb,nextb,img,infobut,infolay);
-  document.body.appendChilds(prog,grid,container);
+  document.body.appendChilds(prog,grid,container,sidebar);
+  $(sidebar).fadeOut();
   var mdts = Object.keys(files).sort(),
   i = 0;
   for(; i < mdts.length; i++)
@@ -818,6 +831,8 @@ function init()
   window.addEventListener("touchmove",moov);
   window.addEventListener("touchstart",moov);
   window.addEventListener("touchend",moov);
+  sidebar.addEventListener("mouseover",showstatus);
+  sidebar.addEventListener("mouseout",hidestatus);
   if(!badbrowser) img.addEventListener("load",rstx);
   var o = false,
   r = false;

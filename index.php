@@ -70,7 +70,7 @@ this.dragging=!0,this.target.fire(e),this.activeDrops.dropzones=[],this.activeDr
         <img id="preview">
       </div>
     <noscript>
-      Sorry, but you need javascript to get this page working.
+      Sorry, but you need to enable javascript to use this page.
     </noscript>
   </body>
   </html>
