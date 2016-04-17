@@ -18,6 +18,27 @@ function fqueue(e)
       }
     }
 }
+function force_fs()
+{
+    var e = document.documentElement;
+    if(e.requestFullscreen)
+    {
+      e.requestFullscreen();
+    }
+    else if(e.mozRequestFullScreen)
+    {
+      e.mozRequestFullScreen();
+    }
+    else if(e.webkitRequestFullscreen)
+    {
+      e.webkitRequestFullscreen();
+    }
+    else if(e.msRequestFullscreen)
+    {
+      e.msRequestFullscreen();
+    }
+
+}
 function fs()
 {
   // based on http://davidwalsh.name/fullscreen
@@ -794,6 +815,7 @@ function init()
   img.classList.add("loadingbg");
   if(smalldev) img.classList.add("pmode");
   img.addEventListener("dblclick",fs);
+  img.addEventListener("touchstart",force_fs);
   window.infobut = CE("img");
   infobut.src = svg ? "icons/info.svg" : "icons/info.png";
   infobut.classList.add("symbol");
@@ -837,7 +859,6 @@ function init()
   window.addEventListener("click",moov);
   window.addEventListener("touchmove",moov);
   window.addEventListener("touchstart",moov);
-  window.addEventListener("touchstart",function(){if(time()-lastmove < 1){fs()}});
   window.addEventListener("touchend",moov);
   sidebar.addEventListener("mouseover",showstatus);
   sidebar.addEventListener("touchstart",showstatus);
