@@ -12,7 +12,7 @@ HTMLElement.prototype.appendChilds = function()
         }
     }
 };
-window.addEventListeners = function(){
+/*window.addEventListeners = function(){
     var elements = [], listeners = [], functions = [];
     $(arguments).each(function (){
       if(this.__proto__.charCodeAt != undefined) listeners.push(this);
@@ -26,7 +26,7 @@ window.addEventListeners = function(){
         })
       })
     })
-  };
+  };*/
 function fqueue(e)
 {
     e.preventDefault();
