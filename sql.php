@@ -14,14 +14,14 @@ if($conn->select_db($database) !== TRUE)
 {
   die("Couldn't select database '{$database}'");
 }
-if ($conn->query("CREATE TABLE IF NOT EXISTS meta (
+if ($conn->query("CREATE TABLE IF NOT EXISTS metadrops (
 image VARCHAR(255) NOT NULL,
 title VARCHAR(30),
 upby VARCHAR(30),
 description VARCHAR(1024)
 )") !== TRUE)
 {
-  die("Error creating table meta: " . $conn->error);
+  die("Error creating table metadrops: " . $conn->error);
 }
 /*if ($conn->query("CREATE TABLE IF NOT EXISTS rawsonmeta (
 image VARCHAR(255) NOT NULL,
@@ -32,8 +32,8 @@ json VARCHAR(2048)
 }*/
 function updatemeta($img,$title,$desc,$by)
 {
-  $GLOBALS['conn']->query("DELETE FROM meta WHERE image = '{$img}'");
-  $sql = "INSERT INTO meta (image, title, description, upby)
+  $GLOBALS['conn']->query("DELETE FROM metadrops WHERE image = '{$img}'");
+  $sql = "INSERT INTO metadrops (image, title, description, upby)
   VALUES ('{$img}','{$title}','{$desc}','{$by}')";
   return ($GLOBALS['conn']->query($sql) === TRUE) ? true : false;
 }
@@ -45,7 +45,7 @@ function updatemeta($img,$title,$desc,$by)
 }*/
 function getmeta($img)
 {
-  $query = "SELECT * FROM meta";
+  $query = "SELECT * FROM metadrops";
   $r = false;
   if ($result = $GLOBALS['conn']->query($query))
   {

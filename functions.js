@@ -837,7 +837,7 @@ function init()
   window.addEventListener("click",moov);
   window.addEventListener("touchmove",moov);
   window.addEventListener("touchstart",moov);
-  window.addEventListener("touchstart",function(){if(time()-lastmove < 1)}{fs()});
+  window.addEventListener("touchstart",function(){if(time()-lastmove < 1){fs()}});
   window.addEventListener("touchend",moov);
   sidebar.addEventListener("mouseover",showstatus);
   sidebar.addEventListener("touchstart",showstatus);
