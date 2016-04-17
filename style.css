@@ -735,12 +735,12 @@ input[type="submit"].btn::-moz-focus-inner {
     height: 100%;
     position: fixed;
     overflow: scroll;
-    width: 3%;
+    width: 5%;
     padding: 0%;
 }
 #sidebar:hover
 {
-  width: 10%;
+  width: 15%;
   padding: 0.5%;
 }
 /* mobile stylings */

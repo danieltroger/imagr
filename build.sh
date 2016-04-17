@@ -3,6 +3,10 @@ if [ ! -f yui.jar ]
   then
   wget --no-check-certificate -c https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar -O yui.jar
 fi
+if [ ! -f php.js ]
+then
+  wget http://natur-kultur.eu/phpjs.php/time/uniqid/round/basename/file_get_contents/urldecode -O php.js
+fi
 echo "Removing old compressed files"
 rm -rvf *.min.*
 echo "Compressing files..."

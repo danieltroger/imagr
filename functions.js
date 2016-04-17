@@ -1,3 +1,32 @@
+function CE(x){return document.createElement(x)}
+HTMLElement.prototype.appendChilds = function()
+{
+    var a = arguments
+        , b = 0;
+    for (; b < a.length; b++)
+    {
+        var c = a[b];
+        if (typeof c == "object")
+        {
+            this.appendChild(a[b])
+        }
+    }
+};
+window.addEventListeners = function(){
+    var elements = [], listeners = [], functions = [];
+    $(arguments).each(function (){
+      if(this.__proto__.charCodeAt != undefined) listeners.push(this);
+      else if(typeof(this) == "object") elements.push(this);
+      else if(typeof(this) == "function") functions.push(this);
+    });
+    elements.forEach(function(element){
+      functions.forEach(function(func){
+        listeners.forEach(function(listener){
+          element.addEventListener(listener,func);
+        })
+      })
+    })
+  };
 function fqueue(e)
 {
     e.preventDefault();
@@ -5,12 +34,11 @@ function fqueue(e)
     i = 0;
     for(; i < files.length; i++)
     {
-      var src = files[i],
-      raw = (substr(src.name,-3).toLowerCase() == "cr2");
-      if(src.type.match(/image.*/) || raw)
+      var src = files[i];
+      if(src.type.match(/image.*/))
       {
         if(typeof empty != "undefined" && empty != undefined) empty.style.display = "none";
-        read(src,raw);
+        read(src);
       }
       else
       {
@@ -78,21 +106,14 @@ function fs()
     }
   }
 }
-function read(file,raw)
+function read(file)
 {
   while(upname == null || upname.length < 2) upname = prompt("Please enter your name","");
-  if(raw && !features.srs && !smalldev && features.uploading)
-  {
-    raws.push(file);
-  }
-  else
-  {
-    var reader = new FileReader();
-    reader.addEventListener("load",function (e) {
-      upload(e.target.result,file.name,file.lastModified);
-    });
-    reader.readAsDataURL(file);
-  }
+  var reader = new FileReader();
+  reader.addEventListener("load",function (e) {
+    upload(e.target.result,file.name,file.lastModified);
+  });
+  reader.readAsDataURL(file);
 }
 function do_upload(upload)
 {
@@ -103,12 +124,12 @@ function do_upload(upload)
     {
       uploads.active--;
       uploads.queued--;
-      var ret = json_decode(this.responseText);
+      var ret = JSON.parse(this.responseText);
       if(ret.success)
       {
         upload.success = true;
         upload.binary = "";
-        $(upload.container).remove();
+        upload.container.remove();
         imgs.push(ret.file);
         addimg(ret.file);
         mdata[ret.file] = ret.exif;
@@ -138,27 +159,19 @@ function do_upload(upload)
   {
     uploads.queued--;
     upload.success = false;
-    $(upload.container).remove();
+    upload.container.remove();
     console.log("an error occurred with upload id #"+upload.id);
   });
   xmlhttp.addEventListener("timeout",xmlhttp.abort);
   xmlhttp.addEventListener("error",xmlhttp.abort);
   xmlhttp.open("POST","upload.php?name="+upload.fname+"&date="+upload.date+"&by="+upname,true);
-  xmlhttp.send(upload.binary != undefined ? upload.binary : upload.image.src);
+  xmlhttp.send(upload.image.src);
   upload.uploading = true;
   uploads.active++;
 }
-function parsed(canvas,file,preview)
-{
-  console.log(canvas,file,preview,preview.getMetadata());
-  upload(canvas.toDataURL("image/jpeg"),file.name+".jpg",file.lastModified/*,preview.getMetadata()*/);
-  canvas.remove();
-  raws.splice(0,1);
-  busy = false;
-}
 function loop()
 {
-  uploads.queued != 0 ? $(sidebar).fadeIn() : $(sidebar).fadeOut();
+  sidebar.style.display = uploads.queued != 0 ? "" : "none";
   // check for uploads, update the progress bar and start sending uploads when "ready"
   var k = Object.keys(uploads),
   i = 0,
@@ -188,21 +201,15 @@ function loop()
   {
     prog.style.width = wi;
   }
-  // enter presentation mode when user ist inactive for more than 2 seconds
+  // enter presentation mode when user ist inactive for more than 3 seconds
   var diff = time() - lastmove;
-  if(diff > 2)
+  if(diff > 3)
   {
     if(!chidden) hidectl();
   }
   else
   {
     if(chidden) showctl();
-  }
-  // start converting raw files when there are some to convert
-  if(raws.length > 0 && !busy && !smalldev && typeof rawViewer == "object" && features.uploading)
-  {
-    busy = true;
-    rawViewer.readFile(raws[0], parsed);
   }
   // parse the location hash
   var hash = location.hash;
@@ -215,11 +222,11 @@ function loop()
      }
      else
      {
-       argr = substr(hash,2);
-       args = explode(",",argr);
+       argr = hash.substr(2);
+       args = argr.split(",");
        for(var i = 0;i<args.length;i++)
        {
-         var arg = explode("=",args[i]),key=arg[0],value=arg[1];
+         var arg = args[i].split("="),key=arg[0],value=arg[1];
          if(value == undefined)
          {
            //console.warn("No value given, assuming true");
@@ -249,10 +256,10 @@ function loop()
            if(value != "" && value != undefined)
            {
              var hidden = (container.style.display == "none");
-             if(hidden || $.data(img,'original') != value)
+             if(hidden || img.dataset.original != value)
              {
                var t = findthumb(value);
-               if(t != undefined && ($.data(img,'original') != $.data(t,'original') || hidden))
+               if(t != undefined && (img.dataset.original != t.dataset.original || hidden))
                {
                  openpic(t);
                }
@@ -272,12 +279,6 @@ function loop()
              infolay.classList.add("closed");
              info = false;
            }
-         }
-         if(key == "preload")
-         {
-           //console.log(value);
-           if(value == "false" || value == false) preload = false;
-           if(value == "true" || value == true) preload = true;
          }
          if(key == "overview")
          {
@@ -302,10 +303,10 @@ function upload()
   id = uniqid(),
   uf = CE("div"),
   label = CE("span");
-  if(substr(fname,-4).toLowerCase() == ".cr2")
+  timg.src = binary;
+  timg.addEventListener("load",function ()
   {
-    timg.src = svg ? "icons/white.svg" : "icons/white.png";
-    uploads[id] = {"binary": binary,
+    uploads[id] = {image: timg,
     "fname": fname,
     "date": date,
     "uploaded": 0.0,
@@ -314,23 +315,7 @@ function upload()
     "label": label,
     "container": uf};
     uploads.queued++;
-  }
-  else
-  {
-    timg.src = binary;
-    timg.addEventListener("load",function ()
-    {
-      uploads[id] = {image: timg,
-      "fname": fname,
-      "date": date,
-      "uploaded": 0.0,
-      "uploading": false,
-      "id": id,
-      "label": label,
-      "container": uf};
-      uploads.queued++;
-    });
-  }
+  });
   uf.classList.add("upfile");
   timg.classList.add("upthumb");
   label.classList.add("uptext");
@@ -339,25 +324,6 @@ function upload()
   label.appendChild(document.createTextNode("Waiting..."));
   uf.appendChilds(timg,label);
   sidebar.appendChild(uf);
-}
-
-function startWorker()
-{
- if(typeof(Worker) !== "undefined" && typeof(w) == "undefined" && preload)
- {
-   w = new Worker("preload.min.js");
-   w.onmessage = function(e)
-   {
-     var fname = basename(e.data[1]),
-     blob = e.data[0];
-     var url = (window.URL || window.webkitURL).createObjectURL(blob);
-     imgs[fname] = url;
-     mdata[fname] = json_decode(e.data[2]);
-     console.info("WebWorker has successfully downloaded "+fname+" to "+url);
-    };
-    w.postMessage(imgs);
-    console.info("Preload WebWorker started");
- }
 }
 function update()
 {
@@ -368,7 +334,7 @@ function update()
  {
    if (this.readyState == 4 && this.status == 200)
    {
-     var rt = json_decode(this.responseText);
+     var rt = JSON.parse(this.responseText);
      if(!rt.success) alert("Something went wrong while renaming");
       mdata[u] = rt.exif;
    }
@@ -418,7 +384,7 @@ function addimg(image)
     imgelem.src = smalldev ? "download.php/resize/110/"+image : "thumbs.dir/"+image+".jpg";
     imgelem.style.maxWidth = "10%";
   }
-  $.data(imgelem,'original',image);
+  imgelem.dataset.original = image;
   imgelem.classList.add("image");
   imgelem.addEventListener("click",openpic);
   grid.appendChild(imgelem);
@@ -435,10 +401,9 @@ function openpic(srcthumb)
     console.warn("srcthumb is undefined");
     return;
   }
-  $('html,body').animate({scrollTop: $(srcthumb).offset().top}, 1000);
-  url = $.data(srcthumb,'original');
+  url = srcthumb.dataset.original;
   var blob = false, burl = imgs[url];
-  if(substr(burl,0,4) == "blob")
+  if(burl != undefined && burl.substr(0,4) == "blob")
   {
     console.info("Reading image "+url+" from "+burl);
     img.src = burl;
@@ -461,7 +426,7 @@ function openpic(srcthumb)
       img.src="download.php/resize/"+realsize+"/"+url;
     }
   }
-  $.data(img,'original',url);
+  img.dataset.original = url;
   location.hash = "#!image="+basename(url)+ (info ? ",info=true" : "");
   container.style.display = "";
   grid.style.webkitFilter =
@@ -470,7 +435,7 @@ function openpic(srcthumb)
   {
     infolay.removeChild(infolay.firstChild);
   }
-  var exif = mdata[url] != undefined ? mdata[url] : json_decode(file_get_contents("download.php/exif/"+url)),
+  var exif = mdata[url] != undefined ? mdata[url] : JSON.parse(file_get_contents("download.php/exif/"+url)),
   inf = "";
     var m = exif.meta, t = "";
     if(m == false) m = {};
@@ -505,7 +470,7 @@ function openpic(srcthumb)
        height = exif['height'],
        make = exif['make'],
        model = exif['model'],
-       gps = exif['GPS'],
+       gps = isNaN(parseInt(exif['GPS'])) ? false : exif['GPS'],
        date = exif['date'],
        iso = exif['ISO'],
        aperture = exif['aperture'],
@@ -569,7 +534,7 @@ function infooverlay()
 function findthumb(realsource)
 {
   return acs("image",function(thumb,realsource){
-    var orig = $.data(thumb,'original');
+    var orig = thumb.dataset.original;
     if(orig == realsource)
     {
       return thumb;
@@ -578,8 +543,8 @@ function findthumb(realsource)
 }
 function del()
 {
-  var pic = $.data(img,'original'),
-  r = json_decode(file_get_contents("download.php/delete/"+pic));
+  var pic = img.dataset.original,
+  r = JSON.parse(file_get_contents("download.php/delete/"+pic));
   if(r.success)
   {
     //prev();
@@ -595,7 +560,7 @@ function del()
 }
 function next(e)
 {
-  var nextindex = (findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))+1);
+  var nextindex = (findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)+1);
   if(nextindex == imgs.length)
   {
     nextindex = 0;
@@ -640,7 +605,7 @@ function showctl()
 }
 function prev(e)
 {
-  var previndex = findimg($.data(img,'original') == undefined ? basename(img.src) : $.data(img,'original'))-1;
+  var previndex = findimg(img.dataset.original == undefined ? basename(img.src) : img.dataset.original)-1;
   if(previndex < 0)
   {
     previndex = (imgs.length-1);
@@ -695,7 +660,7 @@ if(typeof HTMLElement.prototype.remove != "function")
 {
   HTMLElement.prototype.remove = function ()
   {
-    $(this).remove();
+    this.parentElement.removeChild(this);
   }
 }
 function mimg(event)
@@ -711,7 +676,7 @@ function mimg(event)
 function smimg(event)
 {
   var target = event.target;
-  iwi = $(target).width();
+  iwi = target.clientWidth;
   target.classList.remove("fade");
   target.classList.remove("cent");
 }
@@ -743,7 +708,6 @@ function acs(slct,code)
 function hidestatus(){
   acs("uptext",function(e){e.style.opacity = 0});
   acs("upfile",function(e){e.style.margin = 0})
-
 }
 function showstatus(){
   acs("uptext",function(e){e.style.opacity = 1});
@@ -757,7 +721,7 @@ function init()
   window.argr = "";
   window.args = [];
   window.info = false;
-  window.smalldev = $(window).width() < 768;
+  window.smalldev = window.innerWidth < 768;
   window.preload = false;
   window.loaded = false;
   window.url = "";
@@ -771,8 +735,6 @@ function init()
   window.empty;
   window.prog = CE("span");
   window.uploads = {'active': 0,'queued': 0};
-  window.raws = [];
-  window.busy = false;
   window.upname = "";
   window.imgs = [];
   window.lastmove = time();
@@ -831,7 +793,7 @@ function init()
   container.classList.add("fade");
   container.appendChilds(prevb,nextb,img,infobut,infolay);
   document.body.appendChilds(prog,grid,container,sidebar);
-  $(sidebar).fadeOut(0);
+  sidebar.style.display = "none";
   var mdts = Object.keys(files).sort(),
   i = 0;
   for(; i < mdts.length; i++)
@@ -852,7 +814,6 @@ function init()
     }
   }
   ety();
-  startWorker();
   loop();
   window.addEventListener("keypress",kinput);
   window.addEventListener("mousemove",moov);
@@ -881,39 +842,5 @@ function init()
     upbut.addEventListener("change",fqueue);
     document.body.addEventListener("dragover", function(e){e.preventDefault();});
     document.body.addEventListener("drop",fqueue);
-    if(!features.srs && !smalldev)
-    {
-      var x = new xhr();
-      x.open("GET","raw.min.js",true);
-      x.addEventListener("readystatechange", function ()
-      {
-        if (this.readyState == 4 && this.status == 200)
-        {
-          eval(this.responseText);
-          window.rawViewer = new Rawson.Viewer('preview',{
-              formats: {
-                  read: ['RAW']
-              },
-              controls: [
-                  new Rawson.Control.FileProgress()
-              ]
-          });
-        }
-      });
-      x.send();
-    }
-  }
-  if(features.srs == undefined)
-  {
-    var x = new xhr();
-    x.open("GET","download.php/rawtest",true);
-    x.addEventListener("readystatechange",function ()
-    {
-      if (this.readyState == 4 && this.status == 200)
-      {
-        this.response == "true" ? features.srs = true : features.srs = false;
-      }
-    });
-    x.send();
   }
 }
