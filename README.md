@@ -112,3 +112,4 @@ php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"))
 * ~~Fix some more beautiful/faster generation of the info overlay~~
 * ~~MySQL database support instead of JSON files~~
 * ~~Renaming feature~~
+* Rewrite the whole shit because it uses way too much resources. It's, uh, inefficient.
