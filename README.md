@@ -113,3 +113,6 @@ php -r 'echo "data:image/jpg;base64," . base64_encode(file_get_contents("'$f'"))
 * ~~MySQL database support instead of JSON files~~
 * ~~Renaming feature~~
 * Rewrite the whole shit because it uses way too much resources. It's, uh, inefficient.
+* Rights management (password protections, etc)
+* Ability to "report" inappropriate pictures
+* Users
