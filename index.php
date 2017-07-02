@@ -17,7 +17,8 @@
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      width: 20%;
+      width: 10%;
+      min-width: 5vw;
     }
     .bgdiv
     {
