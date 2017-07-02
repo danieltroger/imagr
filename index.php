@@ -29,6 +29,7 @@
     {
       z-index: 1;
       filter: blur(20px);
+      background-size: cover;
     }
     .oldiv
     {
@@ -65,20 +66,6 @@
     {
       transform: translate(-50%,-50%) scale(1);
     }
-    <?php
-    $imgs = file("imgs.list");
-    foreach($imgs as $img)
-    {
-      $img = trim(preg_replace('/\s+/', '', $img));
-      ?>
-      #bgdiv<?php echo $img; ?>
-      {
-        background: url("<?php echo $img; ?>-fhd.jpg") no-repeat center center fixed;
-        background-size: cover;
-      }
-      <?php
-    }
-    ?>
     </style>
   </head>
   <body>
@@ -88,9 +75,9 @@ foreach($imgs as $img)
 {
   $img = trim(preg_replace('/\s+/', '', $img));
   ?><div class="idiv" style="display: none;">
-    <div class="bgdiv" id="bgdiv<?php echo $img; ?>"></div>
-    <div class="oldiv" id="oldiv<?php echo $img; ?>"></div>
-    <img class="image" id="img<?php echo $img; ?>" src="<?php echo $img; ?>-fhd.jpg">
+    <div class="bgdiv" style="background: url('<?php echo $img; ?>-fhd.jpg') no-repeat center center fixed;"></div>
+    <div class="oldiv"></div>
+    <img class="image" src="<?php echo $img; ?>-fhd.jpg">
   </div>
     <?php
 }
