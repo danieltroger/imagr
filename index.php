@@ -107,31 +107,6 @@ window.onload = function()
   images[1].style.display = "";
   images[0].children[2].classList.add("large");
 };
-/*if (typeof window.DeviceMotionEvent != 'undefined') {
-
-    // Position variables
-    var hms = 0, rotation;
-
-    // Listen to motion events and update the position
-    window.addEventListener('devicemotion', function (e) {
-        rotation = e.rotationRate;
-        if (rotation != null) {
-          var ln = Math.max(rotation.alpha,rotation.beta);
-          //console.log(ln);
-        if(ln > 30 || ln < -30)
-        {
-          hms++; // events in x ms
-        }
-    }
-    }, false);
-    setInterval(function(){
-      if(hms > 6)
-      {
-        next();
-      }
-      hms = 0;
-    },600);
-}*/
 window.onkeypress = function (e){
   var k = e.which || e.keyCode;
   if(k == 32 || k == 39)
