@@ -9,20 +9,14 @@
       margin: 0;
       background: black;
     }
-    #prev
+    #prev{left: 2%;}
+    #next{right: 2%;}
+    .pn
     {
+      transition-duration: 1;
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      left: 2%;
-      width: 20%;
-    }
-    #next
-    {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      right: 2%;
       width: 20%;
     }
     .bgdiv
@@ -66,6 +60,7 @@
     {
       transform: translate(-50%,-50%) scale(1);
     }
+    img{border:none}
     </style>
   </head>
   <body>
@@ -93,36 +88,47 @@ window.onload = function()
   images[images.length-1].style.display = "";
   images[1].style.display = "";
   images[0].children[2].classList.add("large");
+  document.getElementById("prev").style.opacity = "1";
+  document.getElementById("next").style.opacity = "1";
 };
 window.onkeypress = function (e){
   var k = e.which || e.keyCode;
-  if(k == 32 || k == 39)
-  {
-      next();
-  }
+  if(k == 32 || k == 39){next()}
+  if(k == 37){prev()}
 }
 function next()
 {
-  images[i].classList.remove("visible");
-  images[i].children[2].classList.remove("large");
-  setTimeout("eval('images["+li(li(i))+"].style.display = \"none\";');",1000);
+  hi(i);
+  ri(li(i));
   i = ni(i);
-  images[i].classList.add("visible");
-  images[i].children[2].classList.add("large");
-  images[ni(i)].style.display = "";
-  images[li(i)].style.display = "";
-  images[ni(ni(i))].style.display = "";
+  si(i);
+  di(ni(i));
 }
 function prev()
 {
-  images[i].classList.remove("visible");
-  images[i].children[2].classList.remove("large");
-  setTimeout("eval('images["+ni(i+2)+"].style.display = \"none\";');",1000);
+  hi(i);
+  ri(ni(i));
   i = li(i);
+  si(i);
+  di(li(i));
+}
+function ri(i)
+{
+  setTimeout("eval('images["+i+"].style.display = \"none\";');",1000);
+}
+function di(i)
+{
+  images[i].style.display = "";
+}
+function si(i)
+{
   images[i].classList.add("visible");
   images[i].children[2].classList.add("large");
-  images[li(i)].style.display = "";
-  images[ni(ni(i))].style.display = "";
+}
+function hi(i)
+{
+  images[i].classList.remove("visible");
+  images[i].children[2].classList.remove("large");
 }
 function ni(i)
 {
@@ -137,8 +143,8 @@ function li(i)
   return i;
 }
 </script>
-<img src="prev.svg" onclick="prev();" id="prev" />
-<img src="next.svg" onclick="next();" id="next" />
+<img src="prev.svg" onclick="prev();" style="opacity: 0;" class="pn" id="prev" />
+<img src="next.svg" onclick="next();" style="opacity: 0;" class="pn" id="next" />
 <h1 style="color:white; z-index:0; ">Loading… If not, please enable javascript and use a modern browser.</h1>
 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
