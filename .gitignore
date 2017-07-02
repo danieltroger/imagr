@@ -1,2 +1,5 @@
 imgs.list
-*.[jpg]
+*.jpg
+*.jpeg
+*.png
+*.gif
