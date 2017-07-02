@@ -13,12 +13,14 @@
     #next{right: 2%;}
     .pn
     {
-      transition-duration: 1;
-      position: fixed;
+      position: absolute;
       top: 50%;
+      transition-duration: 1;
+      will-change: transform, opacity;
       transform: translateY(-50%);
       width: 10%;
       min-width: 5vw;
+      z-index: 4;
     }
     .bgdiv
     {
@@ -34,7 +36,7 @@
     .image{z-index:3}
     .idiv, .bgdiv, .oldiv
     {
-      position: fixed;
+      position: absolute;
       width: 100%;
       height: 100%;
     }
@@ -42,6 +44,7 @@
     {
       transition-duration: 1s;
       opacity: 0;
+      will-change: opacity;
     }
     .idiv.visible
     {
@@ -50,12 +53,13 @@
     .image
     {
       transition-duration: 0.5s;
-      position: fixed;
+      position: absolute;
       max-width: 100%;
       max-height: 100%;
       left: 50%;
       top: 50%;
       transform: translate(-50%,-50%) scale(0.1);
+      will-change: transform, display;
     }
     .image.large
     {
@@ -91,6 +95,8 @@ window.onload = function()
   images[0].children[2].classList.add("large");
   document.getElementById("prev").style.opacity = "1";
   document.getElementById("next").style.opacity = "1";
+  document.getElementById("prev").onclick = prev;
+  document.getElementById("next").onclick = next;
 };
 window.onkeypress = function (e){
   var k = e.which || e.keyCode;
@@ -144,11 +150,8 @@ function li(i)
   return i;
 }
 </script>
-<img src="prev.svg" onclick="prev();" style="opacity: 0;" class="pn" id="prev" />
-<img src="next.svg" onclick="next();" style="opacity: 0;" class="pn" id="next" />
+<img src="prev.svg" style="opacity: 0;" class="pn" id="prev" />
+<img src="next.svg" style="opacity: 0;" class="pn" id="next" />
 <h1 style="color:white; z-index:0; ">Loading… If not, please enable javascript and use a modern browser.</h1>
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-  </body>
+</body>
 </html>
