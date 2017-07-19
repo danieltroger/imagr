@@ -22,7 +22,6 @@ window.onkeypress = function (e){
 function next()
 {
   var diff = (new Date/1000)-ris;
-  console.log(diff);
   if(diff < 1){if(direction == 0){abrt++}}
   hi(i);
   ri(i);
@@ -34,7 +33,6 @@ function next()
 function prev()
 {
   var diff = (new Date/1000)-ris;
-  console.log(diff);
   if(diff < 1){if(direction == 1){abrt++}}
   hi(i);
   ri(i);
@@ -46,7 +44,7 @@ function prev()
 function ri(i)
 {
   ris = new Date/1000;
-  setTimeout("(function(){console.log(abrt);if(abrt > 0){abrt--;return}images["+i+"].style.display = \"none\";})();",1000);
+  setTimeout("(function(){if(abrt > 0){abrt--;return}images["+i+"].style.display = \"none\";})();",1000);
 }
 function di(i)
 {
