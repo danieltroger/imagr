@@ -14,7 +14,6 @@ foreach($imgs as $img)
   $img = trim(preg_replace('/\s+/', '', $img));
   ?><div class="idiv" style="display: none;">
     <div class="bgdiv" style="background: url('<?php echo $img; ?>-fhd.jpg') no-repeat center center fixed;"></div>
-    <div class="oldiv"></div>
     <img class="image" src="<?php echo $img; ?>-fhd.jpg">
   </div>
     <?php
