@@ -3,70 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>ImgView</title>
-    <style type="text/css">
-    body
-    {
-      margin: 0;
-      background: black;
-    }
-    #prev{left: 2%;}
-    #next{right: 2%;}
-    .pn
-    {
-      position: absolute;
-      top: 50%;
-      transition-duration: 1;
-      will-change: transform, opacity;
-      transform: translateY(-50%);
-      width: 10%;
-      min-width: 5vw;
-      z-index: 4;
-    }
-    .bgdiv
-    {
-      z-index: 1;
-      filter: blur(20px);
-      background-size: cover;
-    }
-    .oldiv
-    {
-      z-index:2;
-      background: rgba(255,190,190,0.2);
-    }
-    .image{z-index:3}
-    .idiv, .bgdiv, .oldiv
-    {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-    .idiv
-    {
-      transition-duration: 1s;
-      opacity: 0;
-      will-change: opacity;
-    }
-    .idiv.visible
-    {
-      opacity: 1;
-    }
-    .image
-    {
-      transition-duration: 0.5s;
-      position: absolute;
-      max-width: 100%;
-      max-height: 100%;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%,-50%) scale(0.1);
-      will-change: transform, display;
-    }
-    .image.large
-    {
-      transform: translate(-50%,-50%) scale(1);
-    }
-    img{border:none}
-    </style>
+    <link type="text/css" href="imagr.css" rel="stylesheet" />
+    <script src="imagr.js" type="text/javascript"></script>
   </head>
   <body>
 <?php
@@ -82,74 +20,6 @@ foreach($imgs as $img)
     <?php
 }
 ?>
-<script type="text/javascript">
-var images = document.getElementsByClassName("idiv"),
-i = 0;
-window.onload = function()
-{
-  document.getElementsByTagName("h1")[0].remove();
-  images[0].style.display = "";
-  images[0].classList.add("visible");
-  images[images.length-1].style.display = "";
-  images[1].style.display = "";
-  images[0].children[2].classList.add("large");
-  document.getElementById("prev").style.opacity = "1";
-  document.getElementById("next").style.opacity = "1";
-  document.getElementById("prev").onclick = prev;
-  document.getElementById("next").onclick = next;
-};
-window.onkeypress = function (e){
-  var k = e.which || e.keyCode;
-  if(k == 32 || k == 39){next()}
-  if(k == 37){prev()}
-}
-function next()
-{
-  hi(i);
-  ri(li(i));
-  i = ni(i);
-  si(i);
-  di(ni(i));
-}
-function prev()
-{
-  hi(i);
-  ri(ni(i));
-  i = li(i);
-  si(i);
-  di(li(i));
-}
-function ri(i)
-{
-  setTimeout("eval('images["+i+"].style.display = \"none\";');",1000);
-}
-function di(i)
-{
-  images[i].style.display = "";
-}
-function si(i)
-{
-  images[i].classList.add("visible");
-  images[i].children[2].classList.add("large");
-}
-function hi(i)
-{
-  images[i].classList.remove("visible");
-  images[i].children[2].classList.remove("large");
-}
-function ni(i)
-{
-  i++;
-  if(i >= images.length){i = 0}
-  return i;
-}
-function li(i)
-{
-  i--;
-  if(i < 0){i = images.length-1;}
-  return i;
-}
-</script>
 <img src="prev.svg" style="opacity: 0;" class="pn" id="prev" />
 <img src="next.svg" style="opacity: 0;" class="pn" id="next" />
 <h1 style="color:white; z-index:0; ">Loading… If not, please enable javascript and use a modern browser.</h1>
