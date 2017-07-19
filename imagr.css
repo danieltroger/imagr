@@ -18,7 +18,6 @@ body
   filter: blur(20px) opacity(0.9);
   background-size: cover;
   transition-duration: 1s;
-  will-change: opacity;
   opacity: 0;
 }
 .image{z-index:3}

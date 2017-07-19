@@ -2,6 +2,9 @@ window.onload = function()
 {
   window.images = document.getElementsByClassName("idiv");
   window.i = 0;
+  window.abrt = 0;
+  window.ris = new Date/1000;
+  window.direction = 1;
   document.getElementsByTagName("h1")[0].remove();
   images[0].style.display = "";
   images[0].children[0].classList.add("visible");
@@ -18,23 +21,32 @@ window.onkeypress = function (e){
 }
 function next()
 {
+  var diff = (new Date/1000)-ris;
+  console.log(diff);
+  if(diff < 1){if(direction == 0){abrt++}}
   hi(i);
   ri(i);
   i = ni(i);
   di(i);
-  setTimeout("si("+i+");",20);
+  setTimeout("si("+i+");",100);
+  direction = 1;
 }
 function prev()
 {
+  var diff = (new Date/1000)-ris;
+  console.log(diff);
+  if(diff < 1){if(direction == 1){abrt++}}
   hi(i);
   ri(i);
   i = li(i);
   di(i);
-  setTimeout("si("+i+");",20);
+  setTimeout("si("+i+");",100);
+  direction = 0;
 }
 function ri(i)
 {
-  setTimeout("images["+i+"].style.display = \"none\";",1000);
+  ris = new Date/1000;
+  setTimeout("(function(){console.log(abrt);if(abrt > 0){abrt--;return}images["+i+"].style.display = \"none\";})();",1000);
 }
 function di(i)
 {
