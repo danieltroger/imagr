@@ -6,7 +6,7 @@ body
 {
   position: absolute;
   top: 50%;
-  transition-duration: 1;
+  transition-duration: 1s;
   transform: translateY(-50%);
   width: 10%;
   min-width: 5vw;
@@ -17,7 +17,7 @@ body
   z-index: 1;
   filter: blur(20px) opacity(0.9);
   background-size: cover;
-  transition-duration: 1s;
+  transition-duration: 0.5s;
   opacity: 0;
 }
 .image{z-index:3}
@@ -33,7 +33,7 @@ body
 }
 .image
 {
-  transition-duration: 0.5s;
+  transition-duration: 0.25s;
   position: absolute;
   max-width: 100%;
   max-height: 100%;

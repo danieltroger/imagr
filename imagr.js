@@ -3,10 +3,6 @@ window.onload = function()
   // define globals
   window.images = document.getElementsByClassName("idiv");
   window.i = 0;
-  window.hu = false;
-  window.abrt = 0;
-  window.ris = new Date/1000;
-  window.direction = 1;
   document.getElementsByTagName("h1")[0].remove(); // remove "loading text"
   // if there's an image in the url, display it as first image
   if(location.hash.substr(1).length > 0)
@@ -26,11 +22,6 @@ window.onload = function()
   }
   window.onhashchange = function(e)
   {
-    if(hu)
-    {
-      hu = false;
-      return;
-    }
     var ti = fi(parseInt(e.newURL.split("#")[1]));
     if(ti > 0)
     {
@@ -55,32 +46,16 @@ window.onkeypress = function (e){ // set previous and next keyboard shortcuts
 }
 function next() // shows the next image to the one currently being shown
 {
-  var diff = (new Date/1000)-ris;
-  if(diff < 1){if(direction == 0){abrt++}}
-  hi(i);
-  ri(i);
-  i = ni(i);
-  uh(i);
-  di(i);
-  setTimeout("si("+i+");",100);
-  direction = 1;
+  uh(ni(i));
 }
 function prev() // shows the previous image to the one currently being shown
 {
-  var diff = (new Date/1000)-ris;
-  if(diff < 1){if(direction == 1){abrt++}}
-  hi(i);
-  ri(i);
-  i = li(i);
-  uh(i);
-  di(i);
-  setTimeout("si("+i+");",100);
-  direction = 0;
+  uh(li(i));
 }
 function ri(im) // remove image, "removes" an image (per display:none) after one second if abrt hasn't been set until then
 {
   ris = new Date/1000;
-  setTimeout("(function(){if(abrt > 0){abrt--;return}images["+im+"].style.display = \"none\";})();",1000);
+  setTimeout("(function(){if(i == "+im+"){return}images["+im+"].style.display = \"none\";})();",500);
 }
 function di(im) // display image, unsets an image's display style
 {
@@ -110,7 +85,6 @@ function li(im) // last image (returns image in images before im)
 }
 function uh(im) // update hash, updates location.hash to show the id of im
 {
-  hu = true;
   location.hash = ifi(im);
 }
 function ifi(im) // id from image, finds the id of the image im in images, counterpart of fi
