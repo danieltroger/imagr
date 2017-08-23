@@ -8,12 +8,9 @@ window.onload = function()
   if(location.hash.substr(1).length > 0)
   {
     var ti = fi(parseInt(location.hash.substr(1)));
-    if(ti > 0)
-    {
-      i = ti;
-      di(i);
-      si(i);
-    }
+    i = ti;
+    di(i);
+    si(i);
   }
   else // display first image in images
   {
