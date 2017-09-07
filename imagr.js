@@ -20,14 +20,11 @@ window.onload = function()
   window.onhashchange = function(e)
   {
     var ti = fi(parseInt(e.newURL.split("#")[1]));
-    if(ti > 0)
-    {
-      hi(i);
-      ri(i);
-      i = ti;
-      di(i);
-      setTimeout("si("+i+");",100);
-    }
+    hi(i);
+    ri(i);
+    i = ti;
+    di(i);
+    setTimeout("si("+i+");",100);
   }
   // show next and previous buttons
   document.getElementById("prev").style.opacity = "1";
