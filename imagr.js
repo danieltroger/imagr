@@ -1,5 +1,23 @@
 window.onload = function()
 {
+  // add images
+  window.screenwidth = window.screen.width * window.devicePixelRatio;
+  var postfix = screenwidth > 1920 ? "-4k.jpg" : "-fhd.jpg", j = 0;
+  for(; j<imagesources.length; j++)
+  {
+    var div = document.createElement("div"),
+    bgdiv = document.createElement("div"),
+    image = document.createElement("img");
+    div.classList.add("idiv");
+    div.style.display = "none";
+    bgdiv.classList.add("bgdiv");
+    bgdiv.style.background = "url("+imagesources[j]+postfix+") no-repeat center center fixed";
+    image.classList.add("image");
+    image.src = imagesources[j]+postfix;
+    div.appendChild(bgdiv);
+    div.appendChild(image);
+    document.body.appendChild(div);
+  }
   // define globals
   window.images = document.getElementsByClassName("idiv");
   window.i = 0;
@@ -35,8 +53,8 @@ window.onload = function()
 };
 window.onkeypress = function (e){ // set previous and next keyboard shortcuts
   var k = e.which || e.keyCode;
-  if(k == 32 || k == 39){next()}
-  if(k == 37){prev()}
+  if(k == 32 || k == 39 || k == 110){next()}
+  if(k == 37 || k == 112){prev()}
 }
 function next() // shows the next image to the one currently being shown
 {

@@ -6,7 +6,7 @@ img="$RANDOM"
 echo "creating cropped version (fhd)"
 convert "$in" -quality 70 -resize 1920 $img-fhd.jpg
 #echo "creating cropped version (4k, 4096p)"
-#convert "$in" -quality 70 -resize 4096 $img-4k.jpg
+convert "$in" -quality 70 -resize 4096 $img-4k.jpg
 #echo "copying full-size"
 #cp "$in" $img.jpg
 echo "adding to imglist"
